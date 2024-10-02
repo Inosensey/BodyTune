@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -12,6 +13,16 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+input,
+button,
+textarea {
+  outline: none;
+}
+p {
+  padding: 0;
+  margin: 0;
 }
 
 body {
