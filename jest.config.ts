@@ -28,6 +28,7 @@ const config: Config.InitialOptions = {
       '^@/(.*)': '<rootDir>/$1',
       '^@/app/(.*)': '<rootDir>/app/$1',
       '^@/components/(.*)': '<rootDir>/components/$1',
+      '^@/icons/(.*)': '<rootDir>/icons/$1',
     //   '^@/icones/(.*)': '<rootDir>/icones/$1',
     //   '^@/css/(.*)': '<rootDir>/css/$1',
     //   '^@/types/(.*)': '<rootDir>/types/$1',

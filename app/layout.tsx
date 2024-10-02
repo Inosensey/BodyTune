@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${QuicksandFont.variable} ${DMSansFont.variable} antialiased bg-gradient-to-b from-lightPrimary to-primary bg-no-repeat h-screen overflow-auto text-textGray`}
+        className={`${QuicksandFont.variable} ${DMSansFont.variable} antialiased bg-gradient-to-b from-lightBackground to-primary bg-no-repeat h-screen overflow-auto text-textGray`}
       >
         {children}
       </body>

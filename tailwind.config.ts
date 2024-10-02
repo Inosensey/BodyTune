@@ -17,13 +17,22 @@ const config: Config = {
     },
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        primary: '#1A2421',
-        lightPrimary: '#2C3A37',
-        secondary: '#415a77',
-        lightSecondary: '#778da9',
-        textGray: '#e0e1dd'
+        // background: "var(--background)",
+        // foreground: "var(--foreground)",
+        // primary: '#121212',
+        // lightPrimary: '#2C3A37',
+        // secondary: '#4B6F64',
+        // lightSecondary: '#A8C8C0',
+        // textGray: '#e0e1dd'
+
+        primary: "#121212", // Rich Black
+        lightPrimary: "#1E1E1E", // Dark Charcoal (Light version for gradient)
+        foreground: "#A8D5BA", // Light Mint Green
+        secondary: "#4B6F64", // Deep Teal
+        lightSecondary: "#D3F0D1", // Light Mint (Light version of secondary text)
+        textGray: "#e0e1dd", // Existing gray text color
+        ctaBackground: "#3E8E41", // Forest Green (CTA background)
+        ctaText: "#FFFFFF", // White (CTA text)
       },
       fontFamily: {
         dmSans: ['var(--font-dm-sans)'],

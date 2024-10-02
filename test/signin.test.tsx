@@ -14,7 +14,7 @@ describe("Sign In Component", () => {
         expect(screen.getByTestId("third-party-container")).toBeInTheDocument();
         expect(screen.getByTestId("google-third-party-login")).toBeInTheDocument();
         expect(screen.getByTestId("facebook-third-party-login")).toBeInTheDocument();
-        expect(screen.getByTestId("twitter-third-party-login")).toBeInTheDocument();
+        expect(screen.getByTestId("instagram-third-party-login")).toBeInTheDocument();
         expect(screen.getByTestId("credentials-login-form")).toBeInTheDocument();
         expect(screen.getByTestId("email-input")).toBeInTheDocument();
         expect(screen.getByTestId("password-input")).toBeInTheDocument();
