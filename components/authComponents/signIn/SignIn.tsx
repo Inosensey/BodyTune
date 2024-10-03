@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 import Image from "next/image";
 
@@ -27,8 +28,10 @@ const SignIn = () => {
   // useState
   const [credentials, setCredentials] =
     useState<credentials>(credentialsInitial);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   // Events
+  const toggleRememberMe = () => setRememberMe(!rememberMe);
   const inputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
@@ -81,28 +84,72 @@ const SignIn = () => {
         </div>
         <hr
           style={{ borderColor: "#b3b3b3" }}
-          className="max-w-[450px] phone:w-10/12"
+          className="max-w-[450px] phone:w-8/12 my-4"
         />
-        <div data-testid="credentials-login-form" className="flex flex-col justify-center gap-3 max-w-[450px] phone:w-6/12">
-          <div className="w-full">
-            <Input
-              name="email"
-              placeholder="Enter your Email"
-              state={credentials.email}
-              type="email"
-              label="Email"
-              onChange={inputOnChange}
-            />
+        <div className="flex flex-col justify-center gap-4 max-w-[450px] phone:w-6/12">
+          <form
+            data-testid="credentials-login-form"
+            className="flex flex-col gap-2"
+          >
+            <div className="w-full">
+              <Input
+                name="email"
+                dataTestId="email-input"
+                placeholder="Enter your Email"
+                state={credentials.email}
+                type="email"
+                label="Email"
+                onChange={inputOnChange}
+                autoComplete="off"
+              />
+            </div>
+            <div className="w-full relative">
+              <Input
+                dataTestId="password-input"
+                name="password"
+                placeholder="Enter your Password"
+                state={credentials.password}
+                type="password"
+                label="Password"
+                onChange={inputOnChange}
+                autoComplete="off"
+              />
+            </div>
+          </form>
+          <div className="flex gap-2 items-center">
+            {/* switch */}
+            <div
+              data-testid="remember-me"
+              style={{
+                justifyContent: rememberMe ? "flex-end" : "flex-start",
+                background: rememberMe ? "#4B6F64" : "#FFFFFF66",
+              }}
+              className="w-[40px] h-[20px] bg-[#FFFFFF66] flex justify-start rounded-[50px] py-[3px] px-[5px] cursor-pointer"
+              onClick={toggleRememberMe}
+            >
+              <motion.div
+                className="w-[15px] h-[15px] bg-white rounded-[40px]"
+                layout
+                transition={{ type: "spring", stiffness: 700, damping: 50 }}
+              />
+            </div>
+            <label className="phone:text-sm font-semibold font-dmSans">Remember Me</label>
           </div>
-          <div className="w-full">
-            <Input
-              name="password"
-              placeholder="Enter your Password"
-              state={credentials.password}
-              type="password"
-              label="Password"
-              onChange={inputOnChange}
-            />
+          <div className="w-28 mx-auto">
+            <motion.button
+              data-testid="credentials-login-button"
+              whileHover={{
+                scale: 1.1,
+                transition: { duration: 0.2 },
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1"
+            >
+              Login
+            </motion.button>
+          </div>
+          <div className="mx-auto">
+            <p data-testid="forgot-password" className="text-sm font-dmSans underline cursor-pointer font-semibold">Forgot your password?</p>
           </div>
         </div>
       </div>
