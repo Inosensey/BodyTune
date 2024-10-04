@@ -47,7 +47,7 @@ export const Input = <T extends string | number>({
       <label className="phone:text-sm font-quickSand font-semibold">{label}</label>
       <div className="w-full relative bg-primary overflow-hidden p-1">
         <input
-        data-testId={dataTestId}
+          data-testid={dataTestId}
           value={state}
           onChange={onChange}
           onBlur={onBlur}
