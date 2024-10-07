@@ -42,7 +42,7 @@ export const Input = <T extends string | number>({
 
   return (
     <div
-      className={`flex flex-col phone:w-[96%] mdphone:w-11/12 laptop:w-full`}
+      className={`flex flex-col phone:w-[96%] mdphone:w-11/12 laptop:w-full gap-2`}
     >
       <label className="phone:text-sm font-quickSand font-semibold">{label}</label>
       <div className="w-full relative bg-primary overflow-hidden p-1">
