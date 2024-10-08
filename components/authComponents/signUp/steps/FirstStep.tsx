@@ -5,8 +5,9 @@ import { Input } from "@/components/reusableComponent/formInputs/input"
 
 //Types
 interface registerInputTypes {
-    email: string
-  }
+  email: string,
+  password: string
+}
 interface props {
     email: string,
     setRegisterInput: React.Dispatch<React.SetStateAction<registerInputTypes>>
