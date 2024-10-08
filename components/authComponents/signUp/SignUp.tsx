@@ -16,17 +16,20 @@ import SecondStep from "./steps/SecondStep";
 
 // Types
 interface registerInputTypes {
-  email: string
+  email: string;
+  password: string;
 }
 
 // Initials
 const registerInputInitials = {
-  email: ""
-}
+  email: "",
+  password: "",
+};
 const SignUp = () => {
-
   // State
-  const [registerInput, setRegisterInput] = useState<registerInputTypes>(registerInputInitials)
+  const [registerInput, setRegisterInput] = useState<registerInputTypes>(
+    registerInputInitials
+  );
   const [progress, setProgress] = useState<number>(0);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -54,8 +57,22 @@ const SignUp = () => {
             <ProgressBar currentProgress={progress} totalProgress={4} />
           </div>
         )}
-        {progress === 0 && <FirstStep email={registerInput.email} setRegisterInput={setRegisterInput} />}
-        {progress === 1 && <SecondStep />}
+        {progress === 0 && (
+          <FirstStep
+            email={registerInput.email}
+            setRegisterInput={setRegisterInput}
+          />
+        )}
+        {progress === 1 && (
+          <SecondStep
+            progressTitle="Create a Password"
+            password={registerInput.password}
+            setRegisterInput={setRegisterInput}
+            currentProgress={progress}
+            totalProgress={4}
+            setProgress={setProgress}
+          />
+        )}
         <div className="w-28 mx-auto" data-testid="credentials-login-button">
           <motion.button
             onClick={() => setProgress((prev) => prev + 1)}
