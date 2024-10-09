@@ -13,21 +13,24 @@ import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
 import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
 import PhInstagramLogoBold from "@/icons/PhInstagramLogoBold";
 import SecondStep from "./steps/SecondStep";
+import ThirdStep from "./steps/ThirdStep";
 
 // Types
-interface registerInputTypes {
-  email: string;
-  password: string;
-}
+import { registerInputType } from "@/types/inputTypes";
 
 // Initials
-const registerInputInitials = {
+const registerInputInitials:registerInputType = {
   email: "",
   password: "",
+  name: "",
+  birthDay: "",
+  birthMonth: "",
+  birthYear: "",
+  Gender: ""
 };
 const SignUp = () => {
   // State
-  const [registerInput, setRegisterInput] = useState<registerInputTypes>(
+  const [registerInput, setRegisterInput] = useState<registerInputType>(
     registerInputInitials
   );
   const [progress, setProgress] = useState<number>(0);
@@ -68,6 +71,20 @@ const SignUp = () => {
             progressTitle="Create a Password"
             password={registerInput.password}
             setRegisterInput={setRegisterInput}
+            currentProgress={progress}
+            totalProgress={4}
+            setProgress={setProgress}
+          />
+        )}
+        {progress === 2 && (
+          <ThirdStep
+            name={registerInput.name}
+            birthDay={registerInput.birthDay}
+            birthMonth={registerInput.birthMonth}
+            birthYear={registerInput.birthYear}
+            Gender={registerInput.Gender}
+            setRegisterInput={setRegisterInput}
+            progressTitle="Tell us about Yourself"
             currentProgress={progress}
             totalProgress={4}
             setProgress={setProgress}
