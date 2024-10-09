@@ -22,7 +22,8 @@
       "@/*": ["./*"],
       "@/components/*": ["components/*"],
       "@/icons/*": ["icons/*"],
-      "@/css/*": ["css/*"]
+      "@/css/*": ["css/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "test/signin.test.tsx", "test/signup.test.tsx"],
