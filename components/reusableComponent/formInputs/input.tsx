@@ -13,6 +13,7 @@ interface inputParams<T> {
   name: string;
   placeholder: string;
   label?: string;
+  shortDescription?: string,
   valid?: null | boolean | undefined;
   validationMessage?: string;
   autoComplete?: string;
@@ -32,6 +33,7 @@ export const Input = <T extends string | number>({
   onInput,
   placeholder,
   label,
+  shortDescription,
   valid,
   validationMessage,
   dataTestId
@@ -44,7 +46,10 @@ export const Input = <T extends string | number>({
     <div
       className={`flex flex-col phone:w-[96%] mdphone:w-11/12 laptop:w-full gap-2`}
     >
-      <label className="phone:text-sm font-quickSand font-semibold">{label}</label>
+      <div className="flex flex-col">
+        {label && <label className="phone:text-sm font-quickSand font-semibold">{label}</label>}
+        {shortDescription && <p className="text-[#999999] text-xs font-semibold font-dmSans">{shortDescription}</p>}
+      </div>
       <div className="w-full relative bg-primary overflow-hidden p-1">
         <input
           data-testid={dataTestId}
