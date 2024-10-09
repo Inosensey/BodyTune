@@ -4,13 +4,10 @@
 import { Input } from "@/components/reusableComponent/formInputs/input"
 
 //Types
-interface registerInputTypes {
-  email: string,
-  password: string
-}
+import { registerInputType } from "@/types/inputTypes";
 interface props {
     email: string,
-    setRegisterInput: React.Dispatch<React.SetStateAction<registerInputTypes>>
+    setRegisterInput: React.Dispatch<React.SetStateAction<registerInputType>>
 }
 const FirstStep = ({email, setRegisterInput}:props) => {
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
