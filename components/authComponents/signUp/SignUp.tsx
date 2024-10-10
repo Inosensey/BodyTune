@@ -17,6 +17,7 @@ import ThirdStep from "./steps/ThirdStep";
 
 // Types
 import { registerInputType } from "@/types/inputTypes";
+import FourthStep from "./steps/FourthStep";
 
 // Initials
 const registerInputInitials:registerInputType = {
@@ -26,7 +27,7 @@ const registerInputInitials:registerInputType = {
   birthDay: "",
   birthMonth: "",
   birthYear: "",
-  Gender: ""
+  gender: ""
 };
 const SignUp = () => {
   // State
@@ -82,13 +83,19 @@ const SignUp = () => {
             birthDay={registerInput.birthDay}
             birthMonth={registerInput.birthMonth}
             birthYear={registerInput.birthYear}
-            Gender={registerInput.Gender}
+            gender={registerInput.gender}
             setRegisterInput={setRegisterInput}
             progressTitle="Tell us about Yourself"
             currentProgress={progress}
             totalProgress={4}
             setProgress={setProgress}
           />
+        )}
+        {progress === 3 && (
+          <FourthStep progressTitle="Terms & Conditions"
+          currentProgress={progress}
+          totalProgress={4}
+          setProgress={setProgress} />
         )}
         <div className="w-28 mx-auto" data-testid="credentials-login-button">
           <motion.button
