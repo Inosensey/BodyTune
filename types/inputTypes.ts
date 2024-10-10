@@ -5,5 +5,5 @@ export interface registerInputType {
   birthDay: string;
   birthMonth: string;
   birthYear: string;
-  Gender: string
+  gender: string
 }
