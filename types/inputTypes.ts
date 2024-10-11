@@ -6,4 +6,6 @@ export interface registerInputType {
   birthMonth: string;
   birthYear: string;
   gender: string
+  weight: string,
+  height: string,
 }
