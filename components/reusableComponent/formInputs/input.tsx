@@ -122,7 +122,7 @@ export const CheckBoxInput = <T extends string | number>({
     <div
       className={`flex flex-col items-center phone:w-[96%] mdphone:w-11/12 laptop:w-full gap-2`}
     >
-      <div className="flex items-center gap-4 justify-center">
+      <div className="flex items-center gap-4 justify-center w-full">
         <input
           data-testid={dataTestId}
           value={state}
