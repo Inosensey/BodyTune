@@ -16,13 +16,15 @@ interface props {
 
 interface toggleTermsAndConditionType {
   marketingMessages: string,
-  termsAndCondition: string
+  termsAndCondition: string,
+  remainders: string
 }
 
 // Initials
 const toggleTermsAndConditionInit:toggleTermsAndConditionType = {
     marketingMessages: "false",
-    termsAndCondition: "false"
+    termsAndCondition: "false",
+    remainders: "false"
 }
 
 const FourthStep = ({
@@ -64,7 +66,15 @@ const FourthStep = ({
           <CheckBoxInput
             name="marketingMessages"
             state={toggleTermsAndCondition.marketingMessages}
-            label="I would prefer not to receive marketing messages from Spotify."
+            label="I would prefer not to receive marketing messages from BodyTune."
+            onChange={onChange}
+          />
+        </div>
+        <div className="w-full relative">
+          <CheckBoxInput
+            name="remainders"
+            state={toggleTermsAndCondition.remainders}
+            label="Receive Progress updates and remainders."
             onChange={onChange}
           />
         </div>
@@ -72,7 +82,7 @@ const FourthStep = ({
           <CheckBoxInput
             name="termsAndCondition"
             state={toggleTermsAndCondition.termsAndCondition}
-            label="I agree to the Spotify Terms and Conditions of Use and Privacy Policy."
+            label="I agree to the BodyTune Terms and Conditions of Use and Privacy Policy."
             onChange={onChange}
           />
         </div>
