@@ -14,6 +14,8 @@ interface props {
   birthMonth: string;
   birthYear: string;
   gender: string;
+  height: string,
+  weight: string,
   setRegisterInput: React.Dispatch<React.SetStateAction<registerInputType>>;
   progressTitle: string;
   currentProgress: number;
@@ -33,6 +35,8 @@ const ThirdStep = ({
   birthMonth,
   birthYear,
   gender,
+  height,
+  weight,
   setRegisterInput,
   progressTitle,
   currentProgress,
@@ -74,7 +78,7 @@ const ThirdStep = ({
           <p className="font-quickSand font-bold">{progressTitle}</p>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <div className="w-full">
           <div className="w-full relative">
             <Input
@@ -136,6 +140,40 @@ const ThirdStep = ({
                 placeholder="yyyy"
                 state={name}
                 type="text"
+                onChange={onChange}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="flex flex-col">
+            <label className="phone:text-sm font-quickSand font-semibold">
+              Height & Weight
+            </label>
+            <p className="text-[#999999] text-xs font-semibold font-dmSans">
+              This information helps us create a personalized exercise and diet plan tailored to your body’s needs.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <div className="w-3/12 relative">
+              <Input
+                name="weight"
+                placeholder="Weight"
+                state={weight}
+                type="text"
+                label="Weight (kg)"
+                onChange={onChange}
+                autoComplete="off"
+              />
+            </div>
+            <div className="w-3/12 relative">
+              <Input
+                name="height"
+                placeholder="Height"
+                state={height}
+                type="text"
+                label="Height (cm)"
                 onChange={onChange}
                 autoComplete="off"
               />
