@@ -20,14 +20,16 @@ import { registerInputType } from "@/types/inputTypes";
 import FourthStep from "./steps/FourthStep";
 
 // Initials
-const registerInputInitials:registerInputType = {
+const registerInputInitials: registerInputType = {
   email: "",
   password: "",
   name: "",
   birthDay: "",
   birthMonth: "",
   birthYear: "",
-  gender: ""
+  gender: "",
+  height: "",
+  weight: "",
 };
 const SignUp = () => {
   // State
@@ -56,47 +58,64 @@ const SignUp = () => {
         )}
       </div>
       <form onSubmit={onSubmit} className="mt-4">
-        {progress !== 0 && (
-          <div className="phone:w-8/12 mx-auto">
-            <ProgressBar currentProgress={progress} totalProgress={4} />
+        <div
+          className="phone:w-8/12 mx-auto"
+          data-testid="progress-bar-container"
+        >
+          {progress !== 0 && (
+            <ProgressBar currentProgress={progress} totalProgress={3} />
+          )}
+        </div>
+        <div data-testid="steps-container">
+          <div data-testid="first-step-container">
+            {progress === 0 && (
+              <FirstStep
+                email={registerInput.email}
+                setRegisterInput={setRegisterInput}
+              />
+            )}
           </div>
-        )}
-        {progress === 0 && (
-          <FirstStep
-            email={registerInput.email}
-            setRegisterInput={setRegisterInput}
-          />
-        )}
-        {progress === 1 && (
-          <SecondStep
-            progressTitle="Create a Password"
-            password={registerInput.password}
-            setRegisterInput={setRegisterInput}
-            currentProgress={progress}
-            totalProgress={4}
-            setProgress={setProgress}
-          />
-        )}
-        {progress === 2 && (
-          <ThirdStep
-            name={registerInput.name}
-            birthDay={registerInput.birthDay}
-            birthMonth={registerInput.birthMonth}
-            birthYear={registerInput.birthYear}
-            gender={registerInput.gender}
-            setRegisterInput={setRegisterInput}
-            progressTitle="Tell us about Yourself"
-            currentProgress={progress}
-            totalProgress={4}
-            setProgress={setProgress}
-          />
-        )}
-        {progress === 3 && (
-          <FourthStep progressTitle="Terms & Conditions"
-          currentProgress={progress}
-          totalProgress={4}
-          setProgress={setProgress} />
-        )}
+          <div data-testid="second-step-container">
+            {progress === 1 && (
+              <SecondStep
+                progressTitle="Create a Password"
+                password={registerInput.password}
+                setRegisterInput={setRegisterInput}
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+              />
+            )}
+          </div>
+          <div data-testid="third-step-container">
+            {progress === 2 && (
+              <ThirdStep
+                name={registerInput.name}
+                birthDay={registerInput.birthDay}
+                birthMonth={registerInput.birthMonth}
+                birthYear={registerInput.birthYear}
+                gender={registerInput.gender}
+                height={registerInput.height}
+                weight={registerInput.weight}
+                setRegisterInput={setRegisterInput}
+                progressTitle="Tell us about Yourself"
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+              />
+            )}
+          </div>
+          <div data-testid="fourth-step-container">
+            {progress === 3 && (
+              <FourthStep
+                progressTitle="Terms & Conditions"
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+              />
+            )}
+          </div>
+        </div>
         <div className="w-28 mx-auto" data-testid="credentials-login-button">
           <motion.button
             onClick={() => setProgress((prev) => prev + 1)}
@@ -117,10 +136,7 @@ const SignUp = () => {
             style={{ borderColor: "#b3b3b3" }}
             className="max-w-[450px] phone:w-10/12 my-4 mx-auto"
           />
-          <div
-            className="mt-5 flex flex-col items-center gap-3"
-            data-testid="third-party-container"
-          >
+          <div className="mt-5 flex flex-col items-center gap-3">
             <div className="phone:w-7/12 flex-col items-center gap-3">
               <div className="phone:w-full">
                 <ThirdPartyLogin
