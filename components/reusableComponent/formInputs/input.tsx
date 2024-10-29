@@ -13,11 +13,11 @@ interface inputParams<T> {
   name: string;
   placeholder?: string;
   label?: string;
-  shortDescription?: string,
+  shortDescription?: string;
   valid?: null | boolean | undefined;
   validationMessage?: string;
   autoComplete?: string;
-  dataTestId?: string,
+  dataTestId?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -36,21 +36,33 @@ export const Input = <T extends string | number>({
   shortDescription,
   valid,
   validationMessage,
-  dataTestId
+  dataTestId,
 }: inputParams<T>) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div
-      className={`flex flex-col phone:w-[96%] mdphone:w-11/12 laptop:w-full gap-2`}
+      className={`flex flex-col w-full laptop:w-full gap-2`}
     >
       <div className="flex flex-col">
-        {label && <label className="phone:text-sm font-quickSand font-semibold">{label}</label>}
-        {shortDescription && <p className="text-[#999999] text-xs font-semibold font-dmSans">{shortDescription}</p>}
+        {label && (
+          <label className="phone:text-sm font-quickSand font-semibold">
+            {label}
+          </label>
+        )}
+        {shortDescription && (
+          <p className="text-[#999999] text-xs font-semibold font-dmSans">
+            {shortDescription}
+          </p>
+        )}
       </div>
-      <div className="w-full relative bg-primary overflow-hidden p-1">
+      <div
+        className="w-full relative bg-primary overflow-hidden p-1"
+        style={{
+          border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
+        }}
+      >
         <input
           data-testid={dataTestId}
           value={state}
@@ -95,7 +107,7 @@ export const Input = <T extends string | number>({
         valid === true ? (
           ""
         ) : (
-          <span className="text-[0.75rem] text-red-500 font-bold">
+          <span className="text-[0.75rem] text-red-500 font-bold font-dmSans">
             {validationMessage}
           </span>
         )
@@ -116,7 +128,7 @@ export const CheckBoxInput = <T extends string | number>({
   shortDescription,
   valid,
   validationMessage,
-  dataTestId
+  dataTestId,
 }: inputParams<T>) => {
   return (
     <div
@@ -131,13 +143,21 @@ export const CheckBoxInput = <T extends string | number>({
           onInput={onInput}
           type="checkbox"
           name={name}
-          style={{color: "red"}}
+          style={{ color: "red" }}
           className={`text-secondary p-4 phone:text-lg ${style.input} font-quickSand`}
           // required
         />
         <div className="flex flex-col w-9/12">
-          {label && <label className="phone:text-sm font-quickSand font-semibold">{label}</label>}
-          {shortDescription && <p className="text-[#999999] text-xs font-semibold font-dmSans">{shortDescription}</p>}
+          {label && (
+            <label className="phone:text-sm font-quickSand font-semibold">
+              {label}
+            </label>
+          )}
+          {shortDescription && (
+            <p className="text-[#999999] text-xs font-semibold font-dmSans">
+              {shortDescription}
+            </p>
+          )}
         </div>
       </div>
       {valid != null ? (
