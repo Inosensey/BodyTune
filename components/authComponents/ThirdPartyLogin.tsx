@@ -27,9 +27,9 @@ const ThirdPartyLogin = ({
         transition: { duration: 0.2 },
       }}
       whileTap={{ scale: 0.9 }}
-      className="border-[1px] border-secondary w-full rounded-md"
+      className="border-[1px] border-secondary w-full rounded-md flex justify-center"
     >
-      <button className="w-full px-1 py-2 font-semibold font-dmSans flex items-center gap-5 pl-12 text-center">
+      <button className="px-1 py-2 font-semibold font-dmSans flex items-center gap-2  text-center">
         <Icon color={backgroundColor} height="1.4em" width="1.4em" />{" "}
         <span>
           {action}{" "}
