@@ -20,6 +20,7 @@ describe("Sign In Component", () => {
         expect(screen.getByTestId("password-input")).toBeInTheDocument();
         expect(screen.getByTestId("remember-me")).toBeInTheDocument();
         expect(screen.getByTestId("credentials-login-button")).toBeInTheDocument();
-        expect(screen.getByTestId("forgot-password")).toBeInTheDocument()
+        expect(screen.getByTestId("forgot-password")).toBeInTheDocument();
+        expect(screen.getByTestId("create-account-link")).toBeInTheDocument();
     })
 })
