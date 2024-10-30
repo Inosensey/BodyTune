@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 // Components
 import { CheckBoxInput } from "@/components/reusableComponent/formInputs/input";
@@ -27,6 +28,28 @@ const toggleTermsAndConditionInit:toggleTermsAndConditionType = {
     remainders: "false"
 }
 
+// Variants
+const containerVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+const childContainer = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+  },
+};
+
 const FourthStep = ({
   currentProgress,
   progressTitle,
@@ -42,9 +65,8 @@ const FourthStep = ({
 
         setToggleTermsAndCondition((prev) => ({...prev, [name]: value}))
     }
-    console.log(toggleTermsAndCondition);
   return (
-    <div className="flex flex-col justify-center mx-auto gap-8 max-w-[450px] phone:w-8/12 mt-4">
+    <div className="flex flex-col justify-center mx-auto gap-8 max-w-[450px] phone:w-11/12 mt-4">
       <div
         className="flex items-center gap-4 cursor-pointer"
         onClick={() => setProgress((prev) => prev - 1)}
@@ -61,32 +83,32 @@ const FourthStep = ({
           <p className="font-quickSand font-bold">{progressTitle}</p>
         </div>
       </div>
-      <div className="flex flex-col gap-6">
-        <div className="w-full relative">
+      <motion.div variants={containerVariant} initial="hidden" animate="show" className="flex flex-col gap-6">
+        <motion.div variants={childContainer} className="w-full relative">
           <CheckBoxInput
             name="marketingMessages"
             state={toggleTermsAndCondition.marketingMessages}
             label="I would prefer not to receive marketing messages from BodyTune."
             onChange={onChange}
           />
-        </div>
-        <div className="w-full relative">
+        </motion.div>
+        <motion.div variants={childContainer} className="w-full relative">
           <CheckBoxInput
             name="remainders"
             state={toggleTermsAndCondition.remainders}
             label="Receive Progress updates and remainders."
             onChange={onChange}
           />
-        </div>
-        <div className="w-full relative">
+        </motion.div>
+        <motion.div variants={childContainer} className="w-full relative">
           <CheckBoxInput
             name="termsAndCondition"
             state={toggleTermsAndCondition.termsAndCondition}
             label="I agree to the BodyTune Terms and Conditions of Use and Privacy Policy."
             onChange={onChange}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

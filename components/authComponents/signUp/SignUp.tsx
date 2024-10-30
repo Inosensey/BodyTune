@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import React, { useState } from "react";
 
 // Components
@@ -16,10 +15,16 @@ import SecondStep from "./steps/SecondStep";
 import ThirdStep from "./steps/ThirdStep";
 
 // Types
-import { registerInputType } from "@/types/inputTypes";
+import { registerInputType, stepsValidation } from "@/types/inputTypes";
 import FourthStep from "./steps/FourthStep";
 
 // Initials
+const stepValidationInitials: stepsValidation = {
+  isFirstStepValid: false,
+  isSecondStepValid: false,
+  isThirdStepValid: false,
+  isFourthStepValid: false,
+}
 const registerInputInitials: registerInputType = {
   email: "",
   password: "",
@@ -37,6 +42,23 @@ const SignUp = () => {
     registerInputInitials
   );
   const [progress, setProgress] = useState<number>(0);
+  const [stepValidation, setStepValidation] = useState<stepsValidation>(stepValidationInitials)
+
+  const updateProgress = () => {
+    if(progress === 0) {
+      if(stepValidation.isFirstStepValid)
+       setProgress((prev) => prev + 1)
+    } else if(progress === 1) {
+      if(stepValidation.isSecondStepValid)
+       setProgress((prev) => prev + 1)
+    } else if(progress === 2) {
+      if(stepValidation.isThirdStepValid)
+       setProgress((prev) => prev + 1)
+    } else if(progress === 3) {
+      if(stepValidation.isFourthStepValid)
+       setProgress((prev) => prev + 1)
+    }
+  }
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
@@ -59,7 +81,7 @@ const SignUp = () => {
       </div>
       <form onSubmit={onSubmit} className="mt-4">
         <div
-          className="phone:w-8/12 mx-auto"
+          className="phone:w-11/12 mx-auto"
           data-testid="progress-bar-container"
         >
           {progress !== 0 && (
@@ -72,6 +94,8 @@ const SignUp = () => {
               <FirstStep
                 email={registerInput.email}
                 setRegisterInput={setRegisterInput}
+                setStepValidation={setStepValidation}
+                updateProgress={updateProgress}
               />
             )}
           </div>
@@ -84,6 +108,9 @@ const SignUp = () => {
                 currentProgress={progress}
                 totalProgress={3}
                 setProgress={setProgress}
+                setStepValidation={setStepValidation}
+                isSecondStepValid={stepValidation.isSecondStepValid}
+                updateProgress={updateProgress}
               />
             )}
           </div>
@@ -102,6 +129,8 @@ const SignUp = () => {
                 currentProgress={progress}
                 totalProgress={3}
                 setProgress={setProgress}
+                updateProgress={updateProgress}
+                setStepValidation={setStepValidation}
               />
             )}
           </div>
@@ -116,28 +145,15 @@ const SignUp = () => {
             )}
           </div>
         </div>
-        <div className="w-28 mx-auto" data-testid="credentials-login-button">
-          <motion.button
-            onClick={() => setProgress((prev) => prev + 1)}
-            whileHover={{
-              scale: 1.1,
-              transition: { duration: 0.2 },
-            }}
-            whileTap={{ scale: 0.9 }}
-            className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
-          >
-            Next
-          </motion.button>
-        </div>
       </form>
       {progress === 0 && (
         <>
           <hr
             style={{ borderColor: "#b3b3b3" }}
-            className="max-w-[450px] phone:w-10/12 my-4 mx-auto"
+            className="max-w-[450px] phone:w-12/12 my-4 mx-auto"
           />
           <div className="mt-5 flex flex-col items-center gap-3">
-            <div className="phone:w-7/12 flex-col items-center gap-3">
+            <div className="phone:w-7/12 min-w-[290px] flex-col items-center gap-3">
               <div className="phone:w-full">
                 <ThirdPartyLogin
                   testId="facebook-third-party-login"
