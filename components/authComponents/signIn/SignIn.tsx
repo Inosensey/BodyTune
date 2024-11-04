@@ -8,12 +8,16 @@ import Image from "next/image";
 import ThirdPartyLogin from "@/components/authComponents/ThirdPartyLogin";
 import { Input } from "@/components/reusableComponent/formInputs/input";
 
+// Utils
+import FormValidation from "@/utils/validation";
+
 // Icons
 import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
 import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
 import PhInstagramLogoBold from "@/icons/PhInstagramLogoBold";
 
 // Types
+import { validation } from "@/types/inputTypes";
 interface credentials {
   email: string;
   password: string;
@@ -29,11 +33,25 @@ const SignIn = () => {
   const [credentials, setCredentials] =
     useState<credentials>(credentialsInitial);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [validation, setValidation] = useState<validation>({
+    valid: null,
+    validationMessage: "",
+    validationName: "",
+  });
 
   // Events
   const toggleRememberMe = () => setRememberMe(!rememberMe);
   const inputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+
+    const validationParams = {
+      value: value,
+      stateName: name,
+    };
+
+    const result: validation = FormValidation(validationParams);
+
+    setValidation(result);
 
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
@@ -107,6 +125,8 @@ const SignIn = () => {
               label="Email"
               onChange={inputOnChange}
               autoComplete="off"
+              valid={validation.valid}
+              validationMessage={validation.validationMessage}
             />
           </div>
           <div className="w-full relative">
@@ -119,6 +139,7 @@ const SignIn = () => {
               label="Password"
               onChange={inputOnChange}
               autoComplete="off"
+              valid={null}
             />
           </div>
         </form>
