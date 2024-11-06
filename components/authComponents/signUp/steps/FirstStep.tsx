@@ -114,6 +114,7 @@ const FirstStep = ({
           }}
           whileTap={{ scale: 0.9 }}
           className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+          type="button"
         >
           Next
         </motion.button>
