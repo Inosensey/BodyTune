@@ -1,6 +1,10 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useFormState } from "react-dom";
+
+// Action
+import { signUpWithEmail } from "@/actions/authActions";
 
 // Components
 import ThirdPartyLogin from "@/components/authComponents/ThirdPartyLogin";
@@ -17,6 +21,8 @@ import ThirdStep from "./steps/ThirdStep";
 // Types
 import { registerInputType, stepsValidation } from "@/types/inputTypes";
 import FourthStep from "./steps/FourthStep";
+import { formReturnType } from "@/types/formTypes";
+import { Session, User } from "@supabase/supabase-js";
 
 // Initials
 const stepValidationInitials: stepsValidation = {
@@ -24,7 +30,7 @@ const stepValidationInitials: stepsValidation = {
   isSecondStepValid: false,
   isThirdStepValid: false,
   isFourthStepValid: false,
-}
+};
 const registerInputInitials: registerInputType = {
   email: "",
   password: "",
@@ -36,33 +42,51 @@ const registerInputInitials: registerInputType = {
   height: "",
   weight: "",
 };
+// Initials
+const useFormStateInitials: formReturnType<
+  { user: User | null; session: Session | null } | []
+> = {
+  success: null,
+  error: null,
+  message: "",
+  data: [],
+};
 const SignUp = () => {
   // State
   const [registerInput, setRegisterInput] = useState<registerInputType>(
     registerInputInitials
   );
   const [progress, setProgress] = useState<number>(0);
-  const [stepValidation, setStepValidation] = useState<stepsValidation>(stepValidationInitials)
+  const [stepValidation, setStepValidation] = useState<stepsValidation>(
+    stepValidationInitials
+  );
+  // UseFormState
+  const [state, formAction] = useFormState(
+    signUpWithEmail,
+    useFormStateInitials
+  );
 
   const updateProgress = () => {
-    if(progress === 0) {
-      if(stepValidation.isFirstStepValid)
-       setProgress((prev) => prev + 1)
-    } else if(progress === 1) {
-      if(stepValidation.isSecondStepValid)
-       setProgress((prev) => prev + 1)
-    } else if(progress === 2) {
-      if(stepValidation.isThirdStepValid)
-       setProgress((prev) => prev + 1)
-    } else if(progress === 3) {
-      if(stepValidation.isFourthStepValid)
-       setProgress((prev) => prev + 1)
+    if (progress === 0) {
+      if (stepValidation.isFirstStepValid) setProgress((prev) => prev + 1);
+    } else if (progress === 1) {
+      if (stepValidation.isSecondStepValid) setProgress((prev) => prev + 1);
+    } else if (progress === 2) {
+      if (stepValidation.isThirdStepValid) setProgress((prev) => prev + 1);
     }
-  }
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
   };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+    if (!stepValidation.isFourthStepValid) {
+      event.preventDefault();
+    }
+  };
+
+  // useEffect
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
   return (
     <div
       data-testid="sign-up-container"
@@ -79,7 +103,7 @@ const SignUp = () => {
           </header>
         )}
       </div>
-      <form onSubmit={onSubmit} className="mt-4">
+      <form action={formAction} onSubmit={handleSubmit} className="mt-4">
         <div
           className="phone:w-11/12 mx-auto"
           data-testid="progress-bar-container"
@@ -89,60 +113,65 @@ const SignUp = () => {
           )}
         </div>
         <div data-testid="steps-container">
-          <div data-testid="first-step-container">
-            {progress === 0 && (
-              <FirstStep
-                email={registerInput.email}
-                setRegisterInput={setRegisterInput}
-                setStepValidation={setStepValidation}
-                updateProgress={updateProgress}
-              />
-            )}
+          <div
+            data-testid="first-step-container"
+            className={progress === 0 ? "block" : "hidden"}
+          >
+            <FirstStep
+              email={registerInput.email}
+              setRegisterInput={setRegisterInput}
+              setStepValidation={setStepValidation}
+              updateProgress={updateProgress}
+            />
           </div>
-          <div data-testid="second-step-container">
-            {progress === 1 && (
-              <SecondStep
-                progressTitle="Create a Password"
-                password={registerInput.password}
-                setRegisterInput={setRegisterInput}
-                currentProgress={progress}
-                totalProgress={3}
-                setProgress={setProgress}
-                setStepValidation={setStepValidation}
-                isSecondStepValid={stepValidation.isSecondStepValid}
-                updateProgress={updateProgress}
-              />
-            )}
+          <div
+            data-testid="second-step-container"
+            className={progress === 1 ? "block" : "hidden"}
+          >
+            <SecondStep
+              progressTitle="Create a Password"
+              password={registerInput.password}
+              setRegisterInput={setRegisterInput}
+              currentProgress={progress}
+              totalProgress={3}
+              setProgress={setProgress}
+              setStepValidation={setStepValidation}
+              isSecondStepValid={stepValidation.isSecondStepValid}
+              updateProgress={updateProgress}
+            />
           </div>
-          <div data-testid="third-step-container">
-            {progress === 2 && (
-              <ThirdStep
-                name={registerInput.name}
-                birthDay={registerInput.birthDay}
-                birthMonth={registerInput.birthMonth}
-                birthYear={registerInput.birthYear}
-                gender={registerInput.gender}
-                height={registerInput.height}
-                weight={registerInput.weight}
-                setRegisterInput={setRegisterInput}
-                progressTitle="Tell us about Yourself"
-                currentProgress={progress}
-                totalProgress={3}
-                setProgress={setProgress}
-                updateProgress={updateProgress}
-                setStepValidation={setStepValidation}
-              />
-            )}
+          <div
+            data-testid="third-step-container"
+            className={progress === 2 ? "block" : "hidden"}
+          >
+            <ThirdStep
+              name={registerInput.name}
+              birthDay={registerInput.birthDay}
+              birthMonth={registerInput.birthMonth}
+              birthYear={registerInput.birthYear}
+              gender={registerInput.gender}
+              height={registerInput.height}
+              weight={registerInput.weight}
+              setRegisterInput={setRegisterInput}
+              progressTitle="Tell us about Yourself"
+              currentProgress={progress}
+              totalProgress={3}
+              setProgress={setProgress}
+              updateProgress={updateProgress}
+              setStepValidation={setStepValidation}
+            />
           </div>
-          <div data-testid="fourth-step-container">
-            {progress === 3 && (
-              <FourthStep
-                progressTitle="Terms & Conditions"
-                currentProgress={progress}
-                totalProgress={3}
-                setProgress={setProgress}
-              />
-            )}
+          <div
+            data-testid="fourth-step-container"
+            className={progress === 3 ? "block" : "hidden"}
+          >
+            <FourthStep
+              progressTitle="Terms & Conditions"
+              currentProgress={progress}
+              totalProgress={3}
+              setProgress={setProgress}              
+              setStepValidation={setStepValidation}
+            />
           </div>
         </div>
       </form>
