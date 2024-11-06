@@ -85,6 +85,11 @@ const thirdStepValidationInitials: thirdStepValidation = {
     validationMessage: "",
   },
 };
+type validationInfo = {
+  validationName: string;
+  valid: boolean;
+  validationMessage: string;
+};
 
 const months: Array<string> = [
   "January",
@@ -152,7 +157,8 @@ const ThirdStep = ({
       value: value,
     };
 
-    const validationResult = FormValidation(validationParams);
+    const validationResult:validationInfo = FormValidation(validationParams);
+
 
     setThirdStepValidation((prev) => ({
       ...prev,
@@ -161,15 +167,39 @@ const ThirdStep = ({
         validationMessage: validationResult.validationMessage,
       },
     }));
+
+    // const allInputValidationResult = checkAllInputValidations();
+    checkValidations(validationResult)
+
     setRegisterInput((prev) => ({ ...prev, [name]: value }));
   };
+  
   const radioOnChange = (value: string, name: string) => {
     setRegisterInput((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
 
+    const validationParams = {
+      stateName: name,
+      value: value,
+    };
+
+    const validationResult:validationInfo = FormValidation(validationParams);
+
+    setThirdStepValidation((prev) => ({
+      ...prev,
+      [validationResult.validationName]: {
+        valid: validationResult.valid,
+        validationMessage: validationResult.validationMessage,
+      },
+    }));
+
+    // const allInputValidationResult = checkAllInputValidations();
+    checkValidations(validationResult)
+
     setRegisterInput((prev) => ({ ...prev, [name]: value }));
+    
   };
 
   // Validations
@@ -184,7 +214,7 @@ const ThirdStep = ({
     height: (value: string) => FormValidation({ stateName: "height", value }),
     weight: (value: string) => FormValidation({ stateName: "weight", value }),
   };
-  const checkValidations = (validationInfo: stepValidationResult) => {
+  const checkValidations = (validationInfo: stepValidationResult | validationInfo) => {
     let isValid = true; // Track overall validation state
     for (const [key, value] of Object.entries(validationInfo)) {
       setThirdStepValidation((prev) => ({
@@ -199,7 +229,25 @@ const ThirdStep = ({
       }
     }
     setStepValidation((prev) => ({ ...prev, isThirdStepValid: isValid }));
+
+    return isValid;
   };
+  const checkAllInputValidations = () => {
+    const values = {
+      name,
+      birthDay,
+      birthMonth,
+      birthYear,
+      weight,
+      height,
+    };
+    const validationResult = validateRegistrationStep(
+      values,
+      validationRules
+    );
+
+    return validationResult;
+  }
 
   return (
     <>
@@ -272,10 +320,10 @@ const ThirdStep = ({
                       ? ""
                       : "1px solid rgb(239 68 68)",
                 }}
-                className="w-full relative mt-[0.05rem]"
+                className="w-full relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-full"
               >
                 <div
-                  className={`flex flex-col phone:w-[96%] mdphone:w-11/12 laptop:w-full gap-2 bg-primary`}
+                  className={`flex flex-col w-full gap-2 bg-primary`}
                 >
                   <select
                     className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
@@ -437,18 +485,7 @@ const ThirdStep = ({
         <motion.button
           data-testid="next-step-button"
           onClick={() => {
-            const values = {
-              name,
-              birthDay,
-              birthMonth,
-              birthYear,
-              weight,
-              height,
-            };
-            const validationResult = validateRegistrationStep(
-              values,
-              validationRules
-            );
+            const validationResult = checkAllInputValidations();
             checkValidations(validationResult);
             updateProgress();
           }}
@@ -458,6 +495,7 @@ const ThirdStep = ({
           }}
           whileTap={{ scale: 0.9 }}
           className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+          type="button"
         >
           Next
         </motion.button>
