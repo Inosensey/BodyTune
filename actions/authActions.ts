@@ -53,11 +53,19 @@ export const signUpWithEmail = async (
       password: accountInfo.password,
     });
     if (error) {
+      if(error.code === "user_already_exists") {
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: `There is an error creating new account: Email is already taken.`,
+        };
+      }
       return {
         success: false,
         error: true,
         data: [],
-        message: `1There is an error creating new account: ${error.message}`,
+        message: `There is an error creating new account: ${error.message}`,
       };
     }
 
@@ -80,7 +88,7 @@ export const signUpWithEmail = async (
   } catch (error: unknown) {
     const errorMessage: string =
       error instanceof Error
-        ? `2There is an error creating new account: ${error.message}`
+        ? `There is an error creating new account: ${error.message}`
         : "An unknown error occurred";
     return {
       success: false,
