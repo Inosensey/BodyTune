@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 // Components
@@ -12,12 +12,18 @@ import TablerSquareRoundedPlus from "@/icons/TablerSquareRoundedPlus";
 
 // Types
 import { stepsValidation } from "@/types/inputTypes";
+import { formReturnType } from "@/types/formTypes";
+import { Session, User } from "@supabase/supabase-js";
 interface props {
   progressTitle: string;
   currentProgress: number;
   totalProgress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setStepValidation: React.Dispatch<React.SetStateAction<stepsValidation>>;
+  mutateResult: formReturnType<
+    { user: User | null; session: Session | null } | []
+  >,
+  setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface toggleTermsAndConditionType {
@@ -60,7 +66,9 @@ const FourthStep = ({
   progressTitle,
   setProgress,
   totalProgress,
-  setStepValidation
+  setStepValidation,
+  mutateResult,
+  setIsSubmitting
 }: props) => {
   // States
   const [toggleTermsAndCondition, setToggleTermsAndCondition] =
@@ -81,6 +89,7 @@ const FourthStep = ({
     } else {
       setIsValid(true);
       setStepValidation((prev) => ({...prev, isFourthStepValid: true}))
+      setIsSubmitting(true);
     }
   };
   return (
@@ -139,6 +148,13 @@ const FourthStep = ({
           </p>
         </div>
       )}
+      {mutateResult.success !== null && mutateResult.error && (
+        <div className="flex flex-col gap-1 mt-1 mx-auto">
+          <p className="text-[0.85rem] text-red-500 font-bold font-dmSans">
+            {mutateResult.message}
+          </p>
+        </div>
+      )}
       <div className="w-28 mx-auto">
         <motion.button
           data-testid="next-step-button"
@@ -148,6 +164,7 @@ const FourthStep = ({
           }}
           onClick={() => {
             checkValidation();
+            
           }}
           whileTap={{ scale: 0.9 }}
           className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2 flex items-center justify-center gap-2"
