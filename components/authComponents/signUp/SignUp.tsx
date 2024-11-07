@@ -11,6 +11,9 @@ import ThirdPartyLogin from "@/components/authComponents/ThirdPartyLogin";
 import FirstStep from "./steps/FirstStep";
 import ProgressBar from "./ProgressBar";
 
+// Loading Components
+import LoadingPopUp from "@/components/reusableComponent/LoadingAnimation/LoadingPopUp";
+
 // Icons
 import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
 import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
@@ -56,6 +59,7 @@ const SignUp = () => {
   const [registerInput, setRegisterInput] = useState<registerInputType>(
     registerInputInitials
   );
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [progress, setProgress] = useState<number>(0);
   const [stepValidation, setStepValidation] = useState<stepsValidation>(
     stepValidationInitials
@@ -85,9 +89,13 @@ const SignUp = () => {
 
   // useEffect
   useEffect(() => {
-    console.log(state);
+    if(state.success !== null || state.error !== null) {
+      setIsSubmitting(false);
+      console.log(state);
+    }
   }, [state]);
   return (
+    <>
     <div
       data-testid="sign-up-container"
       className="bg-black max-w-[550px] phone:w-[95%] py-3 px-2 rounded-sm"
@@ -171,6 +179,8 @@ const SignUp = () => {
               totalProgress={3}
               setProgress={setProgress}              
               setStepValidation={setStepValidation}
+              mutateResult={state}
+              setIsSubmitting={setIsSubmitting}
             />
           </div>
         </div>
@@ -218,6 +228,9 @@ const SignUp = () => {
         </>
       )}
     </div>
+    
+    <LoadingPopUp isLoading={isSubmitting} message="Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!" />
+    </>
   );
 };
 
