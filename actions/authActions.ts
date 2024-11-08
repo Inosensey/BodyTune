@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 // import { cookies } from "next/headers";
 
 // Supabase
@@ -8,7 +9,7 @@ import { createSSR } from "@/utils/supabaseSSR";
 // Types
 import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
-import { Session, User } from "@supabase/supabase-js";
+import { Provider, Session, User } from "@supabase/supabase-js";
 import { registerInputType, termsAndConditionTypes } from "@/types/inputTypes";
 type credentials = {
   email: string;
@@ -53,7 +54,7 @@ export const signUpWithEmail = async (
       password: accountInfo.password,
     });
     if (error) {
-      if(error.code === "user_already_exists") {
+      if (error.code === "user_already_exists") {
         return {
           success: false,
           error: true,
@@ -69,20 +70,26 @@ export const signUpWithEmail = async (
       };
     }
 
-    const mutatePersonalInformationRes =  await mutatePersonalInformation(data.user!.id, personalInfo);
-    if(mutatePersonalInformationRes.error) {
-      return mutatePersonalInformationRes
+    const mutatePersonalInformationRes = await mutatePersonalInformation(
+      data.user!.id,
+      personalInfo
+    );
+    if (mutatePersonalInformationRes.error) {
+      return mutatePersonalInformationRes;
     }
 
-    const mutateTermsAndConditionsRes =  await mutateTermsAndConditions(data.user!.id, termsAndConditions);
-    if(mutateTermsAndConditionsRes.error) {
-      return mutateTermsAndConditionsRes
+    const mutateTermsAndConditionsRes = await mutateTermsAndConditions(
+      data.user!.id,
+      termsAndConditions
+    );
+    if (mutateTermsAndConditionsRes.error) {
+      return mutateTermsAndConditionsRes;
     }
 
     return {
       success: true,
       error: false,
-      data: [],
+      data: data,
       message: ``,
     };
   } catch (error: unknown) {
@@ -102,7 +109,7 @@ export const signUpWithEmail = async (
 export const mutatePersonalInformation = async (
   userId: string,
   personalInfo: registerInputType
-):Promise<formReturnType<[]>> => {
+): Promise<formReturnType<[]>> => {
   const supabase = await createSSR();
 
   const date = `${personalInfo.birthMonth}/${personalInfo.birthDay}/${personalInfo.birthYear}`;
@@ -148,16 +155,24 @@ export const mutatePersonalInformation = async (
   }
 };
 
-export const mutateTermsAndConditions = async (userId: string, termsAndConditionData: termsAndConditionTypes):Promise<formReturnType<[]>> => {
+export const mutateTermsAndConditions = async (
+  userId: string,
+  termsAndConditionData: termsAndConditionTypes
+): Promise<formReturnType<[]>> => {
   const supabase = await createSSR();
   try {
-    const {error} = await supabase.from("terms_and_condition").insert<TableInsert<"terms_and_condition">>({
-      user_id: userId,
-      recieve_marketing_messages: termsAndConditionData.marketingMessages === "true" ? true : false,
-      recieve_progess_updates_remainders: termsAndConditionData.remainders === "true" ? true : false,
-      agree_terms_and_conditions: termsAndConditionData.termsAndCondition === "true" ? true : false
-    });
-    
+    const { error } = await supabase
+      .from("terms_and_condition")
+      .insert<TableInsert<"terms_and_condition">>({
+        user_id: userId,
+        recieve_marketing_messages:
+          termsAndConditionData.marketingMessages === "true" ? true : false,
+        recieve_progess_updates_remainders:
+          termsAndConditionData.remainders === "true" ? true : false,
+        agree_terms_and_conditions:
+          termsAndConditionData.termsAndCondition === "true" ? true : false,
+      });
+
     if (error) {
       const errorMessage: string = `There is an error Inserting the terms and conditions: ${error.message}`;
       return {
@@ -177,6 +192,91 @@ export const mutateTermsAndConditions = async (userId: string, termsAndCondition
     const errorMessage: string =
       error instanceof Error
         ? `There is an error Inserting the terms and conditions: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+export const loginWithThirdParty = async (
+  prevState: formReturnType<{ redirectLink: string; loginType: string } | []>,
+  formData: FormData
+): Promise<
+  formReturnType<{ redirectLink: string; loginType: string } | []>
+> => {
+  const nextUrl = "http://localhost:3000/auth/callback?next=/dashboard";
+
+  try {
+    const supabase = await createSSR();
+    const provider = formData.get("provider") as Provider;
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        redirectTo: nextUrl,
+        queryParams: {
+          next: "/dashboard",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+    if (error) {
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: `There is an error creating new account: ${error.message}`,
+      };
+    }
+    const response: { redirectLink: string; loginType: string } = {
+      redirectLink: data.url,
+      loginType: "thirdParty",
+    };
+
+    return {
+      success: true,
+      error: false,
+      data: response,
+      message: ``,
+    };
+  } catch (error: unknown) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error creating new account: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+
+
+export const signOut = async () => {
+  const supabase = await createSSR();
+  try {
+    const {error} = await supabase.auth.signOut({scope: "local"})
+
+    if(error) {    
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message:`There is an error Signing Out: ${error.message}`
+      }
+    }
+    redirect('/login')
+  }  catch (error: unknown) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Signing Out: ${error.message}`
         : "An unknown error occurred";
     return {
       success: false,
