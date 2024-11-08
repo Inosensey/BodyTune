@@ -9,17 +9,17 @@ import { signUpWithEmail } from "@/actions/authActions";
 // Components
 import ThirdPartyLogin from "@/components/authComponents/ThirdPartyLogin";
 import FirstStep from "./steps/FirstStep";
+import SecondStep from "./steps/SecondStep";
+import ThirdStep from "./steps/ThirdStep";
 import ProgressBar from "./ProgressBar";
 
 // Loading Components
 import LoadingPopUp from "@/components/reusableComponent/LoadingAnimation/LoadingPopUp";
 
 // Icons
-import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
+// import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
 import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
-import PhInstagramLogoBold from "@/icons/PhInstagramLogoBold";
-import SecondStep from "./steps/SecondStep";
-import ThirdStep from "./steps/ThirdStep";
+// import HugeiconsNewTwitter from "@/icons/HugeiconsNewTwitter";
 
 // Types
 import { registerInputType, stepsValidation } from "@/types/inputTypes";
@@ -59,7 +59,7 @@ const SignUp = () => {
   const [registerInput, setRegisterInput] = useState<registerInputType>(
     registerInputInitials
   );
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [stepValidation, setStepValidation] = useState<stepsValidation>(
     stepValidationInitials
@@ -81,7 +81,6 @@ const SignUp = () => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-
     if (!stepValidation.isFourthStepValid) {
       event.preventDefault();
     }
@@ -89,147 +88,153 @@ const SignUp = () => {
 
   // useEffect
   useEffect(() => {
-    if(state.success !== null || state.error !== null) {
+    if (state.success !== null || state.error !== null) {
       setIsSubmitting(false);
       console.log(state);
     }
   }, [state]);
   return (
     <>
-    <div
-      data-testid="sign-up-container"
-      className="bg-black max-w-[550px] phone:w-[95%] py-3 px-2 rounded-sm"
-    >
-      <div className="flex flex-col items-center gap-3">
-        <Image src="/assets/img/logo.png" width={38} height={38} alt="Logo" />
-        {progress === 0 && (
-          <header className="text-center font-dmSans text-xl font-semibold">
-            Register to start using{" "}
-            <span className="font-quickSand text-secondary font-bold">
-              BodyTune
-            </span>
-          </header>
-        )}
-      </div>
-      <form action={formAction} onSubmit={handleSubmit} className="mt-4">
-        <div
-          className="phone:w-11/12 mx-auto"
-          data-testid="progress-bar-container"
-        >
-          {progress !== 0 && (
-            <ProgressBar currentProgress={progress} totalProgress={3} />
+      <div
+        data-testid="sign-up-container"
+        className="bg-black max-w-[550px] phone:w-[95%] py-3 px-2 rounded-sm"
+      >
+        <div className="flex flex-col items-center gap-3">
+          <Image src="/assets/img/logo.png" width={38} height={38} alt="Logo" />
+          {progress === 0 && (
+            <header className="text-center font-dmSans text-xl font-semibold">
+              Register to start using{" "}
+              <span className="font-quickSand text-secondary font-bold">
+                BodyTune
+              </span>
+            </header>
           )}
         </div>
-        <div data-testid="steps-container">
+        <form action={formAction} onSubmit={handleSubmit} className="mt-4">
           <div
-            data-testid="first-step-container"
-            className={progress === 0 ? "block" : "hidden"}
+            className="phone:w-11/12 mx-auto"
+            data-testid="progress-bar-container"
           >
-            <FirstStep
-              email={registerInput.email}
-              setRegisterInput={setRegisterInput}
-              setStepValidation={setStepValidation}
-              updateProgress={updateProgress}
-            />
+            {progress !== 0 && (
+              <ProgressBar currentProgress={progress} totalProgress={3} />
+            )}
           </div>
-          <div
-            data-testid="second-step-container"
-            className={progress === 1 ? "block" : "hidden"}
-          >
-            <SecondStep
-              progressTitle="Create a Password"
-              password={registerInput.password}
-              setRegisterInput={setRegisterInput}
-              currentProgress={progress}
-              totalProgress={3}
-              setProgress={setProgress}
-              setStepValidation={setStepValidation}
-              isSecondStepValid={stepValidation.isSecondStepValid}
-              updateProgress={updateProgress}
-            />
-          </div>
-          <div
-            data-testid="third-step-container"
-            className={progress === 2 ? "block" : "hidden"}
-          >
-            <ThirdStep
-              name={registerInput.name}
-              birthDay={registerInput.birthDay}
-              birthMonth={registerInput.birthMonth}
-              birthYear={registerInput.birthYear}
-              gender={registerInput.gender}
-              height={registerInput.height}
-              weight={registerInput.weight}
-              setRegisterInput={setRegisterInput}
-              progressTitle="Tell us about Yourself"
-              currentProgress={progress}
-              totalProgress={3}
-              setProgress={setProgress}
-              updateProgress={updateProgress}
-              setStepValidation={setStepValidation}
-            />
-          </div>
-          <div
-            data-testid="fourth-step-container"
-            className={progress === 3 ? "block" : "hidden"}
-          >
-            <FourthStep
-              progressTitle="Terms & Conditions"
-              currentProgress={progress}
-              totalProgress={3}
-              setProgress={setProgress}              
-              setStepValidation={setStepValidation}
-              mutateResult={state}
-              setIsSubmitting={setIsSubmitting}
-            />
-          </div>
-        </div>
-      </form>
-      {progress === 0 && (
-        <>
-          <hr
-            style={{ borderColor: "#b3b3b3" }}
-            className="max-w-[450px] phone:w-12/12 my-4 mx-auto"
-          />
-          <div className="mt-5 flex flex-col items-center gap-3">
-            <div className="phone:w-7/12 min-w-[290px] flex-col items-center gap-3">
-              <div className="phone:w-full">
-                <ThirdPartyLogin
-                  testId="facebook-third-party-login"
-                  Icon={PhFacebookLogoBold}
-                  action="Register with"
-                  buttonName="Facebook"
-                  backgroundColor="#1877F2"
-                  textBackground="linear-gradient(90deg, #1877F2, #1877F2)"
-                />
-              </div>
-              <div className="phone:w-full">
-                <ThirdPartyLogin
-                  testId="google-third-party-login"
-                  Icon={PhGoogleLogoBold}
-                  action="Register with"
-                  buttonName="Google"
-                  backgroundColor="#DB4437"
-                  textBackground="linear-gradient(90deg, #4285F4, #DB4437, #F4B400, #0F9D58)"
-                />
-              </div>
-              <div className="phone:w-full">
-                <ThirdPartyLogin
-                  testId="instagram-third-party-login"
-                  Icon={PhInstagramLogoBold}
-                  action="Register with"
-                  buttonName="Instagram"
-                  backgroundColor="#FD1D1D"
-                  textBackground="linear-gradient(90deg, #833AB4, #E1306C, #FD1D1D, #FCAF45)"
-                />
-              </div>
+          <div data-testid="steps-container">
+            <div
+              data-testid="first-step-container"
+              className={progress === 0 ? "block" : "hidden"}
+            >
+              <FirstStep
+                email={registerInput.email}
+                setRegisterInput={setRegisterInput}
+                setStepValidation={setStepValidation}
+                updateProgress={updateProgress}
+              />
+            </div>
+            <div
+              data-testid="second-step-container"
+              className={progress === 1 ? "block" : "hidden"}
+            >
+              <SecondStep
+                progressTitle="Create a Password"
+                password={registerInput.password}
+                setRegisterInput={setRegisterInput}
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+                setStepValidation={setStepValidation}
+                isSecondStepValid={stepValidation.isSecondStepValid}
+                updateProgress={updateProgress}
+              />
+            </div>
+            <div
+              data-testid="third-step-container"
+              className={progress === 2 ? "block" : "hidden"}
+            >
+              <ThirdStep
+                name={registerInput.name}
+                birthDay={registerInput.birthDay}
+                birthMonth={registerInput.birthMonth}
+                birthYear={registerInput.birthYear}
+                gender={registerInput.gender}
+                height={registerInput.height}
+                weight={registerInput.weight}
+                setRegisterInput={setRegisterInput}
+                progressTitle="Tell us about Yourself"
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+                updateProgress={updateProgress}
+                setStepValidation={setStepValidation}
+              />
+            </div>
+            <div
+              data-testid="fourth-step-container"
+              className={progress === 3 ? "block" : "hidden"}
+            >
+              <FourthStep
+                progressTitle="Terms & Conditions"
+                currentProgress={progress}
+                totalProgress={3}
+                setProgress={setProgress}
+                setStepValidation={setStepValidation}
+                mutateResult={state}
+                setIsSubmitting={setIsSubmitting}
+              />
             </div>
           </div>
-        </>
-      )}
-    </div>
-    
-    <LoadingPopUp isLoading={isSubmitting} message="Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!" />
+        </form>
+        {progress === 0 && (
+          <>
+            <hr
+              style={{ borderColor: "#b3b3b3" }}
+              className="max-w-[450px] phone:w-12/12 my-4 mx-auto"
+            />
+            <div className="mt-5 flex flex-col items-center gap-3">
+              <div className="phone:w-7/12 min-w-[290px] flex-col items-center gap-3">
+                {/* <div className="phone:w-full">
+                  <ThirdPartyLogin
+                    testId="facebook-third-party-login"
+                    Icon={PhFacebookLogoBold}
+                    action="Register with"
+                    buttonName="Facebook"
+                    backgroundColor="#1877F2"
+                    textBackground="linear-gradient(90deg, #1877F2, #1877F2)"
+                    provider="facebook"
+                  />
+                </div> */}
+                <div className="phone:w-full">
+                  <ThirdPartyLogin
+                    testId="google-third-party-login"
+                    Icon={PhGoogleLogoBold}
+                    action="Register with"
+                    buttonName="Google"
+                    backgroundColor="#DB4437"
+                    textBackground="linear-gradient(90deg, #4285F4, #DB4437, #F4B400, #0F9D58)"
+                    provider="google"
+                  />
+                </div>
+                {/* <div className="phone:w-full">
+                  <ThirdPartyLogin
+                    testId="instagram-third-party-login"
+                    Icon={HugeiconsNewTwitter}
+                    action="Login with"
+                    buttonName="Twitter(X)"
+                    backgroundColor="#1DA1F2" // Twitter's brand blue color
+                    textBackground="linear-gradient(90deg, #1DA1F2, #1DA1F2)"
+                    provider="twitter"
+                  />
+                </div> */}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <LoadingPopUp
+        isLoading={isSubmitting}
+        message="Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!"
+      />
     </>
   );
 };
