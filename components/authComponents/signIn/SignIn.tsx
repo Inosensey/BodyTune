@@ -12,9 +12,9 @@ import { Input } from "@/components/reusableComponent/formInputs/input";
 import FormValidation from "@/utils/validation";
 
 // Icons
-import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
+// import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
 import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
-import PhInstagramLogoBold from "@/icons/PhInstagramLogoBold";
+// import HugeiconsNewTwitter from "@/icons/HugeiconsNewTwitter";
 
 // Types
 import { validation } from "@/types/inputTypes";
@@ -73,17 +73,18 @@ const SignIn = () => {
         className="mt-5 flex flex-col items-center gap-3"
         data-testid="third-party-container"
       >
-        <div className=" phone:w-7/12 flex-col items-center gap-3">
-          <div className="phone:w-full">
+        <div className="phone:w-7/12 min-w-[290px] flex-col items-center gap-3">
+          {/* <div className="phone:w-full">
             <ThirdPartyLogin
               testId="facebook-third-party-login"
               Icon={PhFacebookLogoBold}
               action="Login with"
               buttonName="Facebook"
               backgroundColor="#1877F2"
-              textBackground="linear-gradient(90deg, #1877F2, #1877F2)"
+              textBackground="linear-gradient(90deg, #1877F2, #1877F2)"                  
+              provider="facebook"
             />
-          </div>
+          </div> */}
           <div className="phone:w-full">
             <ThirdPartyLogin
               testId="google-third-party-login"
@@ -92,25 +93,27 @@ const SignIn = () => {
               buttonName="Google"
               backgroundColor="#DB4437"
               textBackground="linear-gradient(90deg, #4285F4, #DB4437, #F4B400, #0F9D58)"
+              provider="google"
             />
           </div>
-          <div className="phone:w-full">
+          {/* <div className="phone:w-full">
             <ThirdPartyLogin
               testId="instagram-third-party-login"
-              Icon={PhInstagramLogoBold}
+              Icon={HugeiconsNewTwitter}
               action="Login with"
-              buttonName="Instagram"
-              backgroundColor="#FD1D1D"
-              textBackground="linear-gradient(90deg, #833AB4, #E1306C, #FD1D1D, #FCAF45)"
+              buttonName="Twitter(X)"
+              backgroundColor="#1DA1F2" // Twitter's brand blue color
+              textBackground="linear-gradient(90deg, #1DA1F2, #1DA1F2)"
+              provider="twitter"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <hr
         style={{ borderColor: "#b3b3b3" }}
-        className="max-w-[450px] phone:w-10/12 my-4 mx-auto"
+        className="max-w-[450px] phone:w-12/12 my-4 mx-auto"
       />
-      <div className="flex flex-col justify-center mx-auto gap-4 max-w-[450px] phone:w-8/12">
+      <div className="flex flex-col justify-center mx-auto gap-4 max-w-[450px] phone:w-12/12">
         <form
           data-testid="credentials-login-form"
           className="flex flex-col gap-2"
