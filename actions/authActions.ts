@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 // import { cookies } from "next/headers";
 
 // Supabase
@@ -106,6 +107,70 @@ export const signUpWithEmail = async (
   }
 };
 
+export const profileSetUp = async (
+  prevState: formReturnType<[]>,
+  formData: FormData
+): Promise<formReturnType<[]>> => {
+  try {
+    const cookieStore = await cookies()
+    const supabase = await createSSR();
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user!.id
+
+    const personalInfo: registerInputType = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      name: formData.get("name") as string,
+      birthDay: formData.get("birthDay") as string,
+      birthMonth: formData.get("birthMonth") as string,
+      birthYear: formData.get("birthYear") as string,
+      gender: formData.get("gender") as string,
+      height: formData.get("height") as string,
+      weight: formData.get("weight") as string,
+    };
+  
+    const termsAndConditions: termsAndConditionTypes = {
+      marketingMessages: formData.get("marketingMessages") as string,
+      remainders: formData.get("remainders") as string,
+      termsAndCondition: formData.get("termsAndCondition") as string,
+    };
+    const mutatePersonalInformationRes = await mutatePersonalInformation(
+      userId,
+      personalInfo
+    );
+    if (mutatePersonalInformationRes.error) {
+      return mutatePersonalInformationRes;
+    }
+
+    const mutateTermsAndConditionsRes = await mutateTermsAndConditions(
+      userId,
+      termsAndConditions
+    );
+    if (mutateTermsAndConditionsRes.error) {
+      return mutateTermsAndConditionsRes;
+    }
+    cookieStore.set('userHaverPersonalInformation', "true", { secure: true })
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: ``,
+    };
+    
+  } catch (error: unknown) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Inserting your personal Information: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
 export const mutatePersonalInformation = async (
   userId: string,
   personalInfo: registerInputType
@@ -202,6 +267,50 @@ export const mutateTermsAndConditions = async (
   }
 };
 
+export const loginWithEmail = async (
+  prevState: formReturnType<[]>,
+  formData: FormData
+): Promise<formReturnType<[]>> => {
+  const credentials: { email: string; password: string } = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+  try {
+    const supabase = await createSSR();
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    if (error) {
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: `There is an error Logging in: ${error.message}`,
+      };
+    }
+    
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: ``,
+    };
+  } catch (error: unknown) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Logging in: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
 export const loginWithThirdParty = async (
   prevState: formReturnType<{ redirectLink: string; loginType: string } | []>,
   formData: FormData
@@ -229,7 +338,7 @@ export const loginWithThirdParty = async (
         success: false,
         error: true,
         data: [],
-        message: `There is an error creating new account: ${error.message}`,
+        message: `There is an error Logging in: ${error.message}`,
       };
     }
     const response: { redirectLink: string; loginType: string } = {
@@ -246,7 +355,7 @@ export const loginWithThirdParty = async (
   } catch (error: unknown) {
     const errorMessage: string =
       error instanceof Error
-        ? `There is an error creating new account: ${error.message}`
+        ? `There is an error Logging in: ${error.message}`
         : "An unknown error occurred";
     return {
       success: false,
@@ -257,23 +366,20 @@ export const loginWithThirdParty = async (
   }
 };
 
-
-
 export const signOut = async () => {
   const supabase = await createSSR();
   try {
-    const {error} = await supabase.auth.signOut({scope: "local"})
+    const { error } = await supabase.auth.signOut({ scope: "local" });
 
-    if(error) {    
+    if (error) {
       return {
         success: false,
         error: true,
         data: [],
-        message:`There is an error Signing Out: ${error.message}`
-      }
+        message: `There is an error Signing Out: ${error.message}`,
+      };
     }
-    redirect('/login')
-  }  catch (error: unknown) {
+  } catch (error: unknown) {
     const errorMessage: string =
       error instanceof Error
         ? `There is an error Signing Out: ${error.message}`
@@ -285,4 +391,5 @@ export const signOut = async () => {
       message: errorMessage,
     };
   }
-}
+  redirect("/login");
+};
