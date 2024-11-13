@@ -18,7 +18,9 @@ interface props {
   textBackground: string;
   action: string,
   testId: string,
-  provider: string
+  provider: string,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
 // Initials
@@ -38,25 +40,39 @@ const ThirdPartyLogin = ({
   textBackground,
   action,
   testId,
-  provider
+  provider,
+  setIsLoading,
+  setMessage
 }: props) => {
   // Initialize router
   const router = useRouter()
 
   // UseFormState
-  const [state, formAction] = useFormState(
+  const [formState, formAction] = useFormState(
     loginWithThirdParty,
     useFormStateInitials
   );
 
   useEffect(() => {
-    if(state.success !== null || state.error !== null) {
-      if (!Array.isArray(state.data)) {
-        router.push(state.data.redirectLink)
+    // if(state.success !== null || state.error !== null) {
+    //   if (!Array.isArray(state.data)) {
+    //     router.push(state.data.redirectLink)
+    //   }
+    // }
+    
+    if (formState.success !== null || formState.error !== null) {
+      if(formState.success) {
+        setMessage(`Redirecting to ${provider}`)
+        if (!Array.isArray(formState.data)) {
+          router.push(formState.data.redirectLink)
+        }
+      } else {
+        setMessage("");
+        setIsLoading(false)
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[state])
+  },[formState])
   return (
     <motion.form
       data-testid={`${testId}`}
@@ -69,7 +85,10 @@ const ThirdPartyLogin = ({
       action={formAction}
     >
       <input type="hidden" name="provider" value={provider} />
-      <button className="px-1 py-2 font-semibold font-dmSans flex items-center gap-2  text-center">
+      <button onClick={() => {
+        setMessage(`Connecting to ${provider}`)
+        setIsLoading(true)
+      }} className="px-1 py-2 font-semibold font-dmSans flex items-center gap-2  text-center">
         <Icon color={backgroundColor} height="1.4em" width="1.4em" />{" "}
         <span>
           {action}{" "}
