@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { useRouter } from "next/navigation";
 
 // Action
 import { signUpWithEmail } from "@/actions/authActions";
@@ -12,6 +13,7 @@ import FirstStep from "./steps/FirstStep";
 import SecondStep from "./steps/SecondStep";
 import ThirdStep from "./steps/ThirdStep";
 import ProgressBar from "./ProgressBar";
+import FourthStep from "./steps/FourthStep";
 
 // Loading Components
 import LoadingPopUp from "@/components/reusableComponent/LoadingAnimation/LoadingPopUp";
@@ -23,7 +25,6 @@ import PhGoogleLogoBold from "@/icons/PhGoogleLogoBold";
 
 // Types
 import { registerInputType, stepsValidation } from "@/types/inputTypes";
-import FourthStep from "./steps/FourthStep";
 import { formReturnType } from "@/types/formTypes";
 import { Session, User } from "@supabase/supabase-js";
 
@@ -55,17 +56,20 @@ const useFormStateInitials: formReturnType<
   data: [],
 };
 const SignUp = () => {
+  const router = useRouter();
+
   // State
   const [registerInput, setRegisterInput] = useState<registerInputType>(
     registerInputInitials
   );
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitMessage, setSubmitMessage] = useState<string>("Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!");
   const [progress, setProgress] = useState<number>(0);
   const [stepValidation, setStepValidation] = useState<stepsValidation>(
     stepValidationInitials
   );
   // UseFormState
-  const [state, formAction] = useFormState(
+  const [formState, formAction] = useFormState(
     signUpWithEmail,
     useFormStateInitials
   );
@@ -88,11 +92,16 @@ const SignUp = () => {
 
   // useEffect
   useEffect(() => {
-    if (state.success !== null || state.error !== null) {
-      setIsSubmitting(false);
-      console.log(state);
+    if (formState.success !== null || formState.error !== null) {
+      if(formState.success) {
+        setSubmitMessage("You're in! 🎯 Taking you to your dashboard—let’s crush some goals today! 💪");
+        router.push("/dashboard")
+      } else {
+        setIsSubmitting(false);
+      }
     }
-  }, [state]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formState]);
   return (
     <>
       <div
@@ -178,7 +187,7 @@ const SignUp = () => {
                 totalProgress={3}
                 setProgress={setProgress}
                 setStepValidation={setStepValidation}
-                mutateResult={state}
+                mutateResult={formState}
                 setIsSubmitting={setIsSubmitting}
               />
             </div>
@@ -212,6 +221,8 @@ const SignUp = () => {
                     backgroundColor="#DB4437"
                     textBackground="linear-gradient(90deg, #4285F4, #DB4437, #F4B400, #0F9D58)"
                     provider="google"
+                    setIsLoading={setIsSubmitting}
+                    setMessage={setSubmitMessage}
                   />
                 </div>
                 {/* <div className="phone:w-full">
@@ -233,7 +244,7 @@ const SignUp = () => {
 
       <LoadingPopUp
         isLoading={isSubmitting}
-        message="Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!"
+        message={submitMessage}
       />
     </>
   );
