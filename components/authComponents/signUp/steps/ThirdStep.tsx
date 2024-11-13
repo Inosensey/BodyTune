@@ -254,13 +254,18 @@ const ThirdStep = ({
       <div className="flex flex-col justify-center mx-auto gap-8 max-w-[450px] phone:w-11/12 mt-4">
         <div
           className="flex items-center gap-4 cursor-pointer"
-          onClick={() => setProgress((prev) => prev - 1)}
+          onClick={() => {
+            if(currentProgress !== 1) {
+              setProgress((prev) => prev - 1)
+            }
+          }}
         >
-          <IcOutlineArrowBackIosNew
+          {currentProgress !== 1 && <IcOutlineArrowBackIosNew
             color="#4B6F64"
             width="1.7em"
             height="1.7em"
-          />
+          />}
+          
           <div>
             <p className="text-[#ccc] font-dmSans font-semibold text-sm">
               Step {currentProgress} of {totalProgress}
