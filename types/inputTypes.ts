@@ -10,6 +10,12 @@ export interface registerInputType {
   height: string,
 }
 
+export interface termsAndConditionTypes {
+  marketingMessages: string;
+  remainders: string;
+  termsAndCondition: string;
+}
+
 export interface stepsValidation {
   isFirstStepValid: boolean,
   isSecondStepValid: boolean,

@@ -45,18 +45,19 @@ export const Input = <T extends string | number>({
     <div
       className={`flex flex-col w-full laptop:w-full gap-2`}
     >
-      <div className="flex flex-col">
-        {label && (
-          <label className="phone:text-sm font-quickSand font-semibold">
-            {label}
-          </label>
-        )}
-        {shortDescription && (
-          <p className="text-[#999999] text-xs font-semibold font-dmSans">
-            {shortDescription}
-          </p>
-        )}
-      </div>
+      
+      {label && (
+        <div className="flex flex-col">
+            <label className="phone:text-sm font-quickSand font-semibold">
+              {label}
+            </label>
+          {shortDescription && (
+            <p className="text-[#999999] text-xs font-semibold font-dmSans">
+              {shortDescription}
+            </p>
+          )}
+        </div>
+      )}
       <div
         className="w-full relative bg-primary overflow-hidden p-1"
         style={{
@@ -143,13 +144,14 @@ export const CheckBoxInput = <T extends string | number>({
           onInput={onInput}
           type="checkbox"
           name={name}
+          id={name}
           style={{ color: "red" }}
           className={`text-secondary p-4 phone:text-lg ${style.input} font-quickSand`}
           // required
         />
         <div className="flex flex-col w-9/12">
           {label && (
-            <label className="phone:text-sm font-quickSand font-semibold">
+            <label htmlFor={name} className="phone:text-sm font-quickSand font-semibold">
               {label}
             </label>
           )}

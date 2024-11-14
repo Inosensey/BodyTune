@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 // Components
@@ -7,26 +7,37 @@ import { CheckBoxInput } from "@/components/reusableComponent/formInputs/input";
 
 // icons
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
+import TablerSquareRoundedPlus from "@/icons/TablerSquareRoundedPlus";
 
+
+// Types
+import { stepsValidation } from "@/types/inputTypes";
+import { formReturnType } from "@/types/formTypes";
+import { Session, User } from "@supabase/supabase-js";
 interface props {
   progressTitle: string;
   currentProgress: number;
   totalProgress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setStepValidation: React.Dispatch<React.SetStateAction<stepsValidation>>;
+  mutateResult: formReturnType<
+    { user: User | null; session: Session | null } | []
+  >,
+  setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface toggleTermsAndConditionType {
-  marketingMessages: string,
-  termsAndCondition: string,
-  remainders: string
+  marketingMessages: string;
+  termsAndCondition: string;
+  remainders: string;
 }
 
 // Initials
-const toggleTermsAndConditionInit:toggleTermsAndConditionType = {
-    marketingMessages: "false",
-    termsAndCondition: "false",
-    remainders: "false"
-}
+const toggleTermsAndConditionInit: toggleTermsAndConditionType = {
+  marketingMessages: "false",
+  termsAndCondition: "false",
+  remainders: "false",
+};
 
 // Variants
 const containerVariant = {
@@ -55,16 +66,32 @@ const FourthStep = ({
   progressTitle,
   setProgress,
   totalProgress,
+  setStepValidation,
+  mutateResult,
+  setIsSubmitting
 }: props) => {
-    // States
-    const [toggleTermsAndCondition, setToggleTermsAndCondition] = useState<toggleTermsAndConditionType>(toggleTermsAndConditionInit)
+  // States
+  const [toggleTermsAndCondition, setToggleTermsAndCondition] =
+    useState<toggleTermsAndConditionType>(toggleTermsAndConditionInit);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
-    // Events
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target
+  // Events
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
 
-        setToggleTermsAndCondition((prev) => ({...prev, [name]: value}))
+    setToggleTermsAndCondition((prev) => ({ ...prev, [name]: `${checked}` }));
+  };
+
+  const checkValidation = () => {
+    if (toggleTermsAndCondition.termsAndCondition !== "true") {
+      setIsValid(false);
+      setStepValidation((prev) => ({...prev, isFourthStepValid: false}))
+    } else {
+      setIsValid(true);
+      setStepValidation((prev) => ({...prev, isFourthStepValid: true}))
+      setIsSubmitting(true);
     }
+  };
   return (
     <div className="flex flex-col justify-center mx-auto gap-8 max-w-[450px] phone:w-11/12 mt-4">
       <div
@@ -83,7 +110,12 @@ const FourthStep = ({
           <p className="font-quickSand font-bold">{progressTitle}</p>
         </div>
       </div>
-      <motion.div variants={containerVariant} initial="hidden" animate="show" className="flex flex-col gap-6">
+      <motion.div
+        variants={containerVariant}
+        initial="hidden"
+        animate="show"
+        className="flex flex-col gap-6"
+      >
         <motion.div variants={childContainer} className="w-full relative">
           <CheckBoxInput
             name="marketingMessages"
@@ -109,6 +141,39 @@ const FourthStep = ({
           />
         </motion.div>
       </motion.div>
+      {!isValid && isValid !== null && (
+        <div className="flex flex-col gap-1 mt-1 mx-auto">
+          <p className="text-[0.75rem] text-red-500 font-bold font-dmSans">
+            You must agree to the Terms and Conditions
+          </p>
+        </div>
+      )}
+      {mutateResult.success !== null && mutateResult.error && (
+        <div className="flex flex-col gap-1 mt-1 mx-auto">
+          <p className="text-[0.85rem] text-red-500 font-bold font-dmSans">
+            {mutateResult.message}
+          </p>
+        </div>
+      )}
+      <div className="w-28 mx-auto">
+        <motion.button
+          data-testid="next-step-button"
+          whileHover={{
+            scale: 1.1,
+            transition: { duration: 0.2 },
+          }}
+          onClick={() => {
+            checkValidation();
+            
+          }}
+          whileTap={{ scale: 0.9 }}
+          className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2 flex items-center justify-center gap-2"
+          type="submit"
+        >
+          <TablerSquareRoundedPlus height="1.2em" width="1.2em" color="#fff" />
+          Submit
+        </motion.button>
+      </div>
     </div>
   );
 };
