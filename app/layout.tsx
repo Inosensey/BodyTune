@@ -17,8 +17,8 @@ const DMSansFont = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "BodyTune - login",
-  description: "Login page of BodyTune",
+  title: "BodyTune - Home",
+  description: "Home page of BodyTune",
 };
 
 export default function RootLayout({
