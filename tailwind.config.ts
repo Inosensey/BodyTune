@@ -10,7 +10,7 @@ const config: Config = {
     screens: {
       phone: '280px',
       mdphone: '420px',
-      tablet: '481px',
+      tablet: '576px',
       laptop: '992px',
       desktop: '1280px',
       larger: '1920px'
