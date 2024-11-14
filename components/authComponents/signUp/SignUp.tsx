@@ -16,7 +16,7 @@ import ProgressBar from "./ProgressBar";
 import FourthStep from "./steps/FourthStep";
 
 // Loading Components
-import LoadingPopUp from "@/components/reusableComponent/LoadingAnimation/LoadingPopUp";
+import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 
 // Icons
 // import PhFacebookLogoBold from "@/icons/PhFacebookLogoBold";
