@@ -14,7 +14,7 @@ import ThirdPartyLogin from "@/components/authComponents/ThirdPartyLogin";
 import { Input } from "@/components/reusableComponent/formInputs/input";
 
 // Loading Components
-import LoadingPopUp from "@/components/reusableComponent/LoadingAnimation/LoadingPopUp";
+import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 
 // Utils
 import FormValidation from "@/utils/validation";
