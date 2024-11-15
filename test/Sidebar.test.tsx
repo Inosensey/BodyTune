@@ -20,6 +20,8 @@ describe("Sidebar Component", () => {
         expect(screen.getByTestId("bodytune-workouts-link-description")).toBeInTheDocument();
         expect(screen.getByTestId("bodytune-nutrition-link")).toBeInTheDocument();
         expect(screen.getByTestId("bodytune-nutrition-link-description")).toBeInTheDocument();
+        expect(screen.getByTestId("bodytune-connections-link")).toBeInTheDocument();
+        expect(screen.getByTestId("bodytune-connections-link-description")).toBeInTheDocument();
         expect(screen.getByTestId("settings-link")).toBeInTheDocument();
         expect(screen.getByTestId("settings-link-description")).toBeInTheDocument();
         expect(screen.getByTestId("signOut")).toBeInTheDocument();
