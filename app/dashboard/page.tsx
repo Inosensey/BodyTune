@@ -1,13 +1,12 @@
 "use server";
 
-import SignOut from "@/components/authComponents/SignOut";
+import Overview from "@/components/dashboardComponents/overviewComponents/Overview";
 
 
 const DashboardPage = () => {
   return (
     <div>
-      DashboardPage{" "}
-        <SignOut />
+      <Overview />
     </div>
   );
 };
