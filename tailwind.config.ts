@@ -33,6 +33,12 @@ const config: Config = {
         textGray: "#e0e1dd", // Existing gray text color
         ctaBackground: "#3E8E41", // Forest Green (CTA background)
         ctaText: "#FFFFFF", // White (CTA text)
+
+        // Notifications theme
+        newFollower: "#4A9B50",
+        comment: "#B07A42",
+        achievement: "#B58E1C",
+        notificationTextColor: "#e0e1dd"
       },
       fontFamily: {
         dmSans: ['var(--font-dm-sans)'],
