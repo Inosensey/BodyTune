@@ -14,7 +14,7 @@ export default function DashboardLayout({
   return (
     <div className="w-full h-screen relative tablet:flex">
       <Sidebar />
-      <div className="flex-1 h-full">
+      <div className="flex-1 h-full overflow-auto">
         {children}
       </div>
     </div>
