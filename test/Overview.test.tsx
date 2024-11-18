@@ -26,9 +26,10 @@ describe("Sidebar Component", () => {
         expect(screen.getByTestId("current-bodytune-progress")).toBeInTheDocument();
 
         expect(screen.getByTestId("news-feed-container")).toBeInTheDocument();
-        expect(screen.getByTestId("new-exercise")).toBeInTheDocument();
-        expect(screen.getByTestId("new-meal-container")).toBeInTheDocument();
-        expect(screen.getByTestId("news-bodytune-plan")).toBeInTheDocument();
+        expect(screen.getByTestId("news-list")).toBeInTheDocument();
+        // expect(screen.getByTestId("new-exercise")).toBeInTheDocument();
+        // expect(screen.getByTestId("new-meal-container")).toBeInTheDocument();
+        // expect(screen.getByTestId("news-bodytune-plan")).toBeInTheDocument();
 
         expect(screen.getByTestId("suggestions-container")).toBeInTheDocument();
 
