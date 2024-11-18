@@ -10,7 +10,7 @@ import TablerBarbell from "@/icons/TablerBarbellLight";
 const WeeklyActivity = () => {
   return (
     <div className="w-full px-4 mt-4">
-      <div>
+      <div className="flex gap-3">
         <div
           data-testid="weekly-summary-container"
           className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-9/12 tablet:max-w-[950px]"
@@ -65,30 +65,6 @@ const WeeklyActivity = () => {
                     Meals ate, calories, parts of the day
                   </p>
                 </div>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center gap-1">
-              <div data-testid="exercises-added" className="flex flex-col">
-                <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
-                  BodyTune Progress
-                </p>
-                <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
-                  Current Selected BodyTune Progress
-                </p>
-              </div>
-              <div className="w-[140px] h-28 flex justify-center mx-auto mt-4">
-                <CircularProgressbar
-                  value={66}
-                  text={`${66}%`}
-                  styles={buildStyles({
-                    textSize: "16px",
-                    pathColor: "#D3F0D1",
-                    pathTransitionDuration: 0.5,
-                    textColor: "#D3F0D1",
-                    trailColor: "#121212",
-                    backgroundColor: "#D3F0D1",
-                  })}
-                />
               </div>
             </div>
           </div>
@@ -189,6 +165,56 @@ const WeeklyActivity = () => {
               <p className="text-3xl text-lightSecondary font-dmSans font-semibold">
                 999
               </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col justify-between gap-2 flex-1">
+          <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
+            <div data-testid="exercises-added" className="flex flex-col">
+              <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
+                Week&apos;s Progress
+              </p>
+              <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+                Progress Achieved This Week
+              </p>
+            </div>
+            <div className="w-[140px] h-28 flex justify-center mx-auto mt-4">
+              <CircularProgressbar
+                value={90}
+                text={`${90}%`}
+                styles={buildStyles({
+                  textSize: "16px",
+                  pathColor: "#D3F0D1",
+                  pathTransitionDuration: 0.5,
+                  textColor: "#D3F0D1",
+                  trailColor: "#121212",
+                  backgroundColor: "#D3F0D1",
+                })}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
+            <div data-testid="exercises-added" className="flex flex-col">
+              <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
+                BodyTune Progress
+              </p>
+              <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+                Current Selected BodyTune Progress
+              </p>
+            </div>
+            <div className="w-[140px] h-28 flex justify-center mx-auto mt-4">
+              <CircularProgressbar
+                value={22}
+                text={`${22}%`}
+                styles={buildStyles({
+                  textSize: "16px",
+                  pathColor: "#D3F0D1",
+                  pathTransitionDuration: 0.5,
+                  textColor: "#D3F0D1",
+                  trailColor: "#121212",
+                  backgroundColor: "#D3F0D1",
+                })}
+              />
             </div>
           </div>
         </div>
