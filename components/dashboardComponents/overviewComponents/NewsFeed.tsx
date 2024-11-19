@@ -47,7 +47,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new BodyTune</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
@@ -58,7 +58,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new Meal Plan</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
@@ -69,7 +69,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new Exercise Plan</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
@@ -80,7 +80,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new Exercise Plan</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
@@ -91,7 +91,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new Exercise Plan</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
@@ -102,7 +102,7 @@ const NewsFeed = () => {
                 </td>
                 <td className="p-1">Created a new Exercise Plan</td>
                 <td className="p-1">
-                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100">
+                  <button className="border-[2px] border-secondary bg-secondary bg-opacity-50 text-white font-quickSand font-bold rounded-md py-1 px-3 hover:bg-opacity-100 transition ease-in-out duration-300">
                     View
                   </button>
                 </td>
