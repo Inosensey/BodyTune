@@ -5,7 +5,7 @@ import Overview from "@/components/dashboardComponents/overviewComponents/Overvi
 import { describe } from "node:test";
 
 describe("Sidebar Component", () => {
-    it("Renders the sidebar component and its contents", () => {
+    it("Renders the overview component and its contents", () => {
         render(<Overview />)
 
         
@@ -14,13 +14,13 @@ describe("Sidebar Component", () => {
         expect(screen.getByTestId("recent-activities-container")).toBeInTheDocument();
         expect(screen.getByTestId("completed-workouts")).toBeInTheDocument();
         expect(screen.getByTestId("meals-logged")).toBeInTheDocument();
-        expect(screen.getByTestId("progress-made-created")).toBeInTheDocument();
+        expect(screen.getByTestId("progress-made-this-week")).toBeInTheDocument();
 
         expect(screen.getByTestId("stats-container")).toBeInTheDocument();
         expect(screen.getByTestId("exercises-added")).toBeInTheDocument();
         expect(screen.getByTestId("meals-added")).toBeInTheDocument();
         expect(screen.getByTestId("exercises-completed")).toBeInTheDocument();
-        expect(screen.getByTestId("meals-logged")).toBeInTheDocument();
+        expect(screen.getByTestId("meals-completed")).toBeInTheDocument();
         expect(screen.getByTestId("bodytune-plan-created")).toBeInTheDocument();
 
         expect(screen.getByTestId("current-bodytune-progress")).toBeInTheDocument();
