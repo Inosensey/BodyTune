@@ -28,7 +28,7 @@ const WeeklyActivity = () => {
             className="flex justify-between"
           >
             <div className="flex flex-col gap-1 mt-2">
-              <div data-testid="completed-workout">
+              <div data-testid="completed-workouts">
                 <p className="underline font-dmSans text-[0.9rem] font-semibold text-lightSecondary">
                   Completed Workout
                 </p>
@@ -125,7 +125,7 @@ const WeeklyActivity = () => {
               </p>
             </div>
             <div
-              data-testid="meals-logged"
+              data-testid="meals-completed"
               className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
             >
               <div className="flex flex-col">
@@ -146,7 +146,7 @@ const WeeklyActivity = () => {
               </p>
             </div>
             <div
-              data-testid="meals-logged"
+              data-testid="bodytune-plan-created"
               className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
             >
               <div className="flex flex-col">
@@ -170,7 +170,7 @@ const WeeklyActivity = () => {
         </div>
         <div className="flex flex-col justify-between gap-2 flex-1">
           <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
-            <div data-testid="exercises-added" className="flex flex-col">
+            <div data-testid="progress-made-this-week" className="flex flex-col">
               <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
                 Week&apos;s Progress
               </p>
@@ -194,7 +194,7 @@ const WeeklyActivity = () => {
             </div>
           </div>
           <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
-            <div data-testid="exercises-added" className="flex flex-col">
+            <div data-testid="current-bodytune-progress" className="flex flex-col">
               <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
                 BodyTune Progress
               </p>
