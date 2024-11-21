@@ -1,8 +1,13 @@
-import React from 'react'
+"use server"
+
+import BodyTuneStudio from "@/components/dashboardComponents/bodytuneStudio/BodyTuneStudio"
+
 
 const BodyTuneStudioPage = () => {
   return (
-    <div>page</div>
+    <div className='px-4 mt-4 w-full'>
+      <BodyTuneStudio />
+    </div>
   )
 }
 
