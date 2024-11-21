@@ -25,7 +25,7 @@ const Sidebar = () => {
         </header>
       </div>
       <div className="mt-6 flex flex-col gap-2" data-testid="links-container">
-        <Link href={"#"}>
+        <Link data-testid="overview-link" href={"/dashboard"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -43,12 +43,15 @@ const Sidebar = () => {
                 height="1.3em"
               />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p
+              data-testid="overview-link-description"
+              className="font-quickSand text-[0.8rem] text-[#b3b3b3]"
+            >
               Your personalized fitness snapshot
             </p>
           </motion.div>
         </Link>
-        <Link href={"#"}>
+        <Link data-testid="bodytune-studio-link" href={"/dashboard/bodytune"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -66,12 +69,12 @@ const Sidebar = () => {
                 height="1.3em"
               />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p data-testid="bodytune-studio-link-description" className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
               Combine workouts and meals into your ideal regimen
             </p>
           </motion.div>
         </Link>
-        <Link href={"#"}>
+        <Link data-testid="bodytune-workouts-link" href={"#"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -85,12 +88,12 @@ const Sidebar = () => {
               </p>
               <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p data-testid="bodytune-workouts-link-description" className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
               Customize and track your exercise routines.
             </p>
           </motion.div>
         </Link>
-        <Link href={"#"}>
+        <Link data-testid="bodytune-nutrition-link" href={"#"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -108,12 +111,12 @@ const Sidebar = () => {
                 height="1.3em"
               />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p data-testid="bodytune-nutrition-link-description" className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
               Plan and personalize your meal choices
             </p>
           </motion.div>
         </Link>
-        <Link href={"#"}>
+        <Link data-testid="bodytune-connections-link" href={"#"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -131,12 +134,12 @@ const Sidebar = () => {
                 height="1.3em"
               />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p data-testid="bodytune-connections-link-description" className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
               Your Fitness Network
             </p>
           </motion.div>
         </Link>
-        <Link href={"#"}>
+        <Link data-testid="settings-link" href={"#"}>
           <motion.div
             whileHover={{
               x: "10px",
@@ -154,7 +157,7 @@ const Sidebar = () => {
                 height="1.3em"
               />
             </div>
-            <p className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
+            <p data-testid="settings-link-description" className="font-quickSand text-[0.8rem] text-[#b3b3b3]">
               Adjust preferences and settings
             </p>
           </motion.div>
