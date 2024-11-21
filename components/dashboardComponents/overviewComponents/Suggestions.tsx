@@ -4,7 +4,7 @@ const Suggestions = () => {
   return (
     <div className="w-full px-4 mt-4">
       <div
-        data-testid="news-feed-container"
+        data-testid="suggestions-container"
         className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-9/12 tablet:w-full"
       >
         <div className="flex flex-col">
