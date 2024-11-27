@@ -3,14 +3,22 @@
 import SolarSettingsLinear from "@/icons/SolarSettingsLinear";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 
-const BodyTuneCreationOptions = () => {
+// Types
+interface props {
+  setSelectOption: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const BodyTuneCreationOptions = ({ setSelectOption }: props) => {
   return (
     <div className="flex flex-col gap-1">
       <p className="text-xl font-quickSand text-secondary font-bold">
         How would you like to create your BodyTune
       </p>
       <div className="flex gap-2">
-        <div className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]">
+        <div
+          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]"
+          onClick={() => setSelectOption("recommendation")}
+        >
           <TablerBarbell color="#D3F0D1" width="2.0em" height="2.0em" />
           <p className="text-lg font-dmSans font-semibold text-lightSecondary transition duration-200 group-hover:text-[#a3e09f]">
             Recommendation
@@ -20,7 +28,10 @@ const BodyTuneCreationOptions = () => {
             exercise experience
           </p>
         </div>
-        <div className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]">
+        <div
+          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]"
+          onClick={() => setSelectOption("custom")}
+        >
           <SolarSettingsLinear color="#D3F0D1" width="2.0em" height="2.0em" />
           <p className="text-lg font-dmSans font-semibold text-lightSecondary transition duration-200 group-hover:text-[#a3e09f]">
             Custom
