@@ -35,3 +35,9 @@ export interface stepValidationResult {
     validationMessage: string;
   };
 }
+
+export interface InterfaceBreadCrumbs {
+  id: number,
+  title: string,
+  shortDescription: string,
+}
