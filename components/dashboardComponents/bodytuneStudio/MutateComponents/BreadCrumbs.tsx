@@ -6,6 +6,7 @@ import style from "@/css/BreadCrumbs.module.css"
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 interface props {
   selectedBreadCrumb: InterfaceBreadCrumbs;
+  setProgress: React.Dispatch<React.SetStateAction<number>>
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
@@ -17,12 +18,16 @@ const BreadCrumbs = ({
   breadCrumbs,
   setSelectedBreadCrumb,
   selectedBreadCrumb,
+  setProgress
 }: props) => {
   return (
     <div className="flex border-[1.5px] border-secondary">
       {breadCrumbs.map((breadcrumb: InterfaceBreadCrumbs) => (
         <motion.div
-          onClick={() => setSelectedBreadCrumb(breadcrumb)}
+          onClick={() => {
+            setSelectedBreadCrumb(breadcrumb)
+            setProgress(breadcrumb.id)
+          }}
           key={breadcrumb.id}
           className={`group bg-black px-4 py-4 cursor-pointer relative ${style.breadcrumbs}`}
         >
