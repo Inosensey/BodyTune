@@ -4,6 +4,8 @@ import { useState } from "react";
 // Components
 import DashboardHeader from "../../DashboardHeader";
 import BodyTuneCreationOptions from "./BodyTuneCreationOptions";
+import BreadCrumbs from "./BreadCrumbs";
+import SecondStep from "./SecondStep";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -12,9 +14,8 @@ import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLin
 import { TableRow } from "@/types/database.types";
 import FirstStep from "./FirstStep";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
-import BreadCrumbs from "./BreadCrumbs";
 interface props {
-  personaInfo: TableRow<"personal_information">;
+  personaInfo: TableRow<"personal_information">[];
 }
 
 // Initials
@@ -49,6 +50,7 @@ const MutateForm = ({ personaInfo }: props) => {
       title: "Body Metrics",
       shortDescription: "Set weight, height, and experience",
     });
+  const [progress, setProgress] = useState<number>(1);
 
   return (
     <div className="flex flex-col gap-4 h-[99%]">
@@ -65,12 +67,26 @@ const MutateForm = ({ personaInfo }: props) => {
             <BreadCrumbs
               breadCrumbs={BreadCrumbsInitials}
               setSelectedBreadCrumb={setSelectedBreadCrumb}
+              setProgress={setProgress}
               selectedBreadCrumb={selectedBreadCrumb}
             />
-            <FirstStep
-              personalInfo={personaInfo}
-              setSelectedOption={setSelectedOption}
-            />
+            <div className="flex justify-center w-full">
+              {progress === 1 && (
+                <FirstStep
+                  personalInfo={personaInfo[0]}
+                  setSelectedOption={setSelectedOption}
+                  setProgress={setProgress}
+                  setSelectedBreadCrumb={setSelectedBreadCrumb}
+                />
+              )}
+              {progress === 2 && (
+                <SecondStep
+                  setSelectedOption={setSelectedOption}
+                  setSelectedBreadCrumb={setSelectedBreadCrumb}
+                  setProgress={setProgress}
+                />
+              )}
+            </div>
           </div>
         )}
       </div>
