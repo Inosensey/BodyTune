@@ -63,30 +63,35 @@ const MutateForm = ({ personaInfo }: props) => {
         {selectedOption === "" ? (
           <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
         ) : (
-          <div className="flex flex-col gap-4">
-            <BreadCrumbs
-              breadCrumbs={BreadCrumbsInitials}
-              setSelectedBreadCrumb={setSelectedBreadCrumb}
-              setProgress={setProgress}
-              selectedBreadCrumb={selectedBreadCrumb}
-            />
-            <div className="flex justify-center w-full">
-              {progress === 1 && (
+          <div className="flex flex-1 flex-col items-center gap-4 w-[1350px] max-w-[1350px]">
+            <div className="w-max">
+              <BreadCrumbs
+                breadCrumbs={BreadCrumbsInitials}
+                setSelectedBreadCrumb={setSelectedBreadCrumb}
+                setProgress={setProgress}
+                selectedBreadCrumb={selectedBreadCrumb}
+              />
+            </div>
+
+            {progress === 1 && (
+              <div className="flex justify-center w-full">
                 <FirstStep
                   personalInfo={personaInfo[0]}
                   setSelectedOption={setSelectedOption}
                   setProgress={setProgress}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                 />
-              )}
-              {progress === 2 && (
+              </div>
+            )}
+            {progress === 2 && (
+              <div className="flex flex-1 justify-center w-full">
                 <SecondStep
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
