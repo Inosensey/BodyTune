@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 // Components
@@ -187,9 +188,12 @@ const SecondStep = ({
           </div>
         )}
       </div>
-      {toggleAddMealForm && (
-        <AddMealForm setToggleAddMealForm={setToggleAddMealForm} />
-      )}
+
+      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+        {toggleAddMealForm && (
+          <AddMealForm setToggleAddMealForm={setToggleAddMealForm} />
+        )}
+      </AnimatePresence>
     </>
   );
 };
