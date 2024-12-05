@@ -63,7 +63,7 @@ const MutateForm = ({ personaInfo }: props) => {
         {selectedOption === "" ? (
           <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
         ) : (
-          <div className="flex flex-1 flex-col items-center gap-4 w-[1350px] max-w-[1350px]">
+          <div className="flex flex-1 flex-col items-center gap-4 w-full">
             <div className="w-max">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
