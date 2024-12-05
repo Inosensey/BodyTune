@@ -33,6 +33,8 @@ const config: Config = {
         textGray: "#e0e1dd", // Existing gray text color
         ctaBackground: "#3E8E41", // Forest Green (CTA background)
         ctaText: "#FFFFFF", // White (CTA text)
+        warningColor: "#dc3545",
+        fadedWarningColor: "#e05260",
 
         // Notifications theme
         newFollower: "#4A9B50",
