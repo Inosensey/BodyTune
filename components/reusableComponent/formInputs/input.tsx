@@ -6,6 +6,8 @@ import style from "@/css/reusableComponent/Input.module.css";
 // icons
 import MdiEyeOffOutline from "@/icons/MdiEyeOffOutline";
 import MdiEyeOutline from "@/icons/MdiEyeOutline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 
 interface inputParams<T> {
   state: T extends string ? T : string;
@@ -17,7 +19,9 @@ interface inputParams<T> {
   valid?: null | boolean | undefined;
   validationMessage?: string;
   autoComplete?: string;
+  deletableInput?: boolean;
   dataTestId?: string;
+  deleteInputFn?: () => void;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -37,24 +41,37 @@ export const Input = <T extends string | number>({
   valid,
   validationMessage,
   dataTestId,
+  deletableInput = false,
+  deleteInputFn,
 }: inputParams<T>) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
-    <div
-      className={`flex flex-col w-full laptop:w-full gap-2`}
-    >
-      
+    <div className={`flex flex-col w-full laptop:w-full gap-2`}>
       {label && (
-        <div className="flex flex-col">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
             <label className="phone:text-sm font-quickSand font-semibold">
               {label}
             </label>
-          {shortDescription && (
-            <p className="text-[#999999] text-xs font-semibold font-dmSans">
-              {shortDescription}
-            </p>
+            {shortDescription && (
+              <p className="text-[#999999] text-xs font-semibold font-dmSans">
+                {shortDescription}
+              </p>
+            )}
+          </div>
+          {deletableInput && (
+            <button
+              onClick={() => deleteInputFn && deleteInputFn()}
+              className="cursor-pointer flex gap-1 items-center bg-fadedWarningColor text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 justify-center transition duration-200 hover:bg-warningColor"
+            >
+              <p className="text-xs font-semibold font-dmSans">Remove</p>
+              <FontAwesomeIcon
+                icon={faXmarkCircle}
+                className="text-[#D3F0D1] text-lg"
+              />
+            </button>
           )}
         </div>
       )}
@@ -151,7 +168,10 @@ export const CheckBoxInput = <T extends string | number>({
         />
         <div className="flex flex-col w-9/12">
           {label && (
-            <label htmlFor={name} className="phone:text-sm font-quickSand font-semibold">
+            <label
+              htmlFor={name}
+              className="phone:text-sm font-quickSand font-semibold"
+            >
               {label}
             </label>
           )}
