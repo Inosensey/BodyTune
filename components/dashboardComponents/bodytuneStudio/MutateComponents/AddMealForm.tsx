@@ -184,8 +184,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
               <p className="font-dmSans font-semibold text-[#a3e09f] underline">
                 Ingredients
               </p>
-              <div className="flex flex-col gap-1 mt-2">
-                {Object.entries(ingredientInputVal!).map(([key, value]) => (
+              <div className="flex flex-col gap-3 mt-2">
+                {Object.entries(ingredientInputVal!).map(([key, value], index) => (
                   <div className="w-full" key={key}>
                     <Input
                       name={`${key}`}
@@ -200,6 +200,20 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       validationMessage={
                         ingredientValidations[key].validationMessage
                       }
+                      deletableInput={index === 0 ? false : true}
+                      deleteInputFn={() => {
+                        setIngredientInputVal((prev) => {
+                          const updatedIngredients = { ...prev };
+                          delete updatedIngredients[key];
+                          return updatedIngredients;
+                        });
+                
+                        setIngredientValidations((prev) => {
+                          const updatedValidations = { ...prev };
+                          delete updatedValidations[key];
+                          return updatedValidations;
+                        });
+                      }}
                     />
                   </div>
                 ))}
