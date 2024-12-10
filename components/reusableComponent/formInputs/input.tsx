@@ -27,6 +27,18 @@ interface inputParams<T> {
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
+interface textareaInputParam {
+  state: string;
+  name: string;
+  label: string;
+  cols: number;
+  rows: number;
+  valid?: null | boolean | undefined;
+  validationMessage?: string;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
+}
+
 export const Input = <T extends string | number>({
   state,
   type,
@@ -48,7 +60,7 @@ export const Input = <T extends string | number>({
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
-    <div className={`flex flex-col w-full laptop:w-full gap-2`}>
+    <div className={`flex flex-col w-full laptop:w-full gap-1`}>
       {label && (
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -120,6 +132,54 @@ export const Input = <T extends string | number>({
         <div
           className={`h-[4px] w-full bg-LightPrimary absolute ${style.inputUnderline}`}
         ></div>
+      </div>
+      {valid != null ? (
+        valid === true ? (
+          ""
+        ) : (
+          <span className="text-[0.75rem] text-red-500 font-bold font-dmSans">
+            {validationMessage}
+          </span>
+        )
+      ) : (
+        ""
+      )}
+    </div>
+  );
+};
+
+export const TextareaInput = ({
+  label,
+  name,
+  state,
+  cols,
+  rows,
+  onBlur,
+  onChange,
+  valid,
+  validationMessage,
+}: textareaInputParam) => {
+  return (
+    <div className="flex flex-col w-full laptop:w-full gap-2">
+      <label className="phone:text-sm font-quickSand font-semibold">
+        {label}
+      </label>
+
+      <div
+        className="w-full relative bg-primary overflow-hidden p-1"
+        style={{
+          border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
+        }}
+      >
+        <textarea
+          className="bg-transparent w-full text-white p-1 phone:text-sm font-quickSand resize-none"
+          name={name}
+          value={state}
+          cols={cols}
+          rows={rows}
+          onChange={onChange}
+          onBlur={onBlur}
+        ></textarea>
       </div>
       {valid != null ? (
         valid === true ? (
