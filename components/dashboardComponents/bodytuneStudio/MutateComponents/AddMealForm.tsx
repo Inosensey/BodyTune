@@ -5,7 +5,10 @@ import { motion } from "framer-motion";
 
 // Components
 import Overlay from "@/components/reusableComponent/Overlay";
-import { Input } from "@/components/reusableComponent/formInputs/input";
+import {
+  Input,
+  TextareaInput,
+} from "@/components/reusableComponent/formInputs/input";
 
 // Utils
 import FormValidation from "@/utils/validation";
@@ -24,15 +27,37 @@ interface props {
 }
 interface MealFormInputTypes {
   title: string;
+  shortDescription: string;
+  cookingInstruction: string;
 }
 interface MealFormValidations {
   title: {
     valid: boolean | null;
     validationMessage: string;
   };
+  shortDescription: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  cookingInstruction: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
 }
 interface IngredientInputTypes {
-  [key: string]: { id: string; name: string; value: string };
+  [key: string]: { 
+    id: string; 
+    ingredientName: string; 
+    ingredientValue: string 
+    caloriesName: string; 
+    caloriesValue: string 
+    proteinsName: string; 
+    proteinsValue: string 
+    carbsName: string; 
+    carbsValue: string 
+    fatName: string; 
+    fatValue: string 
+  };
 }
 interface IngredientInputValidation {
   [key: string]: {
@@ -44,9 +69,19 @@ interface IngredientInputValidation {
 // Initials
 const MealFormInputValInitial: MealFormInputTypes = {
   title: "",
+  shortDescription: "",
+  cookingInstruction: "",
 };
 const MealFormValidationInitials: MealFormValidations = {
   title: {
+    valid: null,
+    validationMessage: "",
+  },
+  shortDescription: {
+    valid: null,
+    validationMessage: "",
+  },
+  cookingInstruction: {
     valid: null,
     validationMessage: "",
   },
@@ -64,8 +99,16 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     useState<IngredientInputTypes>({
       [`ingredient${initUUID}`]: {
         id: initUUID,
-        name: `Ingredients 1`,
-        value: "",
+        ingredientName: `Ingredients 1`,
+        ingredientValue: "",
+        caloriesName: `Calories`,
+        caloriesValue: "",
+        proteinsName: `Proteins`,
+        proteinsValue: "",
+        carbsName: `Carbs`,
+        carbsValue: "",
+        fatName: `Fat`,
+        fatValue: "",
       },
     });
   const [ingredientValidations, setIngredientValidations] =
@@ -74,6 +117,16 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     });
 
   // Events
+  const handleTextareaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+
+    setMealFormInputVal((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
@@ -180,43 +233,126 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                 validationMessage={mealValidations.title.validationMessage}
               />
             </motion.div>
-            <div>
+            <motion.div className="w-full">
+              <TextareaInput
+                name="shortDescription"
+                state={MealFormInputVal.shortDescription}
+                label="Short Description (Optional)"
+                cols={30}
+                rows={3}
+                onChange={handleTextareaChange}
+                onBlur={handleTextareaChange}
+                valid={mealValidations.shortDescription.valid}
+                validationMessage={
+                  mealValidations.shortDescription.validationMessage
+                }
+              />
+            </motion.div>
+            <div className="flex flex-col laptop:w-[100%]">
               <p className="font-dmSans font-semibold text-[#a3e09f] underline">
                 Ingredients
               </p>
               <div className="flex flex-col gap-3 mt-2">
-                {Object.entries(ingredientInputVal!).map(([key, value], index) => (
-                  <div className="w-full" key={key}>
-                    <Input
-                      name={`${key}`}
-                      placeholder="Enter the Ingredient Name"
-                      state={value.value}
-                      type="text"
-                      label={value.name}
-                      onChange={onChangeIngredientInput}
-                      onBlur={onChangeIngredientInput}
-                      autoComplete="off"
-                      valid={ingredientValidations[key].valid}
-                      validationMessage={
-                        ingredientValidations[key].validationMessage
-                      }
-                      deletableInput={index === 0 ? false : true}
-                      deleteInputFn={() => {
-                        setIngredientInputVal((prev) => {
-                          const updatedIngredients = { ...prev };
-                          delete updatedIngredients[key];
-                          return updatedIngredients;
-                        });
-                
-                        setIngredientValidations((prev) => {
-                          const updatedValidations = { ...prev };
-                          delete updatedValidations[key];
-                          return updatedValidations;
-                        });
-                      }}
-                    />
-                  </div>
-                ))}
+                <div className="flex flex-col gap-2 pr-2 overflow-auto max-h-[250px]">
+                  {Object.entries(ingredientInputVal!).map(
+                    ([key, value], index) => (
+                      <div key={key}>
+                        <div className="w-full">
+                          <Input
+                            name={`${key}`}
+                            placeholder="Enter the Ingredient Name"
+                            state={value.ingredientValue}
+                            type="text"
+                            label={value.ingredientName}
+                            onChange={onChangeIngredientInput}
+                            onBlur={onChangeIngredientInput}
+                            autoComplete="off"
+                            valid={ingredientValidations[key].valid}
+                            validationMessage={
+                              ingredientValidations[key].validationMessage
+                            }
+                            deletableInput={index === 0 ? false : true}
+                            deleteInputFn={() => {
+                              setIngredientInputVal((prev) => {
+                                const updatedIngredients = { ...prev };
+                                delete updatedIngredients[key];
+                                return updatedIngredients;
+                              });
+
+                              setIngredientValidations((prev) => {
+                                const updatedValidations = { ...prev };
+                                delete updatedValidations[key];
+                                return updatedValidations;
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="w-full flex items-center justify-between mt-2">
+                            <div className="w-[24%]">
+                              <Input
+                                name={`${key}`}
+                                state={value.caloriesValue}
+                                type="text"
+                                label={value.caloriesName}
+                                onChange={onChangeIngredientInput}
+                                onBlur={onChangeIngredientInput}
+                                autoComplete="off"
+                                valid={ingredientValidations[key].valid}
+                                validationMessage={
+                                  ingredientValidations[key].validationMessage
+                                }
+                              />
+                          </div>
+                            <div className="w-[24%]">
+                              <Input
+                                name={`${key}`}
+                                state={value.proteinsValue}
+                                type="text"
+                                label={value.proteinsName}
+                                onChange={onChangeIngredientInput}
+                                onBlur={onChangeIngredientInput}
+                                autoComplete="off"
+                                valid={ingredientValidations[key].valid}
+                                validationMessage={
+                                  ingredientValidations[key].validationMessage
+                                }
+                              />
+                          </div>
+                            <div className="w-[24%]">
+                              <Input
+                                name={`${key}`}
+                                state={value.carbsValue}
+                                type="text"
+                                label={value.carbsName}
+                                onChange={onChangeIngredientInput}
+                                onBlur={onChangeIngredientInput}
+                                autoComplete="off"
+                                valid={ingredientValidations[key].valid}
+                                validationMessage={
+                                  ingredientValidations[key].validationMessage
+                                }
+                              />
+                          </div>
+                            <div className="w-[24%]">
+                              <Input
+                                name={`${key}`}
+                                state={value.fatValue}
+                                type="text"
+                                label={value.fatName}
+                                onChange={onChangeIngredientInput}
+                                onBlur={onChangeIngredientInput}
+                                autoComplete="off"
+                                valid={ingredientValidations[key].valid}
+                                validationMessage={
+                                  ingredientValidations[key].validationMessage
+                                }
+                              />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
                 <div className="w-max group">
                   <button
                     onClick={() => {
@@ -226,9 +362,17 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       setIngredientInputVal((prev) => ({
                         ...prev,
                         [`ingredient${uuid}`]: {
-                          id: `ingredient${uuid}`,
-                          name: `Ingredient ${ingredientCount}`,
-                          value: "",
+                          id: uuid,
+                          ingredientName: `Ingredient ${ingredientCount}`,
+                          ingredientValue: "",
+                          caloriesName: `Calories`,
+                          caloriesValue: "",
+                          proteinsName: `Proteins`,
+                          proteinsValue: "",
+                          carbsName: `Carbs`,
+                          carbsValue: "",
+                          fatName: `Fat`,
+                          fatValue: "",
                         },
                       }));
                       setIngredientValidations((prev) => ({
@@ -248,7 +392,58 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                     />
                   </button>
                 </div>
+                <div className="w-max">
+                  <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                    Nutrition:
+                  </label>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <div className="flex items-center gap-1">
+                      <p className="font-dmSans font-bold text-lightSecondary text-sm">
+                        Calories:
+                      </p>
+                      <p className="font-quickSand text-sm">0</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <p className="font-dmSans font-bold text-lightSecondary text-sm">
+                        Protein:
+                      </p>
+                      <p className="font-quickSand text-sm">0g</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <p className="font-dmSans font-bold text-lightSecondary text-sm">
+                        Carbs:
+                      </p>
+                      <p className="font-quickSand text-sm">0g</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <p className="font-dmSans font-bold text-lightSecondary text-sm">
+                        Fat:
+                      </p>
+                      <p className="font-quickSand text-sm">0g</p>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+            <div className="flex flex-col laptop:w-[100%]">
+              <p className="font-dmSans font-semibold text-[#a3e09f] underline">
+                How to Prepare
+              </p>
+              <motion.div className="w-full">
+                <TextareaInput
+                  name="cookingInstruction"
+                  state={MealFormInputVal.cookingInstruction}
+                  label="Cooking Instructions:"
+                  cols={30}
+                  rows={6}
+                  onChange={handleTextareaChange}
+                  onBlur={handleTextareaChange}
+                  valid={mealValidations.cookingInstruction.valid}
+                  validationMessage={
+                    mealValidations.cookingInstruction.validationMessage
+                  }
+                />
+              </motion.div>
             </div>
           </div>
         </div>
