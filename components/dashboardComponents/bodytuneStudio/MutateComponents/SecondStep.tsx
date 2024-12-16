@@ -33,6 +33,13 @@ const secondStepFieldsInit: secondStepInterface = {
   selectedMealPlan: 0,
   mealPlanName: "",
 };
+const ingredientsDummyData: Array<string> = [
+  "Chicken",
+  "Salt",
+  "Pepper",
+  "Butter",
+  "Paprika",
+];
 
 const SecondStep = ({
   setSelectedOption,
@@ -90,15 +97,21 @@ const SecondStep = ({
     // checkValidations(validationResult);
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
-      setSecondStepFieldsVal((prev) => ({ ...prev, mealPlanName: options[event.target.selectedIndex].text }));
+      setSecondStepFieldsVal((prev) => ({
+        ...prev,
+        mealPlanName: options[event.target.selectedIndex].text,
+      }));
     } else {
       setSecondStepFieldsVal((prev) => ({ ...prev, [name]: value }));
     }
   };
   return (
     <>
-      <div className=" flex flex-col w-min-[350px]">
-        <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
+      <div className="flex flex-col h-full w-min-[350px]">
+        <div
+          style={{ height: `${showMealPlanHtml && "27%"}` }}
+          className="bg-black rounded-t-lg pt-4 py-2 w-full"
+        >
           <div
             className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
             onClick={() => {
@@ -178,82 +191,150 @@ const SecondStep = ({
           </div>
         </div>
         {showMealPlanHtml && (
-          <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-2 w-[1150px]">
-            <motion.div className="phone:w-3/12">
-              <Input
-                name="mealPlanName"
-                placeholder="Enter the name of the Meal Plan"
-                state={secondStepFieldsVal.mealPlanName}
-                type="text"
-                label="Meal Plan Name"
-                onChange={onChange}
-                onBlur={onChange}
-                autoComplete="off"
-                valid={null}
-                validationMessage={""}
-              />
-            </motion.div>
-            <div className="flex gap-1">
-              {weekDates.map((date: string, index: number) => (
-                <div
-                  className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                  key={index}
-                  onClick={() => setSelectedWeekDate(date)}
-                >
-                  <p
-                    className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                      selectedWeekDate === date
-                        ? "text-[#ffffff]"
-                        : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                    }`}
+          <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-2 h-[70%] w-[1150px]">
+            <div className="h-[35%] flex flex-col gap-1">
+              <motion.div className="phone:w-3/12">
+                <Input
+                  name="mealPlanName"
+                  placeholder="Enter the name of the Meal Plan"
+                  state={secondStepFieldsVal.mealPlanName}
+                  type="text"
+                  label="Meal Plan Name"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={null}
+                  validationMessage={""}
+                />
+              </motion.div>
+              <div className="flex gap-1">
+                {weekDates.map((date: string, index: number) => (
+                  <div
+                    className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                    key={index}
+                    onClick={() => setSelectedWeekDate(date)}
                   >
-                    {date}
+                    <p
+                      className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                        selectedWeekDate === date
+                          ? "text-[#ffffff]"
+                          : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                      }`}
+                    >
+                      {date}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 flex gap-1 justify-between h-[69%]">
+              <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
+                <div className="w-[100%] flex flex-col justify-center items-center">
+                  <Image
+                    src="/assets/svg/healthy-1.svg"
+                    width={200}
+                    height={200}
+                    alt="Logo"
+                  />
+                  <p
+                    onClick={() => setToggleAddMealForm(true)}
+                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                  >
+                    Make a Breakfast Meal
                   </p>
                 </div>
-              ))}
-            </div>
-            <div className="flex-1 flex justify-between">
-              <div className="w-[33%] border-[1.5px] border-lightSecondary flex flex-col justify-center items-center">
-                <Image
-                  src="/assets/svg/healthy-1.svg"
-                  width={200}
-                  height={200}
-                  alt="Logo"
-                />
-                <p
-                  onClick={() => setToggleAddMealForm(true)}
-                  className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                >
-                  Make a Breakfast Meal
-                </p>
               </div>
-              <div className="w-[33%] border-[1.5px] border-lightSecondary flex flex-col justify-center items-center">
-                <Image
-                  src="/assets/svg/healthy-1.svg"
-                  width={200}
-                  height={200}
-                  alt="Logo"
-                />
-                <p
-                  onClick={() => setToggleAddMealForm(true)}
-                  className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                >
-                  Make a Lunch Meal
-                </p>
+              <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
+                <div className="w-[100%] flex flex-col justify-center items-center">
+                  <Image
+                    src="/assets/svg/healthy-1.svg"
+                    width={200}
+                    height={200}
+                    alt="Logo"
+                  />
+                  <p
+                    onClick={() => setToggleAddMealForm(true)}
+                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                  >
+                    Make a Lunch Meal
+                  </p>
+                </div>
               </div>
-              <div className="w-[33%] border-[1.5px] border-lightSecondary flex flex-col justify-center items-center">
-                <Image
-                  src="/assets/svg/healthy-1.svg"
-                  width={200}
-                  height={200}
-                  alt="Logo"
-                />
-                <p
-                  onClick={() => setToggleAddMealForm(true)}
-                  className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                >
-                  Make a Dinner Meal
-                </p>
+              <div className="w-[33%] h-[100%] overflow-auto flex flex-1 border-[1.5px] border-lightSecondary">
+                <div className="w-[100%] hidden flex-col justify-center items-center">
+                  <Image
+                    src="/assets/svg/healthy-1.svg"
+                    width={200}
+                    height={200}
+                    alt="Logo"
+                  />
+                  <p
+                    onClick={() => setToggleAddMealForm(true)}
+                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                  >
+                    Make a Dinner Meal
+                  </p>
+                </div>
+                <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
+                  <div className="flex justify-between w-[100%]">
+                    <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
+                      Delicious Chicken
+                    </p>
+                    <button className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary">
+                      Edit
+                    </button>
+                  </div>
+                  <div>
+                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                      Ingredients:
+                    </label>
+                    <div className="flex gap-1">
+                      <p className="font-dmSans text-white text-sm">
+                        {ingredientsDummyData.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                      Nutrition:
+                    </label>
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <div className="flex items-center gap-1">
+                        <p className="font-dmSans text-white text-sm">
+                          Calories:
+                        </p>
+                        <p className="font-quickSand text-sm">0</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <p className="font-dmSans text-white text-sm">
+                          Protein:
+                        </p>
+                        <p className="font-quickSand text-sm">0g</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <p className="font-dmSans text-white text-sm">Carbs:</p>
+                        <p className="font-quickSand text-sm">0g</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <p className="font-dmSans text-white text-sm">Fat:</p>
+                        <p className="font-quickSand text-sm">0g</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                      Cooking Instructions:
+                    </label>
+                    <p className="font-dmSans text-white text-sm">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Deserunt sapiente excepturi cupiditate! Maiores eligendi
+                      quia voluptatum necessitatibus aut et quos nostrum
+                      incidunt iusto sequi laudantium quidem non, provident
+                      tenetur qui.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
