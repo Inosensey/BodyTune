@@ -6,6 +6,7 @@ import DashboardHeader from "../../DashboardHeader";
 import BodyTuneCreationOptions from "./BodyTuneCreationOptions";
 import BreadCrumbs from "./BreadCrumbs";
 import SecondStep from "./SecondStep";
+import ThirdStep from "./ThirdStep";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -53,18 +54,20 @@ const MutateForm = ({ personaInfo }: props) => {
   const [progress, setProgress] = useState<number>(1);
 
   return (
-    <div className="flex flex-col gap-4 h-[99%]">
-      <DashboardHeader
-        headerText="Create Your BodyTune"
-        headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
-        Icon={SolarStarsMinimalisticLineDuotone}
-      />
-      <div className="flex flex-col flex-1 gap-8 items-center">
+    <div className="flex flex-col gap-2 h-[99%]">
+      <div className="h-[17%]">
+        <DashboardHeader
+          headerText="Create Your BodyTune"
+          headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
+          Icon={SolarStarsMinimalisticLineDuotone}
+        />
+      </div>
+      <div className="h-[83%] flex flex-col flex-1 gap-1 items-center">
         {selectedOption === "" ? (
           <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
         ) : (
-          <div className="flex flex-1 flex-col items-center gap-4 w-full">
-            <div className="w-max">
+          <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
+            <div className="w-max h-[14%]">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -84,8 +87,17 @@ const MutateForm = ({ personaInfo }: props) => {
               </div>
             )}
             {progress === 2 && (
-              <div className="flex flex-1 justify-center w-full">
+              <div className="flex flex-1 justify-center h-[85%] w-full">
                 <SecondStep
+                  setSelectedOption={setSelectedOption}
+                  setSelectedBreadCrumb={setSelectedBreadCrumb}
+                  setProgress={setProgress}
+                />
+              </div>
+            )}
+            {progress === 3 && (
+              <div className="flex flex-1 justify-center h-[85%] w-full">
+                <ThirdStep
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
