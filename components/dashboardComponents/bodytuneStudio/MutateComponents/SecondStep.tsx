@@ -109,7 +109,7 @@ const SecondStep = ({
     <>
       <div className="flex flex-col h-full w-min-[350px]">
         <div
-          style={{ height: `${showMealPlanHtml && "27%"}` }}
+          // style={{ height: `${showMealPlanHtml && "27%"}` }}
           className="bg-black rounded-t-lg pt-4 py-2 w-full"
         >
           <div
@@ -192,7 +192,7 @@ const SecondStep = ({
         </div>
         {showMealPlanHtml && (
           <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-2 h-[70%] w-[1150px]">
-            <div className="h-[35%] flex flex-col gap-1">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[25%] ">
               <motion.div className="phone:w-3/12">
                 <Input
                   name="mealPlanName"
@@ -227,8 +227,7 @@ const SecondStep = ({
                 ))}
               </div>
             </div>
-
-            <div className="flex-1 flex gap-1 justify-between h-[69%]">
+            <div className="flex-1 flex gap-1 justify-between phone:h-[69%] tablet:h-[89%]">
               <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
                 <div className="w-[100%] flex flex-col justify-center items-center">
                   <Image
