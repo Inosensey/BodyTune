@@ -5,15 +5,15 @@ import { useState } from "react";
 import DashboardHeader from "../../DashboardHeader";
 import BodyTuneCreationOptions from "./BodyTuneCreationOptions";
 import BreadCrumbs from "./BreadCrumbs";
-import SecondStep from "./SecondStep";
-import ThirdStep from "./ThirdStep";
+import SetGeneralInfo from "./SetGeneralInfo";
+import SetMealPlan from "./SetMealPlan";
+import SetExercisePlan from "./SetExercisePlan";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
 // Types
 import { TableRow } from "@/types/database.types";
-import FirstStep from "./FirstStep";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 interface props {
   personaInfo: TableRow<"personal_information">[];
@@ -54,8 +54,8 @@ const MutateForm = ({ personaInfo }: props) => {
   const [progress, setProgress] = useState<number>(1);
 
   return (
-    <div className="flex flex-col gap-2 h-[99%]">
-      <div className="h-[17%]">
+    <div className="flex flex-col gap-2 h-[99%] relative border-2">
+      <div className="phone:h-[17%] laptop:h-[12%]">
         <DashboardHeader
           headerText="Create Your BodyTune"
           headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
@@ -67,7 +67,7 @@ const MutateForm = ({ personaInfo }: props) => {
           <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="w-max h-[14%]">
+            <div className="w-max phone:h-[14%] laptop:h-[12%]">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -78,7 +78,7 @@ const MutateForm = ({ personaInfo }: props) => {
 
             {progress === 1 && (
               <div className="flex justify-center w-full">
-                <FirstStep
+                <SetGeneralInfo
                   personalInfo={personaInfo[0]}
                   setSelectedOption={setSelectedOption}
                   setProgress={setProgress}
@@ -88,7 +88,7 @@ const MutateForm = ({ personaInfo }: props) => {
             )}
             {progress === 2 && (
               <div className="flex flex-1 justify-center h-[85%] w-full">
-                <SecondStep
+                <SetMealPlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
@@ -97,7 +97,7 @@ const MutateForm = ({ personaInfo }: props) => {
             )}
             {progress === 3 && (
               <div className="flex flex-1 justify-center h-[85%] w-full">
-                <ThirdStep
+                <SetExercisePlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
