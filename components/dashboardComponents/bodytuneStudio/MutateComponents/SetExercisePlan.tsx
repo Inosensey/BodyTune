@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import {  useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 // components
 import { Input } from "@/components/reusableComponent/formInputs/input";
+import AddExerciseForm from "./AddExerciseForm";
 
 // Icons
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
@@ -37,11 +38,38 @@ const SetExercisePlan = ({
 }: props) => {
   // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
-  const [isZoomed, setIsZoomed] = useState(false);
+  // const [isZoomed, setIsZoomed] = useState<number | null>(null);
   const [showExercisePlanHtml, setShowExercisePanHtml] =
+    useState<boolean>(false);
+  const [toggleAddExerciseForm, setTogglAddExerciseForm] =
     useState<boolean>(false);
   const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
     useState<exercisePlanInterface>(exercisePlanInitials);
+  // const [initialPositions, setInitialPositions] = useState<
+  //   { x: number; y: number }[]
+  // >([]);
+  // const [divs, setDivs] = useState<number[]>([]);
+
+  // Refs for each motion.div
+  // const motionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // const addMotionDiv = () => {
+  //   setDivs((prev) => [...prev, prev.length]); // Adds new div identifier to trigger re-render
+  // };
+
+  // useEffect(() => {
+  //   // Capture initial positions when the motion divs are added
+  //   motionRefs.current.forEach((ref, index) => {
+  //     if (ref) {
+  //       const rect = ref.getBoundingClientRect();
+  //       setInitialPositions((prev) => {
+  //         const newPositions = [...prev];
+  //         newPositions[index] = { x: rect.left, y: rect.top };
+  //         return newPositions;
+  //       });
+  //     }
+  //   });
+  // }, [divs]);
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,40 +243,68 @@ const SetExercisePlan = ({
                 ))}
               </div>
             </div>
-            <div className="flex gap-1 overflow-auto justify-between phone:h-[69%] tablet:h-[89%] z-[99999999]">
-              <motion.div
-                className={`w-[33%] h-max flex border-[1.5px] border-lightSecondary font-dmSans text-sm cursor-pointer`}
-                style={{position: isZoomed ? "absolute" : "static"}}
-                // animate={
-                //   isZoomed
-                //     ? {
-                //         x: "-50%", // Compensate for alignment
-                //         y: "-50%", // Adjust vertical alignment
-                //         top: "50%", // Center vertically
-                //         left: "50%", // Center horizontally
-                //         height: "50%",
-                //         transition: { duration: 0.5, ease: "linear" },
-                //       }
-                //     : {
-                //         left: null, // Unset horizontal alignment
-                //         right: null,
-                //         top: null, // Unset vertical alignment
-                //         x: 0, // Reset translation
-                //         y: 0, // Reset translation
-                //         transition: { duration: 0.5, ease: "linear" },
-                //       }
-                // }
-                onClick={() => setIsZoomed((prev) => !prev)}
-              >
-                <p>
-                  The container of this text will scale to the center of the
-                  screen when clicked {isZoomed ? "true" : "false"}
-                </p>
-              </motion.div>
+            <div className="flex flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[89%]">
+              <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
+              <div className="h-[125px] phone:w-[96%] mdphone:w-11/12 laptop:w-[120px] group">
+                  <button
+                    onClick={() => setTogglAddExerciseForm(true)}
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                  >
+                    Add an Exercise
+                    <FontAwesomeIcon
+                      icon={faPlusSquare}
+                      className="text-white text-xl"
+                    />
+                  </button>
+                </div>
+                <div></div>
+                {/* {divs.map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-[80px] flex border-[1.5px] border-lightSecondary"
+                  >
+                    <motion.div
+                      className={`w-[80px] flex font-dmSans text-sm cursor-pointer absolute`}
+                      animate={
+                        isZoomed === index
+                          ? {
+                              x: "-50%", // Compensate for alignment
+                              y: "-50%", // Adjust vertical alignment
+                              top: "50%", // Center vertically
+                              left: "50%", // Center horizontally
+                              height: "50%",
+                              transition: { duration: 0.5, ease: "linear" },
+                            }
+                          : isZoomed === null
+                          ? {} // No animation when unzoomed and in flex
+                          : {
+                              x: initialPositions[index]?.x ?? 0,
+                              y: initialPositions[index]?.y ?? 0,
+                              transition: { duration: 0.5, ease: "linear" },
+                            }
+                      }
+                      onClick={() =>
+                        setIsZoomed((prev) => (prev === index ? null : index))
+                      }
+                    >
+                      <p>
+                        The container of this text will scale to the center of
+                        the screen when clicked
+                      </p>
+                    </motion.div>
+                  </div>
+                ))} */}
+              </div>
             </div>
           </div>
         )}
       </div>
+      
+      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+        {toggleAddExerciseForm && (
+          <AddExerciseForm setToggleAddExerciseForm={setTogglAddExerciseForm} />
+        )}
+      </AnimatePresence>
     </>
   );
 };
