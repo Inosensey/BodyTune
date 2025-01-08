@@ -92,7 +92,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
   const initUUID = crypto.randomUUID();
   const [mealValidations, setMealStepValidations] =
     useState<MealFormValidations>(MealFormValidationInitials);
-  const [MealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
+  const [mealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
     MealFormInputValInitial
   );
   const [ingredientInputVal, setIngredientInputVal] =
@@ -223,7 +223,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
               <Input
                 name="title"
                 placeholder="Enter the title of the Breakfast Meal"
-                state={MealFormInputVal.title}
+                state={mealFormInputVal.title}
                 type="text"
                 label="Breakfast Meal Name"
                 onChange={onChange}
@@ -236,7 +236,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
             <motion.div className="w-full">
               <TextareaInput
                 name="shortDescription"
-                state={MealFormInputVal.shortDescription}
+                state={mealFormInputVal.shortDescription}
                 label="Short Description (Optional)"
                 cols={30}
                 rows={3}
@@ -432,7 +432,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
               <motion.div className="w-full">
                 <TextareaInput
                   name="cookingInstruction"
-                  state={MealFormInputVal.cookingInstruction}
+                  state={mealFormInputVal.cookingInstruction}
                   label="Cooking Instructions:"
                   cols={30}
                   rows={6}
