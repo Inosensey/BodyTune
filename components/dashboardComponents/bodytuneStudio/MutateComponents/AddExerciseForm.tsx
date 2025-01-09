@@ -8,6 +8,8 @@ import Overlay from "@/components/reusableComponent/Overlay";
 import {
   Input,
   TextareaInput,
+  RadioButtonGroup,
+  CustomFileInput,
 } from "@/components/reusableComponent/formInputs/input";
 
 // Utils
@@ -30,6 +32,8 @@ interface ExerciseFormInputTypes {
   shortDescription: string;
   difficulty: string;
   measurementType: string;
+  measurement: string;
+  exerciseDemo: string;
 }
 interface ExerciseFormValidations {
   title: {
@@ -48,6 +52,19 @@ interface ExerciseFormValidations {
     valid: boolean | null;
     validationMessage: string;
   };
+  measurement: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  exerciseDemo: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+}
+interface radioButtonInfo {
+  name: string;
+  value: string;
+  label: string;
 }
 
 // Initials
@@ -56,6 +73,8 @@ const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
   shortDescription: "",
   difficulty: "",
   measurementType: "",
+  measurement: "",
+  exerciseDemo: "",
 };
 const ExerciseFormValidationInitials: ExerciseFormValidations = {
   title: {
@@ -74,17 +93,46 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     valid: null,
     validationMessage: "",
   },
+  measurement: {
+    valid: null,
+    validationMessage: "",
+  },
+  exerciseDemo: {
+    valid: null,
+    validationMessage: "",
+  },
 };
 
-// Variants
-const childContainer = {
-  hidden: {
-    opacity: 0,
+// Fixed values
+const difficultyRadioButtons: radioButtonInfo[] = [
+  {
+    label: "Beginner",
+    name: "difficulty",
+    value: "Beginner",
   },
-  show: {
-    opacity: 1,
+  {
+    label: "Amateur",
+    name: "difficulty",
+    value: "Amateur",
   },
-};
+  {
+    label: "Expert",
+    name: "difficulty",
+    value: "Expert",
+  },
+];
+const measurementTypeRadioButtons: radioButtonInfo[] = [
+  {
+    label: "Reps (Repetition-Based)",
+    name: "measurementType",
+    value: "Reps",
+  },
+  {
+    label: "Time (Time-Based)",
+    name: "measurementType",
+    value: "Time",
+  },
+];
 
 const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
   // States
@@ -126,6 +174,9 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
     checkValidations(validationResult);
 
     setExerciseFormInputVal((prev) => ({ ...prev, [name]: value }));
+  };
+  const fileInputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target);
   };
   const radioOnChange = (value: string, name: string) => {
     setExerciseFormInputVal((prev) => ({ ...prev, [name]: value }));
@@ -198,173 +249,67 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 }
               />
             </motion.div>
-            <motion.div variants={childContainer} className="w-full">
-              <div className="flex flex-col">
-                <label className="phone:text-sm font-quickSand font-semibold">
-                  Difficulty:
-                </label>
-              </div>
-              <div className="w-full flex items-center flex-wrap gap-2 mt-2">
-                <div
-                  className="flex items-center gap-1 cursor group font-dmSans"
-                  onClick={() => radioOnChange("Beginner", "difficulty")}
-                >
-                  <div
-                    style={{
-                      boxShadow:
-                        exerciseFormInputVal.difficulty === "Beginner"
-                          ? "0px 0px 0px 3.5px #4B6F64 inset"
-                          : "",
-                    }}
-                    className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
-                  ></div>
+            <RadioButtonGroup
+              radioOnChangeFn={radioOnChange}
+              radioButtonGroupLabel="Difficulty"
+              radioButtons={difficultyRadioButtons}
+              selectedRadio={exerciseFormInputVal.difficulty}
+            />
 
-                  <label className="phone:text-sm font-quickSand">
-                    Beginner
-                  </label>
-                  <input
-                    type="radio"
-                    name="difficulty"
-                    value="Beginner"
-                    className="hidden"
-                    onChange={() => console.log("wew")}
-                    checked={
-                      exerciseFormInputVal.difficulty === "Beginner"
-                        ? true
-                        : false
-                    }
-                  />
-                </div>
-                <div
-                  className="flex items-center gap-1 cursor group font-dmSans"
-                  onClick={() => radioOnChange("Amateur", "difficulty")}
-                >
-                  <div
-                    style={{
-                      boxShadow:
-                        exerciseFormInputVal.difficulty === "Amateur"
-                          ? "0px 0px 0px 3.5px #4B6F64 inset"
-                          : "",
-                    }}
-                    className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
-                  ></div>
-
-                  <label className="phone:text-sm font-quickSand">
-                    Amateur
-                  </label>
-                  <input
-                    type="radio"
-                    name="difficulty"
-                    value="Amateur"
-                    className="hidden"
-                    onChange={() => console.log("wew")}
-                    checked={
-                      exerciseFormInputVal.difficulty === "Amateur"
-                        ? true
-                        : false
-                    }
-                  />
-                </div>
-                <div
-                  className="flex items-center gap-1 cursor group font-dmSans"
-                  onClick={() => radioOnChange("Expert", "difficulty")}
-                >
-                  <div
-                    style={{
-                      boxShadow:
-                        exerciseFormInputVal.difficulty === "Expert"
-                          ? "0px 0px 0px 3.5px #4B6F64 inset"
-                          : "",
-                    }}
-                    className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
-                  ></div>
-
-                  <label className="phone:text-sm font-quickSand">
-                    Expert
-                  </label>
-                  <input
-                    type="radio"
-                    name="difficulty"
-                    value="Expert"
-                    className="hidden"
-                    onChange={() => console.log("wew")}
-                    checked={
-                      exerciseFormInputVal.difficulty === "Expert"
-                        ? true
-                        : false
-                    }
-                  />
-                </div>
-              </div>
-            </motion.div>
-            <motion.div variants={childContainer} className="w-full">
-              <div className="flex flex-col">
-                <label className="phone:text-sm font-quickSand font-semibold">
-                  Measurement Type:
-                </label>
-              </div>
-              <div className="w-full flex items-center flex-wrap gap-2 mt-2">
-                <div
-                  className="flex items-center gap-1 cursor group font-dmSans"
-                  onClick={() => radioOnChange("Reps", "measurementType")}
-                >
-                  <div
-                    style={{
-                      boxShadow:
-                        exerciseFormInputVal.measurementType === "Reps"
-                          ? "0px 0px 0px 3.5px #4B6F64 inset"
-                          : "",
-                    }}
-                    className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
-                  ></div>
-
-                  <label className="phone:text-sm font-quickSand">
-                    Reps (Repetition-Based)
-                  </label>
-                  <input
-                    type="radio"
-                    name="measurementType"
-                    value="Reps"
-                    className="hidden"
-                    onChange={() => console.log("wew")}
-                    checked={
-                      exerciseFormInputVal.measurementType === "Reps"
-                        ? true
-                        : false
-                    }
-                  />
-                </div>
-                <div
-                  className="flex items-center gap-1 cursor group font-dmSans"
-                  onClick={() => radioOnChange("Time", "measurementType")}
-                >
-                  <div
-                    style={{
-                      boxShadow:
-                        exerciseFormInputVal.measurementType === "Time"
-                          ? "0px 0px 0px 3.5px #4B6F64 inset"
-                          : "",
-                    }}
-                    className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
-                  ></div>
-
-                  <label className="phone:text-sm font-quickSand">
-                    Time (Time-Based)
-                  </label>
-                  <input
-                    type="radio"
-                    name="measurementType"
-                    value="Time"
-                    className="hidden"
-                    onChange={() => console.log("wew")}
-                    checked={
-                      exerciseFormInputVal.measurementType === "Time"
-                        ? true
-                        : false
-                    }
-                  />
-                </div>
-              </div>
+            <RadioButtonGroup
+              radioOnChangeFn={radioOnChange}
+              radioButtonGroupLabel="Measurement Type"
+              radioButtons={measurementTypeRadioButtons}
+              selectedRadio={exerciseFormInputVal.measurementType}
+            />
+            {exerciseFormInputVal.measurementType === "Reps" && (
+              <motion.div className="w-1/2">
+                <Input
+                  name="measurement"
+                  placeholder="Reps per set"
+                  state={exerciseFormInputVal.measurement}
+                  type="text"
+                  label="Repitition"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={exerciseValidations.measurement.valid}
+                  validationMessage={
+                    exerciseValidations.measurement.validationMessage
+                  }
+                />
+              </motion.div>
+            )}
+            {exerciseFormInputVal.measurementType === "Time" && (
+              <motion.div className="w-1/2">
+                <Input
+                  name="measurement"
+                  placeholder="Duration per set"
+                  state={exerciseFormInputVal.measurement}
+                  type="text"
+                  label="Time"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={exerciseValidations.measurement.valid}
+                  validationMessage={
+                    exerciseValidations.measurement.validationMessage
+                  }
+                />
+              </motion.div>
+            )}
+            <motion.div className="w-1/2">
+              <CustomFileInput
+                customButtonName="Choose a File"
+                label="Upload an image or GIF to show the exercise."
+                name="exerciseDemo"
+                state={exerciseFormInputVal.exerciseDemo}
+                valid={exerciseValidations.exerciseDemo.valid}
+                validationMessage={
+                  exerciseValidations.exerciseDemo.validationMessage
+                }
+                onChange={fileInputOnChange}
+              />
             </motion.div>
           </div>
         </div>
