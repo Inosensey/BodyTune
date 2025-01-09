@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import style from "@/css/reusableComponent/Input.module.css";
 
 // icons
@@ -37,6 +38,27 @@ interface textareaInputParam {
   validationMessage?: string;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
+}
+interface fileInputParam {
+  state: string;
+  name: string;
+  customButtonName: string;
+  label: string;
+  valid?: null | boolean | undefined;
+  validationMessage?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface radioButtonInfo {
+  name: string;
+  value: string;
+  label: string;
+}
+interface radioButtonGroupParams {
+  radioOnChangeFn: (radioButtonVal: string, stateName: string) => void;
+  selectedRadio: string;
+  radioButtonGroupLabel: string;
+  radioButtons: radioButtonInfo[];
 }
 
 export const Input = <T extends string | number>({
@@ -247,6 +269,116 @@ export const CheckBoxInput = <T extends string | number>({
           ""
         ) : (
           <span className="text-[0.75rem] text-red-500 font-bold">
+            {validationMessage}
+          </span>
+        )
+      ) : (
+        ""
+      )}
+    </div>
+  );
+};
+
+export const RadioButtonGroup = ({
+  radioOnChangeFn,
+  radioButtonGroupLabel,
+  radioButtons,
+  selectedRadio,
+}: radioButtonGroupParams) => {
+  // Variants
+  const childContainer = {
+    hidden: {
+      opacity: 0,
+    },
+    show: {
+      opacity: 1,
+    },
+  };
+  return (
+    <motion.div variants={childContainer} className="w-full">
+      <div className="flex flex-col">
+        <label className="phone:text-sm font-quickSand font-semibold">
+          {radioButtonGroupLabel}:
+        </label>
+      </div>
+      <div className="w-full flex items-center flex-wrap gap-2 mt-2">
+        {radioButtons.map((radioButtonInfo: radioButtonInfo, index: number) => (
+          <div
+            key={index}
+            className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
+            onClick={() =>
+              radioOnChangeFn(radioButtonInfo.value, radioButtonInfo.name)
+            }
+          >
+            <div
+              style={{
+                boxShadow:
+                  selectedRadio === radioButtonInfo.value
+                    ? "0px 0px 0px 3.5px #4B6F64 inset"
+                    : "",
+              }}
+              className="w-4 h-4 rounded-2xl shadow-[0px_0px_0px_2px_#fff_inset] group-hover:shadow-[0px_0px_0px_2px_#4B6F64_inset]"
+            ></div>
+
+            <label className="phone:text-sm font-quickSand cursor-pointer">
+              {radioButtonInfo.label}
+            </label>
+            <input
+              type="radio"
+              name={radioButtonInfo.name}
+              value={radioButtonInfo.value}
+              className="hidden"
+              onChange={() => console.log("wew")}
+              checked={selectedRadio === radioButtonInfo.value ? true : false}
+            />
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+export const CustomFileInput = ({
+  label,
+  name,
+  state,
+  valid,
+  customButtonName,
+  validationMessage,
+  onChange,
+}: fileInputParam) => {
+  return (
+    <div className="flex flex-col w-full laptop:w-full gap-2">
+      <label className="phone:text-sm font-quickSand font-semibold">
+        {label}
+      </label>
+
+      <div
+        className="w-full relative"
+        style={{
+          border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
+        }}
+      >
+        <input
+          type="file"
+          name={name}
+          id={name}
+          value={state}
+          onChange={onChange}
+          className="hidden"
+        />
+        <label
+          className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+          htmlFor={name}
+        >
+          {customButtonName}
+        </label>
+      </div>
+      {valid != null ? (
+        valid === true ? (
+          ""
+        ) : (
+          <span className="text-[0.75rem] text-red-500 font-bold font-dmSans">
             {validationMessage}
           </span>
         )
