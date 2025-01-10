@@ -1,5 +1,5 @@
 "use client";
-import {  useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 // components
@@ -207,8 +207,8 @@ const SetExercisePlan = ({
           </div>
         </div>
         {showExercisePlanHtml && (
-          <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-3 h-[70%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[25%] ">
+          <div className="flex flex-col bg-black flex-1 rounded-b-lg pt-2 pb-4 px-3">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[22%]">
               <motion.div className="phone:w-5/12">
                 <Input
                   name="exercisePlanName"
@@ -243,12 +243,12 @@ const SetExercisePlan = ({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[89%]">
+            <div className="flex flex-col gap-1 overflow-auto phone:h-[69%] tablet:h-max">
               <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
-              <div className="h-[125px] phone:w-[96%] mdphone:w-11/12 laptop:w-[120px] group">
+                <div className="h-[125px] phone:w-[96%] mdphone:w-11/12 laptop:w-[120px] group">
                   <button
                     onClick={() => setTogglAddExerciseForm(true)}
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md flex flex-col-reverse items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
                   >
                     Add an Exercise
                     <FontAwesomeIcon
@@ -257,7 +257,6 @@ const SetExercisePlan = ({
                     />
                   </button>
                 </div>
-                <div></div>
                 {/* {divs.map((_, index) => (
                   <div
                     key={index}
@@ -299,7 +298,7 @@ const SetExercisePlan = ({
           </div>
         )}
       </div>
-      
+
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddExerciseForm && (
           <AddExerciseForm setToggleAddExerciseForm={setTogglAddExerciseForm} />
