@@ -249,7 +249,7 @@ const SetExercisePlan = ({
                 <div className="hidden mt-2 phone:h-[85px] phone:w-[96%] mdphone:w-11/12 laptop:w-[125px] group">
                   <button
                     onClick={() => setTogglAddExerciseForm(true)}
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md flex flex-col-reverse items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
                   >
                     Add an Exercise
                     <FontAwesomeIcon
@@ -341,6 +341,7 @@ const SetExercisePlan = ({
           </div>
         )}
       </div>
+
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddExerciseForm && (

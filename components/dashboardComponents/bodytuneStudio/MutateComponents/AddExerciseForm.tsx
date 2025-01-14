@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Components
 import Overlay from "@/components/reusableComponent/Overlay";
@@ -24,6 +25,7 @@ import {
 
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
+import TablerBarbell from "@/icons/TablerBarbellLight";
 interface props {
   setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -34,6 +36,7 @@ interface ExerciseFormInputTypes {
   measurementType: string;
   measurement: string;
   exerciseDemo: string;
+  youtubeLink: string;
 }
 interface ExerciseFormValidations {
   title: {
@@ -60,6 +63,10 @@ interface ExerciseFormValidations {
     valid: boolean | null;
     validationMessage: string;
   };
+  youtubeLink: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
 }
 interface radioButtonInfo {
   name: string;
@@ -75,6 +82,7 @@ const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
   measurementType: "",
   measurement: "",
   exerciseDemo: "",
+  youtubeLink: "",
 };
 const ExerciseFormValidationInitials: ExerciseFormValidations = {
   title: {
@@ -98,6 +106,10 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     validationMessage: "",
   },
   exerciseDemo: {
+    valid: null,
+    validationMessage: "",
+  },
+  youtubeLink: {
     valid: null,
     validationMessage: "",
   },
@@ -140,6 +152,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
     useState<ExerciseFormValidations>(ExerciseFormValidationInitials);
   const [exerciseFormInputVal, setExerciseFormInputVal] =
     useState<ExerciseFormInputTypes>(ExerciseFormInputValInitial);
+  const [demoSrc, setDemoSrc] = useState<string | null>(null);
 
   // Events
   const handleTextareaChange = (
@@ -176,7 +189,37 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
     setExerciseFormInputVal((prev) => ({ ...prev, [name]: value }));
   };
   const fileInputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const files = event.target.files;
+
+    if (files && files[0]) {
+      const file = files[0];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Invalid file type. Please select a JPEG, PNG, or GIF file.");
+        event.target.value = "";
+        setExerciseStepValidations((prev) => ({
+          ...prev,
+          exerciseDemo: {
+            valid: false,
+            validationMessage:
+              "Invalid file type. Please select a JPEG, PNG, or GIF file",
+          },
+        }));
+        return;
+      } else {
+        setExerciseStepValidations((prev) => ({
+          ...prev,
+          exerciseDemo: { valid: true, validationMessage: "" },
+        }));
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log("File content as base64:", e.target?.result);
+        setDemoSrc(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
   const radioOnChange = (value: string, name: string) => {
     setExerciseFormInputVal((prev) => ({ ...prev, [name]: value }));
@@ -298,7 +341,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 />
               </motion.div>
             )}
-            <motion.div className="w-1/2">
+            <motion.div className="w-1/2 flex flex-col gap-2">
               <CustomFileInput
                 customButtonName="Choose a File"
                 label="Upload an image or GIF to show the exercise."
@@ -310,7 +353,46 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 }
                 onChange={fileInputOnChange}
               />
+              {demoSrc && (
+                <Image
+                  src={demoSrc}
+                  width={200}
+                  height={200}
+                  alt="Preview"
+                  className="w-full h-44 object-cover"
+                />
+              )}
             </motion.div>
+            <motion.div className="w-8/12">
+              <Input
+                name="youtubeLink"
+                placeholder="Enter the Youtube link to the Exercise"
+                state={exerciseFormInputVal.youtubeLink}
+                type="text"
+                label="Youtube Link (Optional)"
+                onChange={onChange}
+                onBlur={onChange}
+                autoComplete="off"
+                valid={exerciseValidations.youtubeLink.valid}
+                validationMessage={
+                  exerciseValidations.youtubeLink.validationMessage
+                }
+              />
+            </motion.div>
+          </div>
+          <div className="w-max mx-auto mt-4">
+            <motion.button
+              whileHover={{
+                scale: 1.1,
+                transition: { duration: 0.2 },
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="flex gap-1 items-center bg-secondary text-white font-quickSand font-semibold w-full rounded-md p-1 px-2"
+              type="button"
+            >
+              <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
+              Create Exercise
+            </motion.button>
           </div>
         </div>
       </div>
