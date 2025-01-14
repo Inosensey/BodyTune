@@ -8,6 +8,7 @@ import BreadCrumbs from "./BreadCrumbs";
 import SetGeneralInfo from "./SetGeneralInfo";
 import SetMealPlan from "./SetMealPlan";
 import SetExercisePlan from "./SetExercisePlan";
+import SetVisibility from "./SetVisibility";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -54,7 +55,7 @@ const MutateForm = ({ personaInfo }: props) => {
   const [progress, setProgress] = useState<number>(1);
 
   return (
-    <div className="flex flex-col gap-2 h-[99%] relative border-2">
+    <div className="flex flex-col gap-2 h-[99%] relative">
       <div className="phone:h-[17%] laptop:h-[12%]">
         <DashboardHeader
           headerText="Create Your BodyTune"
@@ -98,6 +99,15 @@ const MutateForm = ({ personaInfo }: props) => {
             {progress === 3 && (
               <div className="flex flex-1 justify-center h-[85%] w-full">
                 <SetExercisePlan
+                  setSelectedOption={setSelectedOption}
+                  setSelectedBreadCrumb={setSelectedBreadCrumb}
+                  setProgress={setProgress}
+                />
+              </div>
+            )}
+            {progress === 4 && (
+              <div className="flex flex-1 justify-center h-[85%] w-full">
+                <SetVisibility
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
