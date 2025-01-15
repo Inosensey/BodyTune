@@ -74,7 +74,7 @@ const Sidebar = () => {
             </p>
           </motion.div>
         </Link>
-        <Link data-testid="bodytune-workouts-link" href={"#"}>
+        <Link data-testid="bodytune-workouts-link" href={"/dashboard/workouts"}>
           <motion.div
             whileHover={{
               x: "10px",
