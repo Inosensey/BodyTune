@@ -56,7 +56,7 @@ const MutateForm = ({ personaInfo }: props) => {
 
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
-      <div className="phone:h-[17%] laptop:h-[12%]">
+      <div className="phone:h-[17%] laptop:h-[16%]">
         <DashboardHeader
           headerText="Create Your BodyTune"
           headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
@@ -68,7 +68,7 @@ const MutateForm = ({ personaInfo }: props) => {
           <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="w-max phone:h-[14%] laptop:h-[12%]">
+            <div className="w-max phone:h-[14%] laptop:h-[15%]">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
