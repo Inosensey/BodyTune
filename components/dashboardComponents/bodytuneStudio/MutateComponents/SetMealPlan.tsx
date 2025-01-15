@@ -192,7 +192,7 @@ const SetMealPlan = ({
         </div>
         {showMealPlanHtml && (
           <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-2 h-[70%] w-[1150px]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[25%] ">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[32%]">
               <motion.div className="phone:w-3/12">
                 <Input
                   name="mealPlanName"
@@ -227,7 +227,7 @@ const SetMealPlan = ({
                 ))}
               </div>
             </div>
-            <div className="flex-1 flex gap-1 justify-between phone:h-[69%] tablet:h-[89%]">
+            <div className="flex gap-1 justify-between flex-1">
               <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
                 <div className="w-[100%] flex flex-col justify-center items-center">
                   <Image
