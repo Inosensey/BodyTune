@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from 'next/navigation'
+
 // Types
 interface props {
   headerText: string;
@@ -8,13 +10,15 @@ interface props {
 }
 
 const DashboardHeader = ({ headerText, headerDescription, Icon }: props) => {
+  const router = useRouter();
+
   return (
     <div className="bg-black w-full p-4 rounded-lg">
       <div className="flex flex-col gap-1">
-        <button className="font-dmSans text-sm text-lightSecondary underline w-max cursor-pointer font-semibold">
+        <button onClick={() => router.back()} className="font-dmSans text-sm text-lightSecondary underline w-max cursor-pointer font-semibold">
           Back
         </button>
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <p className="text-lg font-dmSans font-bold text-lightSecondary">
             {headerText}
           </p>
