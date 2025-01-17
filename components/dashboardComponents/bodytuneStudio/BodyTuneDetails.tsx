@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Components
 import Overlay from "@/components/reusableComponent/Overlay";
@@ -35,10 +36,32 @@ const fadeVariants = {
     opacity: 1,
   },
 };
+const exerciseContainerAnimationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+const exerciseAnimationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+  },
+};
 
 const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
   // States
   const [selectedMealTab, setSelectedMealTab] = useState<string>("Breakfast");
+  const [selectedMealPlanDate, setSelectedMealPlanDate] =
+    useState<string>("Monday");
   const [selectedExerciseDate, setSelectedExerciseDate] =
     useState<string>("Monday");
 
@@ -104,31 +127,52 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                   </div>
                 </div>
                 <div className="w-full flex flex-col gap-1 h-[75%]">
-                  <div className="flex gap-1 h-max">
-                    {mealPlanTabs.map((meal: string, index: number) => (
-                      <div
-                        className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                        key={index}
-                        onClick={() => setSelectedMealTab(meal)}
-                      >
-                        <p
-                          className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                            selectedMealTab === meal
-                              ? "text-[#ffffff]"
-                              : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                          }`}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex h-max gap-1">
+                      {weekDates.map((date: string, index: number) => (
+                        <div
+                          className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                          key={index}
+                          onClick={() => setSelectedMealPlanDate(date)}
                         >
-                          {meal}
-                        </p>
-                      </div>
-                    ))}
+                          <p
+                            className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                              selectedMealPlanDate === date
+                                ? "text-[#ffffff]"
+                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                            }`}
+                          >
+                            {date}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-1 h-max">
+                      {mealPlanTabs.map((meal: string, index: number) => (
+                        <div
+                          className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                          key={index}
+                          onClick={() => setSelectedMealTab(meal)}
+                        >
+                          <p
+                            className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                              selectedMealTab === meal
+                                ? "text-[#ffffff]"
+                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                            }`}
+                          >
+                            {meal}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   {selectedMealTab === "Breakfast" && (
                     <motion.div
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 px-2 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto"
+                      className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto"
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -414,6 +458,115 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                         </p>
                       </div>
                     ))}
+                  </div>
+                  <div className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto">
+                    <motion.div
+                      variants={exerciseContainerAnimationVariant}
+                      initial="hidden"
+                      animate="show"
+                      className="flex flex-wrap gap-2 h-[100%] w-[100%] overflow-auto"
+                    >
+                      <motion.div
+                        variants={exerciseAnimationVariant}
+                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                      >
+                        <div className="flex flex-col">
+                          <p className="font-bold text-[#a3e09f]">
+                            Bench Press
+                          </p>
+                          <p className="font-semibold">Beginner</p>
+                          <p className="font-semibold">3 sets x 8–10 reps</p>
+                          <p className="font-semibold">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline">
+                            Bench Press Youtube Link
+                          </p>
+                        </div>
+                        <div className="w-[100%] h-36">
+                          <Image
+                            width={200}
+                            height={200}
+                            src="/assets/svg/healthy-1.svg"
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </motion.div>
+                      <motion.div
+                        variants={exerciseAnimationVariant}
+                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                      >
+                        <div className="flex flex-col">
+                          <p className="font-bold text-[#a3e09f]">
+                            Bench Press
+                          </p>
+                          <p className="font-semibold">Beginner</p>
+                          <p className="font-semibold">3 sets x 8–10 reps</p>
+                          <p className="font-semibold">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline">
+                            Bench Press Youtube Link
+                          </p>
+                        </div>
+                        <div className="w-[100%] h-36">
+                          <Image
+                            width={200}
+                            height={200}
+                            src="/assets/svg/healthy-1.svg"
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </motion.div>
+                      <motion.div
+                        variants={exerciseAnimationVariant}
+                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                      >
+                        <div className="flex flex-col">
+                          <p className="font-bold text-[#a3e09f]">
+                            Bench Press
+                          </p>
+                          <p className="font-semibold">Beginner</p>
+                          <p className="font-semibold">3 sets x 8–10 reps</p>
+                          <p className="font-semibold">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline">
+                            Bench Press Youtube Link
+                          </p>
+                        </div>
+                        <div className="w-[100%] h-36">
+                          <Image
+                            width={200}
+                            height={200}
+                            src="/assets/svg/healthy-1.svg"
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </motion.div>
+                      <motion.div
+                        variants={exerciseAnimationVariant}
+                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                      >
+                        <div className="flex flex-col">
+                          <p className="font-bold text-[#a3e09f]">
+                            Bench Press
+                          </p>
+                          <p className="font-semibold">Beginner</p>
+                          <p className="font-semibold">3 sets x 8–10 reps</p>
+                          <p className="font-semibold">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline">
+                            Bench Press Youtube Link
+                          </p>
+                        </div>
+                        <div className="w-[100%] h-36">
+                          <Image
+                            width={200}
+                            height={200}
+                            src="/assets/svg/healthy-1.svg"
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </motion.div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
