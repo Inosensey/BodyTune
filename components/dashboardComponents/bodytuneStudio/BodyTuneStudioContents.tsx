@@ -9,6 +9,10 @@ import { AnimatePresence } from "framer-motion";
 import BodyTuneCard from "./BodyTuneCard";
 import BodyTuneDetails from "./BodyTuneDetails";
 
+// Icons
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
 const pageResultPreferences: Array<number | string> = [
@@ -61,9 +65,20 @@ const BodyTuneStudioContents = () => {
         <div className="w-full h-full">
           <div className="flex flex-col w-full h-full">
             <div className="flex gap-1 items-center justify-between">
-              <p className="text-lg font-dmSans font-bold text-lightSecondary">
-                BodyTune Lists
-              </p>
+              <div className="w-max flex gap-1 items-center">
+                <p className="text-lg font-dmSans font-bold text-lightSecondary">
+                  BodyTune Lists
+                </p>
+                <Link href={"bodytune/create"}>
+                  <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-2 py-1 text-sm rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
+                    Add a BodyTune
+                    <FontAwesomeIcon
+                      icon={faPlusSquare}
+                      className="text-white text-xl"
+                    />
+                  </button>
+                </Link>
+              </div>
               <div className="flex gap-1">
                 <div
                   className={`bg-lightPrimary px-2 py-1 flex w-[190px] items-center gap-2`}
