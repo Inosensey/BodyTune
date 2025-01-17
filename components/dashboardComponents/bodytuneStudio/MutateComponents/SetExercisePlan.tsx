@@ -263,6 +263,7 @@ const SetExercisePlan = ({
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
+                    <p className="truncate">Equipment Name</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
@@ -271,6 +272,7 @@ const SetExercisePlan = ({
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
+                    <p className="truncate">Equipment Name</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
@@ -279,6 +281,7 @@ const SetExercisePlan = ({
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
+                    <p className="truncate">Equipment Name</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
@@ -287,6 +290,7 @@ const SetExercisePlan = ({
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
+                    <p className="truncate">Equipment Name</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
@@ -295,6 +299,7 @@ const SetExercisePlan = ({
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
+                    <p className="truncate">Equipment Name</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
