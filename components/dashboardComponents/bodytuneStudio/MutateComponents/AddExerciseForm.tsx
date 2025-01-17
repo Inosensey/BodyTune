@@ -33,6 +33,7 @@ interface ExerciseFormInputTypes {
   title: string;
   shortDescription: string;
   difficulty: string;
+  equipment: string;
   measurementType: string;
   measurement: string;
   exerciseDemo: string;
@@ -48,6 +49,10 @@ interface ExerciseFormValidations {
     validationMessage: string;
   };
   difficulty: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  equipment: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -79,6 +84,7 @@ const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
   title: "",
   shortDescription: "",
   difficulty: "",
+  equipment: "",
   measurementType: "",
   measurement: "",
   exerciseDemo: "",
@@ -94,6 +100,10 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     validationMessage: "",
   },
   difficulty: {
+    valid: null,
+    validationMessage: "",
+  },
+  equipment: {
     valid: null,
     validationMessage: "",
   },
@@ -290,6 +300,20 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 validationMessage={
                   exerciseValidations.shortDescription.validationMessage
                 }
+              />
+            </motion.div>
+            <motion.div className="w-full">
+              <Input
+                name="equipment"
+                placeholder="Enter the Equipment of the Exercise"
+                state={exerciseFormInputVal.equipment}
+                type="text"
+                label="Equipment"
+                onChange={onChange}
+                onBlur={onChange}
+                autoComplete="off"
+                valid={exerciseValidations.equipment.valid}
+                validationMessage={exerciseValidations.equipment.validationMessage}
               />
             </motion.div>
             <RadioButtonGroup
