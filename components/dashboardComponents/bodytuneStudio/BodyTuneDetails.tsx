@@ -84,7 +84,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
             </div>
           </div>
           <div className="flex flex-col gap-1 laptop:h-[95%]">
-            <div className="flex flex-col gap-2 bg-primary w-max p-4 rounded-md font-quickSand font-bold h-[18%] ">
+            <div className="flex flex-col gap-2 bg-primary w-max p-4 rounded-md font-quickSand font-bold h-[20%] ">
               <p className="font-dmSans">
                 Plan Name:{" "}
                 <span className="font-normal text-lightSecondary">
@@ -104,7 +104,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                 </span>
               </p>
             </div>
-            <div className="w-full h-[82%] flex gap-2 ">
+            <div className="w-full h-[80%] flex gap-2 ">
               <div className="p-4 w-[50%] flex flex-col h-[100%] bg-primary gap-1">
                 <div className="flex flex-col gap-1 h-[25%] overflow-auto">
                   <p className="font-quickSand font-bold">
@@ -468,16 +468,16 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                     >
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold">Beginner</p>
-                          <p className="font-semibold">3 sets x 8–10 reps</p>
-                          <p className="font-semibold">Barbell</p>
-                          <p className="font-semibold cursor-pointer underline">
+                          <p className="font-semibold laptop:text-sm">Beginner</p>
+                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
+                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
                         </div>
@@ -493,16 +493,16 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold">Beginner</p>
-                          <p className="font-semibold">3 sets x 8–10 reps</p>
-                          <p className="font-semibold">Barbell</p>
-                          <p className="font-semibold cursor-pointer underline">
+                          <p className="font-semibold laptop:text-sm">Beginner</p>
+                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
+                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
                         </div>
@@ -518,16 +518,16 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold">Beginner</p>
-                          <p className="font-semibold">3 sets x 8–10 reps</p>
-                          <p className="font-semibold">Barbell</p>
-                          <p className="font-semibold cursor-pointer underline">
+                          <p className="font-semibold laptop:text-sm">Beginner</p>
+                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
+                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
                         </div>
@@ -543,16 +543,16 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 w-[225px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold">Beginner</p>
-                          <p className="font-semibold">3 sets x 8–10 reps</p>
-                          <p className="font-semibold">Barbell</p>
-                          <p className="font-semibold cursor-pointer underline">
+                          <p className="font-semibold laptop:text-sm">Beginner</p>
+                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
+                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
                         </div>
