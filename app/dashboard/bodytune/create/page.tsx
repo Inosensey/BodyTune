@@ -23,11 +23,11 @@ const CreateBodyTunePage = async () => {
       cache: "force-cache",
     }
   );
-  const personalInformation: { response: TableRow<"personal_information"> } = await res.json();
+  const personalInformation: { response: TableRow<"personal_information">[] } = await res.json();
 
   return (
     <div className="px-4 mt-4 w-full">
-      <MutateForm personaInfo={personalInformation.response} />
+      <MutateForm personalInfo={personalInformation.response} />
     </div>
   );
 };
