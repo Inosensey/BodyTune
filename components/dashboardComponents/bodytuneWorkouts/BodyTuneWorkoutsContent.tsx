@@ -16,11 +16,11 @@ const BodyTuneWorkoutsContent = () => {
         <p className="w-max text-xl">
           You don&apos;t have any{" "}
           <span className="font-bold font-quickSand text-secondary">
-            Workouts
+            Workout Plans
           </span>{" "}
           yet.
         </p>
-        <Link href={"bodytune/create"}>
+        <Link href={"workouts/create"}>
           <p className="w-max text-lg text-lightSecondary underline cursor-pointer">
             Create your first one now!
           </p>
