@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
+
 // Components
-import DashboardHeader from "../../DashboardHeader";
-import BodyTuneCreationOptions from "./BodyTuneCreationOptions";
-import BreadCrumbs from "./BreadCrumbs";
-import SetGeneralInfo from "./SetGeneralInfo";
-import SetMealPlan from "./SetMealPlan";
-import SetExercisePlan from "./SetExercisePlan";
-import SetVisibility from "./SetVisibility";
+import DashboardHeader from "@/components/dashboardComponents/DashboardHeader";
+import BreadCrumbs from "@/components/dashboardComponents/reusableComponents/BreadCrumbs";
+import SetGeneralInfo from "@/components/dashboardComponents/reusableComponents/SetGeneralInfo";
+import SetMealPlan from "@/components/dashboardComponents/reusableComponents/SetMealPlan";
+import SetExercisePlan from "@/components/dashboardComponents/reusableComponents/SetExercisePlan";
+import SetVisibility from "@/components/dashboardComponents/reusableComponents/SetVisibility";
+import CreationOption from "../../reusableComponents/CreationOption";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -17,7 +18,7 @@ import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLin
 import { TableRow } from "@/types/database.types";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 interface props {
-  personaInfo: TableRow<"personal_information">[];
+  personalInfo: TableRow<"personal_information">[];
 }
 
 // Initials
@@ -44,7 +45,7 @@ const BreadCrumbsInitials: InterfaceBreadCrumbs[] = [
   },
 ];
 
-const MutateForm = ({ personaInfo }: props) => {
+const MutateForm = ({ personalInfo }: props) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [selectedBreadCrumb, setSelectedBreadCrumb] =
     useState<InterfaceBreadCrumbs>({
@@ -65,7 +66,7 @@ const MutateForm = ({ personaInfo }: props) => {
       </div>
       <div className="h-[83%] flex flex-col flex-1 gap-1 items-center">
         {selectedOption === "" ? (
-          <BodyTuneCreationOptions setSelectOption={setSelectedOption} />
+          <CreationOption label="How would you like to create your BodyTune" setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
             <div className="w-max phone:h-[14%] laptop:h-[15%]">
@@ -80,7 +81,7 @@ const MutateForm = ({ personaInfo }: props) => {
             {progress === 1 && (
               <div className="flex justify-center w-full">
                 <SetGeneralInfo
-                  personalInfo={personaInfo[0]}
+                  personalInfo={personalInfo[0]}
                   setSelectedOption={setSelectedOption}
                   setProgress={setProgress}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
