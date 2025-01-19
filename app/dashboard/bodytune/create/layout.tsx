@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     description: "Combine workouts and meals into your ideal regimen",
 };
 
-export default function BodyTuneLayout({
+export default function CreateBodyTuneLayout({
     children,
   }: Readonly<{
     children: React.ReactNode;
