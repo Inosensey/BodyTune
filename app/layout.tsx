@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={`${QuicksandFont.variable} ${DMSansFont.variable} antialiased bg-gradient-to-b from-lightBackground to-primary bg-no-repeat h-screen overflow-auto text-textGray`}
       >
-        <NextTopLoader color="#D3F0D1" showSpinner={false} />
+        <NextTopLoader color="#D3F0D1" showSpinner={true} />
         {children}
       </body>
     </html>
