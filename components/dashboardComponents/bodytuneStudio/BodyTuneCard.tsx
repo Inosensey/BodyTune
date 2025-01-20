@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import SolarEyeOutline from "@/icons/SolarEyeOutline";
 import SolarHeartAngleOutline from "@/icons/SolarHeartAngleOutline";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
+import TablerBarbell from "@/icons/TablerBarbellLight";
+import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
 
 // Types
 interface props {
@@ -28,9 +30,57 @@ const BodyTuneCard = ({
       <p className="text-base font-bold text-lightSecondary underline">
         {bodyTunePlanName}
       </p>
-      <div className="flex gap-1 justify-between">
-        <p className="font-sm font-bold text-sm">{exercisePlanName}</p>
-        <p className="font-sm font-bold text-sm">{mealPlanName}</p>
+      <div className="flex flex-col gap-2 justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <p className="font-sm font-bold text-sm underline">{exercisePlanName}</p>
+            <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
+          </div>
+          <div className="flex flex-wrap gap-1 font-dmSans font-semibold text-xs">
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Beginner
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Underweight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Healthy weight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Overweight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Obesity
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <p className="font-sm font-bold text-sm underline">{mealPlanName}</p>
+            <MdiFoodDrumstickOutline
+              color="#D3F0D1"
+              width="1.3em"
+              height="1.3em"
+            />
+          </div>
+          <div className="flex flex-wrap gap-1 font-dmSans font-semibold text-xs">
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Beginner
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Underweight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Healthy weight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Overweight
+            </p>
+            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
+              Obesity
+            </p>
+          </div>
+        </div>
       </div>
       <div className="flex gap-2 items-center">
         <div className="flex gap-1 items-center">
