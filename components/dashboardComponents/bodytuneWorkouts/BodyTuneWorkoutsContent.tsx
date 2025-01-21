@@ -49,7 +49,7 @@ const BodyTuneWorkoutsContent = () => {
               <p className="text-lg font-dmSans font-bold text-lightSecondary">
                 BodyTune Workout Lists
               </p>
-              <Link href={"bodytune/create"}>
+              <Link href={"workouts/create"}>
                 <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-2 py-1 text-sm rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
                   Add a Workout
                   <FontAwesomeIcon
