@@ -41,7 +41,7 @@ const BodyTuneStudioContents = () => {
   };
   return (
     <>
-      <div className="flex-1 bg-black w-full p-4 rounded-lg">
+      <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
         <div className="hidden flex-col w-full h-full font-dmSans justify-center items-center">
           <Image
             src="/assets/svg/dumbbell-2.svg"
@@ -130,7 +130,7 @@ const BodyTuneStudioContents = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full max-h-[89%] gap-2 flex flex-wrap mt-2">
+            <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
               <BodyTuneCard
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
