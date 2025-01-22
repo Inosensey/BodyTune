@@ -3,17 +3,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+// Components
+import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
+import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
+import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
+
 // Icons
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import IcBaselinePeopleOutline from "@/icons/IcBaselinePeopleOutline";
 import IcBaselineStarBorder from "@/icons/IcBaselineStarBorder";
 import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
-import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
-import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -77,8 +79,8 @@ const FollowerProfileContent = () => {
   return (
     <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
       <div className="flex justify-between h-full w-full">
-        <div className="w-[22%] flex flex-col items-center justify-center gap-1 font-quickSand  bg-lightPrimary rounded-lg">
-          <div className="w-[95%] flex flex-col items-center justify-center gap-5 rounded-md px-2 py-3">
+        <div className="w-[30%] flex flex-col items-center justify-center gap-1 font-quickSand  bg-lightPrimary rounded-lg">
+          <div className="w-[95%] flex flex-col items-center justify-center gap-2 rounded-md px-2 py-3">
             <div className="flex flex-col items-center">
               <div className="border-2 border-lightSecondary rounded-full h-[120px] w-[120px] flex items-center justify-center mb-2">
                 <p className="text-center">Profile Image here</p>
@@ -88,7 +90,7 @@ const FollowerProfileContent = () => {
               </p>
               <p className="font-semibold text-[#ccc]">Mat2x</p>
             </div>
-            <div className="max-h-[150px] overflow-auto">
+            <div className="max-h-[100px] overflow-auto">
               <p className="text-justify font-quickSand h-full text-sm">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil,
                 perspiciatis nostrum? Quasi magnam vitae tempora architecto,
@@ -100,7 +102,7 @@ const FollowerProfileContent = () => {
             </div>
             <div className="flex flex-col gap-3 w-full">
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-bold">
+                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
                   Followers
                   <IcBaselinePeopleOutline
                     color="#D3F0D1"
@@ -111,7 +113,7 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">1234123</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-bold">
+                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
                   Achievements
                   <IcBaselineStarBorder
                     color="#D3F0D1"
@@ -122,7 +124,7 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">123</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-bold">
+                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
                   BodyTunes
                   <SolarStarsMinimalisticLineDuotone
                     color="#D3F0D1"
@@ -133,14 +135,14 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">12</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-bold">
+                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
                   Workouts
                   <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
                 </p>
                 <p className="font-semibold">20</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-bold">
+                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
                   Meals
                   <MdiFoodDrumstickOutline
                     color="#D3F0D1"
@@ -153,7 +155,7 @@ const FollowerProfileContent = () => {
             </div>
 
             <div className="w-full">
-              <button className="w-full bg-[#5d897b] text-white font-quickSand font-semibold py-2 rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
+              <button className="w-full bg-[#5d897b] text-white font-quickSand font-semibold py-1 rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
                 Follow
                 <FontAwesomeIcon
                   icon={faPlusSquare}
@@ -163,7 +165,7 @@ const FollowerProfileContent = () => {
             </div>
           </div>
         </div>
-        <div className="w-[77%] flex flex-col gap-1">
+        <div className="w-[69%] flex flex-col gap-1 h-full">
           <div className="flex gap-1 items-center justify-between border-b-[1px] border-lightSecondary pb-1">
             <div className="flex items-center gap-1">
               {contentTabValues.map((tab: string, index: number) => (
@@ -230,15 +232,13 @@ const FollowerProfileContent = () => {
             </div>
           </div>
 
-          <div className="w-full h-[93%] overflow-auto">
-            {/* containerAnimationVariant
-          childAnimationVariant */}
+          <div className="w-full max-h-[93%] overflow-auto">
             {selectedContentTab === "BodyTunes" && (
               <motion.div
                 variants={containerAnimationVariant}
                 initial="hidden"
                 animate="show"
-                className="w-full h-full gap-2 flex flex-wrap mt-2"
+                className="w-full gap-2 flex flex-wrap mt-2"
               >
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
@@ -277,7 +277,7 @@ const FollowerProfileContent = () => {
                 variants={containerAnimationVariant}
                 initial="hidden"
                 animate="show"
-                className="w-full h-full gap-2 flex flex-wrap mt-2"
+                className="w-full gap-2 flex flex-wrap mt-2"
               >
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneWorkoutCard
@@ -316,7 +316,7 @@ const FollowerProfileContent = () => {
                 variants={containerAnimationVariant}
                 initial="hidden"
                 animate="show"
-                className="w-full h-full gap-2 flex flex-wrap mt-2"
+                className="w-full gap-2 flex flex-wrap mt-2"
               >
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneMealCard
