@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import IcBaselinePeopleOutline from "@/icons/IcBaselinePeopleOutline";
 import IcOutlinePerson from "@/icons/IcOutlinePerson";
+import Link from "next/link";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Followers", "Hearts"];
@@ -41,7 +42,7 @@ const ConnectionsContent = () => {
     }
   };
   return (
-    <div className="flex-1 bg-black w-full p-4 rounded-lg">
+    <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
       <div className="w-full h-full">
         <div className="flex flex-col w-full h-full">
           <div className="flex gap-1 items-center justify-between border-b-[1px] border-lightSecondary pb-1">
@@ -159,14 +160,16 @@ const ConnectionsContent = () => {
                 </p>
               </div>
               <div className="w-full">
-                <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-4 py-2 rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
-                  View Profile
-                  <IcOutlinePerson
-                    color="#D3F0D1"
-                    width="1.3em"
-                    height="1.3em"
-                  />
-                </button>
+                <Link href={"connections/1"}>
+                  <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-4 py-2 rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
+                    View Profile
+                    <IcOutlinePerson
+                      color="#D3F0D1"
+                      width="1.3em"
+                      height="1.3em"
+                    />
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
