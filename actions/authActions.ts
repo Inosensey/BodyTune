@@ -368,6 +368,7 @@ export const loginWithThirdParty = async (
 
 export const signOut = async () => {
   const supabase = await createSSR();
+  const cookieStore = await cookies()
   try {
     const { error } = await supabase.auth.signOut({ scope: "local" });
 
@@ -379,6 +380,8 @@ export const signOut = async () => {
         message: `There is an error Signing Out: ${error.message}`,
       };
     }
+    
+    cookieStore.delete('userHaverPersonalInformation')
   } catch (error: unknown) {
     const errorMessage: string =
       error instanceof Error
