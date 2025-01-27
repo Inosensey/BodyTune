@@ -2,10 +2,10 @@ import React from "react";
 
 const Suggestions = () => {
   return (
-    <div className="w-full px-4 mt-4">
+    <div className="w-full mt-4 phone:px-2 tablet:px-4">
       <div
         data-testid="suggestions-container"
-        className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-9/12 tablet:w-full"
+        className="bg-black flex flex-col rounded-md px-4 py-3 phone:w-full"
       >
         <div className="flex flex-col">
           <p className="font-dmSans font-semibold text-lightSecondary">
@@ -15,8 +15,8 @@ const Suggestions = () => {
             Tailored recommendations to boost your fitness journey, customized based on your weight, height, and experience level
           </p>
         </div>
-        <div className="mt-2 flex justify-between phone:flex-col tablet:flex-row">
-          <div className="flex flex-col h-[300px] phone:w-11/12 tablet:w-[32%] py-1 px-2 bg-primary rounded-lg">
+        <div className="mt-2 flex justify-between phone:flex-col phone:gap-1 laptop:flex-row">
+          <div className="flex flex-col phone:w-12/12 laptop:w-[32%] tablet:max-h-[300px]  py-1 px-2 bg-primary rounded-lg">
             <div className="flex flex-col">
               <p className="font-dmSans font-semibold text-[0.9rem] text-lightSecondary">
                 Exercise Plans
@@ -53,7 +53,7 @@ const Suggestions = () => {
               </table>
             </div>
           </div>
-          <div className="flex flex-col h-[300px] phone:w-11/12 tablet:w-[32%] py-1 px-2 bg-primary rounded-lg">
+          <div className="flex flex-col max-h-[300px] phone:w-12/12 laptop:w-[32%] py-1 px-2 bg-primary rounded-lg">
             <div className="flex flex-col">
               <p className="font-dmSans font-semibold text-[0.9rem] text-lightSecondary">
                 Meal Plans
@@ -90,7 +90,7 @@ const Suggestions = () => {
               </table>
             </div>
           </div>
-          <div className="flex flex-col h-[300px] phone:w-11/12 tablet:w-[32%] py-1 px-2 bg-primary rounded-lg">
+          <div className="flex flex-col max-h-[300px] phone:w-12/12 laptop:w-[32%] py-1 px-2 bg-primary rounded-lg">
             <div className="flex flex-col">
               <p className="font-dmSans font-semibold text-[0.9rem] text-lightSecondary">
                 BodyTune&apos;s
