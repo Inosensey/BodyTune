@@ -19,7 +19,7 @@ import SolarRoundedMagniferLinear from "@/icons/SolarRoundedMagniferLinear";
 
 const Sidebar = () => {
   return (
-    <div className="top-0 left-0 h-full bg-black w-[280px] phone:fixed tablet:relative">
+    <div className="top-0 left-0 h-full bg-black w-[280px] phone:fixed phone:-left-[100%] laptop:relative laptop:-left-[0%]">
       <div
         className="py-4 flex flex-col items-center gap-1"
         data-testid="header-container"
