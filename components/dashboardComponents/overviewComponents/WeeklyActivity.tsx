@@ -9,11 +9,11 @@ import TablerBarbell from "@/icons/TablerBarbellLight";
 
 const WeeklyActivity = () => {
   return (
-    <div className="w-full px-4 mt-4">
-      <div className="flex gap-3">
+    <div className="w-full phone:px-2 laptop:px-4">
+      <div className="flex phone:gap-1 phone:flex-col tablet:flex-row laptop:gap-3 w-full">
         <div
           data-testid="weekly-summary-container"
-          className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-9/12 tablet:max-w-[950px]"
+          className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-12/12 tablet:max-w-[950px]"
         >
           <div className="flex flex-col">
             <p className="font-dmSans font-semibold text-lightSecondary">
@@ -70,15 +70,15 @@ const WeeklyActivity = () => {
           </div>
           <div
             data-testid="stats-container"
-            className="flex phone:flex-col tablet:flex-row gap-4 mt-4"
+            className="flex w-full flex-wrap mt-4 phone:flex-col phone:gap-1 mdphone:flex-row tablet:gap-4"
           >
-            <div className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]">
+            <div className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[100%] mdphone:w-[140px] tablet:h-40 tablet:w-[145px]">
               <div data-testid="exercises-added" className="flex flex-col">
                 <TablerBarbell color="#D3F0D1" width="1.7em" height="1.7em" />
-                <p className="font-dmSans text-[0.8rem] font-semibold text-lightSecondary">
+                <p className="font-dmSans phone:text-[1rem] tablet:text-[0.8rem] font-semibold text-lightSecondary">
                   Exercise Added
                 </p>
-                <p className="font-quickSand text-[0.7rem] text-[#b3b3b3]">
+                <p className="font-quickSand phone:text-[0.9rem] tablet:text-[0.7rem] text-[#b3b3b3]">
                   Overall exercise added
                 </p>
               </div>
@@ -88,14 +88,14 @@ const WeeklyActivity = () => {
             </div>
             <div
               data-testid="meals-added"
-              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
+              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[100%] mdphone:w-[140px] tablet:h-40 tablet:w-[145px]"
             >
               <div className="flex flex-col">
                 <TablerBarbell color="#D3F0D1" width="1.7em" height="1.7em" />
-                <p className="font-dmSans text-[0.8rem] font-semibold text-lightSecondary">
+                <p className="font-dmSans phone:text-[1rem] tablet:text-[0.8rem] font-semibold text-lightSecondary">
                   Exercise Completed
                 </p>
-                <p className="font-quickSand text-[0.7rem] text-[#b3b3b3]">
+                <p className="font-quickSand phone:text-[0.9rem] tablet:text-[0.7rem] text-[#b3b3b3]">
                   Overall exercise competed
                 </p>
               </div>
@@ -105,7 +105,7 @@ const WeeklyActivity = () => {
             </div>
             <div
               data-testid="exercises-completed"
-              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
+              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[100%] mdphone:w-[140px] tablet:h-40 tablet:w-[145px]"
             >
               <div className="flex flex-col">
                 <MdiFoodDrumstickOutline
@@ -113,10 +113,10 @@ const WeeklyActivity = () => {
                   width="1.7em"
                   height="1.7em"
                 />
-                <p className="font-dmSans text-[0.8rem] font-semibold text-lightSecondary">
+                <p className="font-dmSans phone:text-[1rem] tablet:text-[0.8rem] font-semibold text-lightSecondary">
                   Meal Added
                 </p>
-                <p className="font-quickSand text-[0.7rem] text-[#b3b3b3]">
+                <p className="font-quickSand phone:text-[0.9rem] tablet:text-[0.7rem] text-[#b3b3b3]">
                   Overall meal added
                 </p>
               </div>
@@ -126,7 +126,7 @@ const WeeklyActivity = () => {
             </div>
             <div
               data-testid="meals-completed"
-              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
+              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[100%] mdphone:w-[140px] tablet:h-40 tablet:w-[145px]"
             >
               <div className="flex flex-col">
                 <MdiFoodDrumstickOutline
@@ -134,10 +134,10 @@ const WeeklyActivity = () => {
                   width="1.7em"
                   height="1.7em"
                 />
-                <p className="font-dmSans text-[0.8rem] font-semibold text-lightSecondary">
+                <p className="font-dmSans phone:text-[1rem] tablet:text-[0.8rem] font-semibold text-lightSecondary">
                   Meal Completed
                 </p>
-                <p className="font-quickSand text-[0.7rem] text-[#b3b3b3]">
+                <p className="font-quickSand phone:text-[0.9rem] tablet:text-[0.7rem] text-[#b3b3b3]">
                   Overall meal completed
                 </p>
               </div>
@@ -147,7 +147,7 @@ const WeeklyActivity = () => {
             </div>
             <div
               data-testid="bodytune-plan-created"
-              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[22%] tablet:h-40 tablet:max-w-[180px]"
+              className="bg-primary flex flex-col justify-center gap-4 rounded-lg px-3 py-2 phone:w-[100%] mdphone:w-[140px] tablet:h-40 tablet:w-[145px]"
             >
               <div className="flex flex-col">
                 <SolarStarsMinimalisticLineDuotone
@@ -155,10 +155,10 @@ const WeeklyActivity = () => {
                   width="1.7em"
                   height="1.7em"
                 />
-                <p className="font-dmSans text-[0.8rem] font-semibold text-lightSecondary">
+                <p className="font-dmSans phone:text-[1rem] tablet:text-[0.8rem] font-semibold text-lightSecondary">
                   BodyTune Created
                 </p>
-                <p className="font-quickSand text-[0.7rem] text-[#b3b3b3]">
+                <p className="font-quickSand phone:text-[0.9rem] tablet:text-[0.7rem] text-[#b3b3b3]">
                   Overall BodyTune created
                 </p>
               </div>
@@ -168,8 +168,8 @@ const WeeklyActivity = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-between gap-2 flex-1">
-          <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
+        <div className="flex justify-between gap-2 phone:h-full phone:flex-col laptop:flex-1">
+          <div className="flex flex-col justify-center rounded-md gap-1 bg-black p-4 phone:w-12/12">
             <div data-testid="progress-made-this-week" className="flex flex-col">
               <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
                 Week&apos;s Progress
@@ -193,7 +193,7 @@ const WeeklyActivity = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col justify-center rounded-md gap-1 bg-black w-12/12 p-4">
+          <div className="flex flex-col justify-center rounded-md gap-1 bg-black p-4 phone:w-12/12">
             <div data-testid="current-bodytune-progress" className="flex flex-col">
               <p className="font-dmSans text-[1rem] font-semibold text-lightSecondary">
                 BodyTune Progress
