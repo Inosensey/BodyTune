@@ -5,7 +5,7 @@ import Overview from "@/components/dashboardComponents/overviewComponents/Overvi
 
 const DashboardPage = () => {
   return (
-    <div>
+    <div className="w-full">
       <Overview />
     </div>
   );
