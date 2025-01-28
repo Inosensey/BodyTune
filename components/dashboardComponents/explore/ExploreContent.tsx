@@ -96,7 +96,7 @@ const ExploreContent = () => {
       <div className="w-full h-full">
         <div className="flex flex-col w-full h-full justify-between">
           <div className="flex gap-1 items-center justify-center">
-            <div className="w-[70%] rounded-md bg-lightPrimary flex flex-col items-center py-2 px-2">
+            <div className="rounded-md bg-lightPrimary flex flex-col items-center py-2 px-2 laptop:w-[90%] desktop:w-[70%] ">
               <div className={`flex flex-col w-full laptop:w-[70%] gap-1`}>
                 <label className="phone:text-sm laptop:text-lg font-quickSand font-semibold">
                   Search Plan Name
