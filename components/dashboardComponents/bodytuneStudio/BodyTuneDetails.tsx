@@ -68,8 +68,8 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary laptop:w-[95%] laptop:h-[85%] rounded-lg p-4">
-          <div className="flex justify-center gap-4 laptop:w-[100%] laptop:h-[5%]">
+        <div className="bg-lightPrimary rounded-lg p-4 w-[95%] h-[85%] overflow-auto">
+          <div className="flex justify-center gap-4 w-[100%] h-[5%]">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               BodyTune Details
             </p>
@@ -83,8 +83,8 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-1 laptop:h-[95%]">
-            <div className="flex flex-col gap-2 bg-primary w-max p-4 rounded-md font-quickSand font-bold h-[20%] ">
+          <div className="flex gap-1 h-[95%] flex-col">
+            <div className="flex flex-col gap-2 bg-primary p-4 rounded-md font-quickSand font-bold h-[20%] phone:w-12/12 phone:overflow-auto laptop:w-max">
               <p className="font-dmSans">
                 Plan Name:{" "}
                 <span className="font-normal text-lightSecondary">
@@ -104,8 +104,8 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                 </span>
               </p>
             </div>
-            <div className="w-full h-[80%] flex gap-2 ">
-              <div className="p-4 w-[50%] flex flex-col h-[100%] bg-primary gap-1">
+            <div className="w-full h-[80%] flex gap-2 phone:flex-col laptop:flex-row">
+              <div className="p-4 flex flex-col h-[100%] bg-primary gap-1 desktop:w-[100%] laptop:w-[50%]">
                 <div className="flex flex-col gap-1 h-[25%] overflow-auto">
                   <p className="font-quickSand font-bold">
                     Meal Plan Name:
@@ -128,7 +128,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                 </div>
                 <div className="w-full flex flex-col gap-1 h-[75%]">
                   <div className="flex flex-col gap-1">
-                    <div className="flex h-max gap-1">
+                    <div className="flex flex-wrap h-max gap-1">
                       {weekDates.map((date: string, index: number) => (
                         <div
                           className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -418,7 +418,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                   )}
                 </div>
               </div>
-              <div className="p-4 w-[50%] flex flex-col h-[100%] bg-primary gap-1">
+              <div className="p-4 flex flex-col h-[100%] bg-primary gap-1  desktop:w-[100%] laptop:w-[50%]">
                 <div className="flex flex-col gap-1 h-[25%] overflow-auto">
                   <p className="font-quickSand font-bold">
                     Exercise Plan Name:
@@ -440,7 +440,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                   </div>
                 </div>
                 <div className="w-full flex flex-col gap-1 h-[75%]">
-                  <div className="flex h-max gap-1">
+                  <div className="flex flex-wrap h-max gap-1">
                     {weekDates.map((date: string, index: number) => (
                       <div
                         className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -468,7 +468,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                     >
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
@@ -493,7 +493,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
@@ -518,7 +518,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
@@ -543,7 +543,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </motion.div>
                       <motion.div
                         variants={exerciseAnimationVariant}
-                        className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                        className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                       >
                         <div className="flex flex-col">
                           <p className="font-bold text-[#a3e09f]">
