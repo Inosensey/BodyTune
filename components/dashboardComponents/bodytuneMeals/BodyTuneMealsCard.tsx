@@ -20,7 +20,7 @@ const BodyTuneMealCard = ({
   setToggleBodyTuneMealDetails,
 }: props) => {
   return (
-    <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg w-[280px] h-max p-4">
+    <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
       <div className="flex flex-col gap-2 justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
