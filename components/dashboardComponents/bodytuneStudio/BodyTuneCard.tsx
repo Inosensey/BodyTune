@@ -26,7 +26,7 @@ const BodyTuneCard = ({
   setToggleBodyTuneDetails,
 }: props) => {
   return (
-    <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg w-[280px] h-max p-4">
+    <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
       <p className="text-base font-bold text-lightSecondary underline">
         {bodyTunePlanName}
       </p>
