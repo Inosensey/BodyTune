@@ -12,12 +12,12 @@ interface props {
 const CreationOption = ({ setSelectOption, label }: props) => {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-xl font-quickSand text-secondary font-bold">
+      <p className="font-quickSand text-secondary font-bold phone:text-base phone:text-center laptop:text-xl ">
         {label}
       </p>
-      <div className="flex gap-2">
+      <div className="flex gap-2 phone:flex-col tablet:flex-row">
         <div
-          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]"
+          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] phone:h-[200px] phone:w-[100%] tablet:max-w-[250px] tablet:h-[250px]"
           onClick={() => setSelectOption("recommendation")}
         >
           <TablerBarbell color="#D3F0D1" width="2.0em" height="2.0em" />
@@ -30,7 +30,7 @@ const CreationOption = ({ setSelectOption, label }: props) => {
           </p>
         </div>
         <div
-          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 h-[250px] transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] tablet:max-w-[250px]"
+          className="bg-black rounded-lg flex flex-col justify-center items-center gap-1 text-center cursor-pointer p-2 transition duration-200 group hover:shadow-xl hover:shadow-[#1E1E1E] phone:h-[200px] phone:w-[100%] tablet:max-w-[250px] tablet:h-[250px]"
           onClick={() => setSelectOption("custom")}
         >
           <SolarSettingsLinear color="#D3F0D1" width="2.0em" height="2.0em" />
