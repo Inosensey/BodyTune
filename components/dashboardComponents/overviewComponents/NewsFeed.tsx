@@ -11,7 +11,7 @@ const NewsFeed = () => {
     <div className="w-full px-4 mt-4 flex gap-3 phone:flex-col tablet:flex-row">
       <div
         data-testid="news-feed-container"
-        className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-12/12 tablet:max-w-[800px]"
+        className="bg-black flex flex-col rounded-md px-4 p-3 phone:w-12/12 tablet:w-[800px]"
       >
         <div className="flex flex-col">
           <p className="font-dmSans font-semibold text-lightSecondary">
