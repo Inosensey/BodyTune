@@ -64,8 +64,8 @@ const BodyTuneStudioContents = () => {
         </div>
         <div className="w-full h-full">
           <div className="flex flex-col w-full h-full">
-            <div className="flex gap-1 items-center justify-between">
-              <div className="w-max flex gap-1 items-center">
+            <div className="flex gap-1 items-center justify-between phone:flex-col laptop:flex-row">
+              <div className="w-max flex gap-1 items-center phone:flex-col mdphone:flex-row">
                 <p className="text-lg font-dmSans font-bold text-lightSecondary">
                   BodyTune Lists
                 </p>
@@ -79,7 +79,7 @@ const BodyTuneStudioContents = () => {
                   </button>
                 </Link>
               </div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap justify-center gap-1">
                 <div
                   className={`bg-lightPrimary px-2 py-1 flex w-[190px] items-center gap-2`}
                 >
@@ -130,7 +130,7 @@ const BodyTuneStudioContents = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
+            <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
               <BodyTuneCard
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
