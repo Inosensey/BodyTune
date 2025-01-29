@@ -69,7 +69,7 @@ const MutateForm = ({ personalInfo }: props) => {
           <CreationOption label="How would you like to create your BodyTune" setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="w-max phone:h-[14%] laptop:h-[15%]">
+            <div className="h-max max-w-[800px] tablet:w-[100%] laptop:w-[100%]">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -79,7 +79,7 @@ const MutateForm = ({ personalInfo }: props) => {
             </div>
 
             {progress === 1 && (
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center max-h w-full">
                 <SetGeneralInfo
                   personalInfo={personalInfo[0]}
                   setSelectedOption={setSelectedOption}
@@ -89,7 +89,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 2 && (
-              <div className="flex flex-1 justify-center h-[85%] w-full">
+              <div className="flex flex-1 justify-center h-[75%]">
                 <SetMealPlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -98,7 +98,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 3 && (
-              <div className="flex flex-1 justify-center h-[85%] w-full">
+              <div className="flex flex-1 justify-center h-[75%]">
                 <SetExercisePlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -107,7 +107,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 4 && (
-              <div className="flex flex-1 justify-center h-[85%] w-full">
+              <div className="flex flex-1 justify-center h-[75%] w-full">
                 <SetVisibility
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
