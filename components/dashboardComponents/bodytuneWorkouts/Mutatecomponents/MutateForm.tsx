@@ -74,7 +74,7 @@ const MutateForm = ({ personalInfo }: props) => {
               />
             </div>
             {progress === 1 && (
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center max-h w-full">
                 <SetGeneralInfo
                   personalInfo={personalInfo[0]}
                   setSelectedOption={setSelectedOption}
@@ -84,7 +84,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 2 && (
-              <div className="flex flex-1 justify-center h-[85%] w-full">
+              <div className="flex flex-1 justify-center h-[75%]">
                 <SetExercisePlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -93,7 +93,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 3 && (
-              <div className="flex flex-1 justify-center h-[85%] w-full">
+              <div className="flex flex-1 justify-center h-[75%]">
                 <SetVisibility
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
