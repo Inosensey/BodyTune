@@ -44,8 +44,8 @@ const BodyTuneMealsContent = () => {
       <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
         <div className="w-full h-full">
           <div className="flex flex-col w-full h-full">
-            <div className="flex gap-1 items-center justify-between">
-              <div className="w-max flex gap-1 items-center">
+            <div className="flex gap-1 items-center justify-between phone:flex-col laptop:flex-row">
+              <div className="w-max flex gap-1 items-center phone:flex-col mdphone:flex-row">
                 <p className="text-lg font-dmSans font-bold text-lightSecondary">
                   BodyTune Meal Lists
                 </p>
@@ -59,7 +59,7 @@ const BodyTuneMealsContent = () => {
                   </button>
                 </Link>
               </div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap justify-center gap-1">
                 <div
                   className={`bg-lightPrimary px-2 py-1 flex w-[190px] items-center gap-2`}
                 >
