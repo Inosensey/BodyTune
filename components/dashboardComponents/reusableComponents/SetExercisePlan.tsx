@@ -126,8 +126,7 @@ const SetExercisePlan = ({
   };
   return (
     <>
-      <div className="flex flex-col h-full"
-      style={{width: !showExercisePlanHtml ? "" : "700px"}}>
+      <div className="flex flex-col h-full w-full">
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
           <div
             className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
@@ -208,9 +207,9 @@ const SetExercisePlan = ({
           </div>
         </div>
         {showExercisePlanHtml && (
-          <div className="flex flex-col flex-1 gap-1 bg-black rounded-b-lg pt-2 pb-4 px-3 w-full h-[70%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[28%] ">
-              <motion.div className="phone:w-5/12">
+          <div className="flex flex-col gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] midtablet:flex-1 mdtabet:h-[70%] ">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%]">
+              <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
                   placeholder="Enter the name of the Exercise Plan"
@@ -224,7 +223,7 @@ const SetExercisePlan = ({
                   validationMessage={""}
                 />
               </motion.div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {weekDates.map((date: string, index: number) => (
                   <div
                     className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -246,10 +245,10 @@ const SetExercisePlan = ({
             </div>
             <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[75%]">
               <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
-                <div className="hidden mt-2 phone:h-[85px] phone:w-[96%] mdphone:w-11/12 laptop:w-[125px] group">
+                <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[125px] group">
                   <button
                     onClick={() => setTogglAddExerciseForm(true)}
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full h-full rounded-md flex flex-col-reverse items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
                   >
                     Add an Exercise
                     <FontAwesomeIcon
@@ -258,8 +257,8 @@ const SetExercisePlan = ({
                     />
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto">
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand text-sm border-[1.5px] border-lightSecondary p-2 h-max w-[180px]">
+                <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
+                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
@@ -268,7 +267,7 @@ const SetExercisePlan = ({
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand text-sm border-[1.5px] border-lightSecondary p-2 h-max w-[180px]">
+                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
@@ -277,7 +276,7 @@ const SetExercisePlan = ({
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand text-sm border-[1.5px] border-lightSecondary p-2 h-max w-[180px]">
+                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
@@ -286,7 +285,7 @@ const SetExercisePlan = ({
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand text-sm border-[1.5px] border-lightSecondary p-2 h-max w-[180px]">
+                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
@@ -295,7 +294,7 @@ const SetExercisePlan = ({
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand text-sm border-[1.5px] border-lightSecondary p-2 h-max w-[180px]">
+                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
                     <p className="truncate font-bold text-lightSecondary">Exercise name</p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
