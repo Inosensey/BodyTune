@@ -107,7 +107,7 @@ const SetMealPlan = ({
   };
   return (
     <>
-      <div className="flex flex-col h-full w-min-[350px]">
+      <div className="flex flex-col h-full w-full">
         <div
           // style={{ height: `${showMealPlanHtml && "27%"}` }}
           className="bg-black rounded-t-lg pt-4 py-2 w-full"
@@ -191,9 +191,9 @@ const SetMealPlan = ({
           </div>
         </div>
         {showMealPlanHtml && (
-          <div className="flex flex-col gap-1 bg-black flex-1 rounded-b-lg pt-2 pb-4 px-2 h-[70%] w-[1150px]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[32%]">
-              <motion.div className="phone:w-3/12">
+          <div className="flex flex-col gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] midtablet:flex-1 mdtabet:h-[70%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%]">
+              <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="mealPlanName"
                   placeholder="Enter the name of the Meal Plan"
@@ -207,7 +207,7 @@ const SetMealPlan = ({
                   validationMessage={""}
                 />
               </motion.div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {weekDates.map((date: string, index: number) => (
                   <div
                     className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -227,8 +227,8 @@ const SetMealPlan = ({
                 ))}
               </div>
             </div>
-            <div className="flex gap-1 justify-between flex-1">
-              <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
+            <div className="flex gap-1 justify-between phone:flex-col mdtablet:flex-1 mdtablet:flex-row">
+              <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
                 <div className="w-[100%] flex flex-col justify-center items-center">
                   <Image
                     src="/assets/svg/healthy-1.svg"
@@ -244,7 +244,7 @@ const SetMealPlan = ({
                   </p>
                 </div>
               </div>
-              <div className="w-[33%] h-[100%] overflow-auto border-[1.5px] border-lightSecondary">
+              <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
                 <div className="w-[100%] flex flex-col justify-center items-center">
                   <Image
                     src="/assets/svg/healthy-1.svg"
@@ -260,7 +260,7 @@ const SetMealPlan = ({
                   </p>
                 </div>
               </div>
-              <div className="w-[33%] h-[100%] overflow-auto flex flex-1 border-[1.5px] border-lightSecondary">
+              <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
                 <div className="w-[100%] hidden flex-col justify-center items-center">
                   <Image
                     src="/assets/svg/healthy-1.svg"
