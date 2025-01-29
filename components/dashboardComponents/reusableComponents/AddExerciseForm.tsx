@@ -257,7 +257,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg laptop:w-[25%] p-4">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto h-[96%] phone:w-[95%] laptop:w-[25%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Exercise
