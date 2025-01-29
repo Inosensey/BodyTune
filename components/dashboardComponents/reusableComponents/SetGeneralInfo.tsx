@@ -145,7 +145,7 @@ const SetGeneralInfo = ({
     return isValid;
   };
   return (
-    <div className="bg-black rounded-lg py-4 px-2 max-h tablet:w-[350px]">
+    <div className="bg-black rounded-lg py-4 px-2 tablet:w-[350px]">
       <div
         className="flex items-center gap-1 cursor-pointer w-max group"
         onClick={() => {
