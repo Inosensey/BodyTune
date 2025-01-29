@@ -77,15 +77,15 @@ const FollowerProfileContent = () => {
   };
 
   return (
-    <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
-      <div className="flex justify-between h-full w-full">
-        <div className="w-[30%] flex flex-col items-center justify-center gap-1 font-quickSand  bg-lightPrimary rounded-lg">
-          <div className="w-[95%] flex flex-col items-center justify-center gap-2 rounded-md px-2 py-3">
-            <div className="flex flex-col items-center">
-              <div className="border-2 border-lightSecondary rounded-full h-[120px] w-[120px] flex items-center justify-center mb-2">
+    <div className="flex-1 bg-black w-full p-4 rounded-lg mdtablet:h-[80%]">
+      <div className="flex justify-between h-full w-full phone:flex-col phone:gap-2 phone:items-center mdtablet:flex-row">
+        <div className="h-full flex flex-col items-center justify-center gap-1 font-quickSand bg-lightPrimary rounded-lg phone:w-[100%] mdphone:w-[90%] mdtablet:w-[30%]">
+          <div className="w-[95%] flex flex-col items-center justify-center gap-2 rounded-md px-2 py-3 phone:h-[650px] mdtablet:h-full ">
+            <div className="flex flex-col items-center w-[100%] border-2 phone:h-[40%] mdtablet:h-[50%] laptop:h-[40%]">
+              <div className="border-2 border-lightSecondary rounded-full h-[80%] phone:w-[70%] mdphone:w-[40%] mdtablet:w-[50%] laptop:w-[45%] desktop:w-[50%] flex items-center justify-center mb-2">
                 <p className="text-center">Profile Image here</p>
               </div>
-              <p className="font-bold text-xl text-lightSecondary">
+              <p className="font-bold laptop:text-sm desktop:text-xl text-lightSecondary">
                 Philip Mathew Dingcong
               </p>
               <p className="font-semibold text-[#ccc]">Mat2x</p>
@@ -102,7 +102,7 @@ const FollowerProfileContent = () => {
             </div>
             <div className="flex flex-col gap-3 w-full">
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
+                <p className="flex gap-1 items-center text-lightSecondary font-semibold phone:text-sm tablet:text-base">
                   Followers
                   <IcBaselinePeopleOutline
                     color="#D3F0D1"
@@ -113,7 +113,7 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">1234123</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
+              <p className="flex gap-1 items-center text-lightSecondary font-semibold phone:text-sm tablet:text-base">
                   Achievements
                   <IcBaselineStarBorder
                     color="#D3F0D1"
@@ -124,7 +124,7 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">123</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
+              <p className="flex gap-1 items-center text-lightSecondary font-semibold phone:text-sm tablet:text-base">
                   BodyTunes
                   <SolarStarsMinimalisticLineDuotone
                     color="#D3F0D1"
@@ -135,14 +135,14 @@ const FollowerProfileContent = () => {
                 <p className="font-semibold">12</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
+              <p className="flex gap-1 items-center text-lightSecondary font-semibold phone:text-sm tablet:text-base">
                   Workouts
                   <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
                 </p>
                 <p className="font-semibold">20</p>
               </div>
               <div className="flex justify-between items-center border-b-[1px] border-secondary pb-1">
-                <p className="flex gap-1 items-center text-base text-lightSecondary font-semibold">
+              <p className="flex gap-1 items-center text-lightSecondary font-semibold phone:text-sm tablet:text-base">
                   Meals
                   <MdiFoodDrumstickOutline
                     color="#D3F0D1"
@@ -165,9 +165,9 @@ const FollowerProfileContent = () => {
             </div>
           </div>
         </div>
-        <div className="w-[69%] flex flex-col gap-1 h-full">
-          <div className="flex gap-1 items-center justify-between border-b-[1px] border-lightSecondary pb-1">
-            <div className="flex items-center gap-1">
+        <div className="flex flex-col gap-1 h-full phone:w-[100%] mdphone:w-[90%] mdtablet:w-[69%]">
+          <div className="flex gap-1 items-center justify-between border-b-[1px] border-lightSecondary pb-1 phone:flex-col mdtablet:flex-row">
+            <div className="flex flex-wrap items-center gap-1">
               {contentTabValues.map((tab: string, index: number) => (
                 <p
                   onClick={() => setSelectedContentTab(tab)}
@@ -182,7 +182,7 @@ const FollowerProfileContent = () => {
                 </p>
               ))}
             </div>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap justify-center gap-1">
               <div
                 className={`bg-lightPrimary px-2 py-1 flex w-[190px] items-center gap-2`}
               >
