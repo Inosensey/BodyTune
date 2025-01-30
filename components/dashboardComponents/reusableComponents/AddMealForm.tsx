@@ -15,6 +15,7 @@ import FormValidation from "@/utils/validation";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
 import {
   faXmarkCircle,
   faPlusSquare,
@@ -26,12 +27,12 @@ interface props {
   setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface MealFormInputTypes {
-  title: string;
+  mealName: string;
   shortDescription: string;
   cookingInstruction: string;
 }
 interface MealFormValidations {
-  title: {
+  mealName: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -45,35 +46,43 @@ interface MealFormValidations {
   };
 }
 interface IngredientInputTypes {
-  [key: string]: { 
-    id: string; 
-    ingredientName: string; 
-    ingredientValue: string 
-    caloriesName: string; 
-    caloriesValue: string 
-    proteinsName: string; 
-    proteinsValue: string 
-    carbsName: string; 
-    carbsValue: string 
-    fatName: string; 
-    fatValue: string 
+  [key: string]: {
+    id: string;
+    ingredientName: string;
+    ingredientValue: string;
+    caloriesName: string;
+    caloriesValue: string;
+    proteinsName: string;
+    proteinsValue: string;
+    carbsName: string;
+    carbsValue: string;
+    fatName: string;
+    fatValue: string;
   };
 }
 interface IngredientInputValidation {
   [key: string]: {
-    valid: boolean | null;
-    validationMessage: string;
+    ingredientValid: boolean | null;
+    ingredientValidationMessage: string;
+    caloriesValid: boolean | null;
+    caloriesValidationMessage: string;
+    proteinsValid: boolean | null;
+    proteinsValidationMessage: string;
+    carbsValid: boolean | null;
+    carbsValidationMessage: string;
+    fatValid: boolean | null;
+    fatValidationMessage: string;
   };
 }
 
 // Initials
 const MealFormInputValInitial: MealFormInputTypes = {
-  title: "",
+  mealName: "",
   shortDescription: "",
   cookingInstruction: "",
 };
 const MealFormValidationInitials: MealFormValidations = {
-  title: {
+  mealName: {
     valid: null,
     validationMessage: "",
   },
@@ -95,6 +104,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
   const [mealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
     MealFormInputValInitial
   );
+  
   const [ingredientInputVal, setIngredientInputVal] =
     useState<IngredientInputTypes>({
       [`ingredient${initUUID}`]: {
@@ -113,7 +123,18 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     });
   const [ingredientValidations, setIngredientValidations] =
     useState<IngredientInputValidation>({
-      [`ingredient${initUUID}`]: { valid: null, validationMessage: "" },
+      [`ingredient${initUUID}`]: { 
+        ingredientValid: null, 
+        ingredientValidationMessage: "",
+        caloriesValid: null,
+        caloriesValidationMessage: "",
+        proteinsValid: null,
+        proteinsValidationMessage: "",
+        carbsValid: null,
+        carbsValidationMessage: "",
+        fatValid: null,
+        fatValidationMessage: "",
+       },
     });
 
   // Events
@@ -121,6 +142,23 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
+
+    const validationParams = {
+      stateName: name,
+      value: value,
+    };
+
+    const validationResult: validation = FormValidation(validationParams);
+
+    setMealStepValidations((prev) => ({
+      ...prev,
+      [validationResult.validationName!]: {
+        valid: validationResult.valid,
+        validationMessage: validationResult.validationMessage,
+      },
+    }));
+
+    checkValidations(validationResult);
 
     setMealFormInputVal((prev) => ({
       ...prev,
@@ -153,10 +191,12 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
   const onChangeIngredientInput = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value } = event.target;
+    const { name, value, dataset } = event.target;
+
+    const customName = dataset.customname!;
 
     const validationParams = {
-      stateName: name,
+      stateName: customName,
       value: value,
     };
 
@@ -164,9 +204,10 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
 
     setIngredientValidations((prev) => ({
       ...prev,
-      [validationResult.validationName!]: {
-        valid: validationResult.valid,
-        validationMessage: validationResult.validationMessage,
+      [name!]: {
+        ...prev[name],
+        [`${validationResult.validationName}Valid`!]: validationResult.valid,
+        [`${validationResult.validationName}ValidationMessage`!]: validationResult.validationMessage,
       },
     }));
 
@@ -176,7 +217,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
       ...prev,
       [name]: {
         ...prev[name],
-        value: value,
+        [customName]: value,
       },
     }));
   };
@@ -203,7 +244,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto h-[96%] phone:w-[95%] desktop:w-[32%] larger:w-[25%]">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] desktop:w-[32%] larger:w-[25%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Meal
@@ -221,16 +262,16 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
           <div className="flex flex-col gap-3 mt-4">
             <motion.div className="w-full">
               <Input
-                name="title"
+                name="mealName"
                 placeholder="Enter the title of the Breakfast Meal"
-                state={mealFormInputVal.title}
+                state={mealFormInputVal.mealName}
                 type="text"
                 label="Breakfast Meal Name"
                 onChange={onChange}
                 onBlur={onChange}
                 autoComplete="off"
-                valid={mealValidations.title.valid}
-                validationMessage={mealValidations.title.validationMessage}
+                valid={mealValidations.mealName.valid}
+                validationMessage={mealValidations.mealName.validationMessage}
               />
             </motion.div>
             <motion.div className="w-full">
@@ -260,6 +301,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                         <div className="w-full">
                           <Input
                             name={`${key}`}
+                            customName={"ingredientValue"}
                             placeholder="Enter the Ingredient Name"
                             state={value.ingredientValue}
                             type="text"
@@ -267,9 +309,9 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                             onChange={onChangeIngredientInput}
                             onBlur={onChangeIngredientInput}
                             autoComplete="off"
-                            valid={ingredientValidations[key].valid}
+                            valid={ingredientValidations[key].ingredientValid}
                             validationMessage={
-                              ingredientValidations[key].validationMessage
+                              ingredientValidations[key].ingredientValidationMessage
                             }
                             deletableInput={index === 0 ? false : true}
                             deleteInputFn={() => {
@@ -288,65 +330,69 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                           />
                         </div>
                         <div className="w-full flex items-center justify-between mt-2">
-                            <div className="w-[24%]">
-                              <Input
-                                name={`${key}`}
-                                state={value.caloriesValue}
-                                type="text"
-                                label={value.caloriesName}
-                                onChange={onChangeIngredientInput}
-                                onBlur={onChangeIngredientInput}
-                                autoComplete="off"
-                                valid={ingredientValidations[key].valid}
-                                validationMessage={
-                                  ingredientValidations[key].validationMessage
-                                }
-                              />
+                          <div className="w-[24%]">
+                            <Input
+                              name={`${key}`}
+                              customName={"caloriesValue"}
+                              state={value.caloriesValue}
+                              type="text"
+                              label={value.caloriesName}
+                              onChange={onChangeIngredientInput}
+                              onBlur={onChangeIngredientInput}
+                              autoComplete="off"
+                              valid={ingredientValidations[key].caloriesValid}
+                              validationMessage={
+                                ingredientValidations[key].caloriesValidationMessage
+                              }
+                            />
                           </div>
-                            <div className="w-[24%]">
-                              <Input
-                                name={`${key}`}
-                                state={value.proteinsValue}
-                                type="text"
-                                label={value.proteinsName}
-                                onChange={onChangeIngredientInput}
-                                onBlur={onChangeIngredientInput}
-                                autoComplete="off"
-                                valid={ingredientValidations[key].valid}
-                                validationMessage={
-                                  ingredientValidations[key].validationMessage
-                                }
-                              />
+                          <div className="w-[24%]">
+                            <Input
+                              name={`${key}`}
+                              customName={"proteinsValue"}
+                              state={value.proteinsValue}
+                              type="text"
+                              label={value.proteinsName}
+                              onChange={onChangeIngredientInput}
+                              onBlur={onChangeIngredientInput}
+                              autoComplete="off"
+                              valid={ingredientValidations[key].proteinsValid}
+                              validationMessage={
+                                ingredientValidations[key].proteinsValidationMessage
+                              }
+                            />
                           </div>
-                            <div className="w-[24%]">
-                              <Input
-                                name={`${key}`}
-                                state={value.carbsValue}
-                                type="text"
-                                label={value.carbsName}
-                                onChange={onChangeIngredientInput}
-                                onBlur={onChangeIngredientInput}
-                                autoComplete="off"
-                                valid={ingredientValidations[key].valid}
-                                validationMessage={
-                                  ingredientValidations[key].validationMessage
-                                }
-                              />
+                          <div className="w-[24%]">
+                            <Input
+                              name={`${key}`}
+                              customName={"carbsValue"}
+                              state={value.carbsValue}
+                              type="text"
+                              label={value.carbsName}
+                              onChange={onChangeIngredientInput}
+                              onBlur={onChangeIngredientInput}
+                              autoComplete="off"
+                              valid={ingredientValidations[key].carbsValid}
+                              validationMessage={
+                                ingredientValidations[key].carbsValidationMessage
+                              }
+                            />
                           </div>
-                            <div className="w-[24%]">
-                              <Input
-                                name={`${key}`}
-                                state={value.fatValue}
-                                type="text"
-                                label={value.fatName}
-                                onChange={onChangeIngredientInput}
-                                onBlur={onChangeIngredientInput}
-                                autoComplete="off"
-                                valid={ingredientValidations[key].valid}
-                                validationMessage={
-                                  ingredientValidations[key].validationMessage
-                                }
-                              />
+                          <div className="w-[24%]">
+                            <Input
+                              name={`${key}`}
+                              customName={"fatValue"}
+                              state={value.fatValue}
+                              type="text"
+                              label={value.fatName}
+                              onChange={onChangeIngredientInput}
+                              onBlur={onChangeIngredientInput}
+                              autoComplete="off"
+                              valid={ingredientValidations[key].fatValid}
+                              validationMessage={
+                                ingredientValidations[key].fatValidationMessage
+                              }
+                            />
                           </div>
                         </div>
                       </div>
@@ -378,8 +424,16 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       setIngredientValidations((prev) => ({
                         ...prev,
                         [`ingredient${uuid}`]: {
-                          valid: null,
-                          validationMessage: "",
+                          ingredientValid: null, 
+                          ingredientValidationMessage: "",
+                          caloriesValid: null,
+                          caloriesValidationMessage: "",
+                          proteinsValid: null,
+                          proteinsValidationMessage: "",
+                          carbsValid: null,
+                          carbsValidationMessage: "",
+                          fatValid: null,
+                          fatValidationMessage: "",
                         },
                       }));
                     }}
@@ -444,6 +498,25 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                   }
                 />
               </motion.div>
+            </div>
+
+            <div className="w-max mx-auto mt-4">
+              <motion.button
+                whileHover={{
+                  scale: 1.1,
+                  transition: { duration: 0.2 },
+                }}
+                whileTap={{ scale: 0.9 }}
+                className="flex gap-1 items-center bg-secondary text-white font-quickSand font-semibold w-full rounded-md p-1 px-2"
+                type="button"
+              >
+                <MdiFoodDrumstickOutline
+                  color="#D3F0D1"
+                  width="1.3em"
+                  height="1.3em"
+                />
+                Create Meal
+              </motion.button>
             </div>
           </div>
         </div>
