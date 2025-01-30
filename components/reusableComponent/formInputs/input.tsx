@@ -14,6 +14,7 @@ interface inputParams<T> {
   state: T extends string ? T : string;
   type?: string;
   name: string;
+  customName?: string;
   placeholder?: string;
   label?: string;
   shortDescription?: string;
@@ -65,6 +66,7 @@ export const Input = <T extends string | number>({
   state,
   type,
   name,
+  customName = "",
   autoComplete,
   onChange,
   onBlur,
@@ -118,6 +120,7 @@ export const Input = <T extends string | number>({
         <input
           data-testid={dataTestId}
           value={state}
+          data-customname={customName}
           onChange={onChange}
           onBlur={onBlur}
           onInput={onInput}
