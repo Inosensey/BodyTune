@@ -32,11 +32,20 @@ const FormValidation = (data: params): validationInfo => {
     case "state":
     case "city":
     case "note":
+    case "mealName":
+    case "cookingInstruction":
       return validateString(data);
     case "email":
       return validateEmail(data);
     case "password":
       return validatePassword(data);
+    case "ingredientValue":
+    case "caloriesValue":
+    case "proteinsValue":
+    case "carbsValue":
+    case "fatValue":
+      return validateIngredientInput(data);
+      break;
     default:
       return {
         validationName: "",
@@ -127,7 +136,8 @@ const validateNumber = (data: params): validationInfo => {
     return (validationInfo = {
       validationName: data.stateName,
       valid: false,
-      validationMessage: `${data.stateName.charAt(0).toUpperCase() + data.stateName.slice(1)
+      validationMessage: `${
+        data.stateName.charAt(0).toUpperCase() + data.stateName.slice(1)
       } field is required`,
     });
   }
@@ -154,6 +164,13 @@ const validateString = (data: params): validationInfo => {
       validationName: data.stateName,
       valid: false,
       validationMessage: "This field is required",
+    });
+  }
+  if(data.stateName === "mealName" || data.stateName === "cookingInstruction") {
+    return (validationInfo = {
+      validationName: data.stateName,
+      valid: true,
+      validationMessage: "",
     });
   }
   if (!numbersRegex.test(data.value)) {
@@ -265,6 +282,76 @@ const validatePassword = (data: params): validationInfo => {
     valid: true,
     validationMessage: "",
   });
+};
+
+// Custom Validation
+const validateIngredientInput = (data: params): validationInfo => {
+  switch (data.stateName) {
+    case "ingredientValue":
+      const validationNameAttr = "ingredient";
+      if (data.value.length === 0) {
+        return {
+          validationName: validationNameAttr,
+          valid: false,
+          validationMessage: "Ingredient field is required",
+        };
+      }
+      return {
+        validationName: validationNameAttr,
+        valid: true,
+        validationMessage: "",
+      };
+    case "caloriesValue":
+      const caloriesAttrs: params = {
+        stateName: "calories",
+        value: data.value,
+      };
+      const caloriesValidationRes = validateNumber(caloriesAttrs);
+      return {
+        validationName: caloriesAttrs.stateName,
+        valid: caloriesValidationRes.valid,
+        validationMessage: caloriesValidationRes.validationMessage,
+      };
+    case "proteinsValue":
+      const proteinsAttrs: params = {
+        stateName: "proteins",
+        value: data.value,
+      };
+      const proteinsValidationRes = validateNumber(proteinsAttrs);
+      return {
+        validationName: proteinsAttrs.stateName,
+        valid: proteinsValidationRes.valid,
+        validationMessage: proteinsValidationRes.validationMessage,
+      };
+    case "carbsValue":
+      const carbsAttrs: params = {
+        stateName: "carbs",
+        value: data.value,
+      };
+      const carbsValidationRes = validateNumber(carbsAttrs);
+      return {
+        validationName: carbsAttrs.stateName,
+        valid: carbsValidationRes.valid,
+        validationMessage: carbsValidationRes.validationMessage,
+      };
+    case "fatValue":
+      const fatAttrs: params = {
+        stateName: "fat",
+        value: data.value,
+      };
+      const fatValidationRes = validateNumber(fatAttrs);
+      return {
+        validationName: fatAttrs.stateName,
+        valid: fatValidationRes.valid,
+        validationMessage: fatValidationRes.validationMessage,
+      };
+    default:
+      return {
+        validationName: data.stateName,
+        valid: false,
+        validationMessage: "State name is undefined",
+      };
+  }
 };
 
 export default FormValidation;
