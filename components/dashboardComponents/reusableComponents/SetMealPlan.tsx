@@ -191,8 +191,8 @@ const SetMealPlan = ({
           </div>
         </div>
         {showMealPlanHtml && (
-          <div className="flex flex-col gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] midtablet:flex-1 mdtabet:h-[70%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%]">
+          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] flex-col midtablet:flex-1 mdtablet:h-[80%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[24%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="mealPlanName"
