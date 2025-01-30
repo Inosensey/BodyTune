@@ -207,8 +207,8 @@ const SetExercisePlan = ({
           </div>
         </div>
         {showExercisePlanHtml && (
-          <div className="flex flex-col gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] midtablet:flex-1 mdtabet:h-[70%] ">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%]">
+          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] flex-col midtablet:flex-1 mdtablet:h-[80%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[24%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
@@ -244,22 +244,24 @@ const SetExercisePlan = ({
               </div>
             </div>
             <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[75%]">
+              <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
+                <button
+                  onClick={() => setTogglAddExerciseForm(true)}
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+                >
+                  Add an Exercise
+                  <FontAwesomeIcon
+                    icon={faPlusSquare}
+                    className="text-white text-xl"
+                  />
+                </button>
+              </div>
               <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
-                <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[125px] group">
-                  <button
-                    onClick={() => setTogglAddExerciseForm(true)}
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
-                  >
-                    Add an Exercise
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      className="text-white text-xl"
-                    />
-                  </button>
-                </div>
                 <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
                   <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">Exercise name</p>
+                    <p className="truncate font-bold text-lightSecondary">
+                      Exercise name
+                    </p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
                     <p className="truncate">Equipment Name</p>
@@ -268,7 +270,9 @@ const SetExercisePlan = ({
                     </button>
                   </div>
                   <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">Exercise name</p>
+                    <p className="truncate font-bold text-lightSecondary">
+                      Exercise name
+                    </p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
                     <p className="truncate">Equipment Name</p>
@@ -277,7 +281,9 @@ const SetExercisePlan = ({
                     </button>
                   </div>
                   <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">Exercise name</p>
+                    <p className="truncate font-bold text-lightSecondary">
+                      Exercise name
+                    </p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
                     <p className="truncate">Equipment Name</p>
@@ -286,7 +292,9 @@ const SetExercisePlan = ({
                     </button>
                   </div>
                   <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">Exercise name</p>
+                    <p className="truncate font-bold text-lightSecondary">
+                      Exercise name
+                    </p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
                     <p className="truncate">Equipment Name</p>
@@ -295,7 +303,9 @@ const SetExercisePlan = ({
                     </button>
                   </div>
                   <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">Exercise name</p>
+                    <p className="truncate font-bold text-lightSecondary">
+                      Exercise name
+                    </p>
                     <p className="truncate">Exercise Difficulty</p>
                     <p className="truncate">Exercise measurement</p>
                     <p className="truncate">Equipment Name</p>
@@ -345,7 +355,6 @@ const SetExercisePlan = ({
           </div>
         )}
       </div>
-
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddExerciseForm && (
