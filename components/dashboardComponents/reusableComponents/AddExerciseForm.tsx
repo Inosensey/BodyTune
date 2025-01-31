@@ -257,7 +257,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto h-[96%] phone:w-[95%] laptop:w-[25%]">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] laptop:w-[30%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Exercise
@@ -275,7 +275,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
           <div className="flex flex-col gap-3 mt-4">
             <motion.div className="w-full">
               <Input
-                name="title"
+                name="exerciseName"
                 placeholder="Enter the Name of the Exercise"
                 state={exerciseFormInputVal.title}
                 type="text"
@@ -308,7 +308,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 placeholder="Enter the Equipment of the Exercise"
                 state={exerciseFormInputVal.equipment}
                 type="text"
-                label="Equipment"
+                label="Equipment (Optional)"
                 onChange={onChange}
                 onBlur={onChange}
                 autoComplete="off"
@@ -390,7 +390,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
             <motion.div className="w-8/12">
               <Input
                 name="youtubeLink"
-                placeholder="Enter the Youtube link to the Exercise"
+                placeholder="Youtube link to the Exercise"
                 state={exerciseFormInputVal.youtubeLink}
                 type="text"
                 label="Youtube Link (Optional)"
@@ -406,12 +406,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
           </div>
           <div className="w-max mx-auto mt-4">
             <motion.button
-              whileHover={{
-                scale: 1.1,
-                transition: { duration: 0.2 },
-              }}
-              whileTap={{ scale: 0.9 }}
-              className="flex gap-1 items-center bg-secondary text-white font-quickSand font-semibold w-full rounded-md p-1 px-2"
+              className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
               type="button"
             >
               <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
