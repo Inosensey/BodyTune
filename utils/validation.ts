@@ -32,6 +32,7 @@ const FormValidation = (data: params): validationInfo => {
     case "state":
     case "city":
     case "note":
+    case "exerciseName":
     case "mealName":
     case "cookingInstruction":
       return validateString(data);
@@ -56,6 +57,28 @@ const FormValidation = (data: params): validationInfo => {
 };
 
 export const validateRegistrationStep = (
+  values: Record<string, string>,
+  validationRules: Record<
+    string,
+    (value: string) => {
+      valid: boolean;
+      validationMessage: string;
+      validationName: string;
+    }
+  >
+): stepValidationResult => {
+  const results: stepValidationResult = {};
+  for (const [key, value] of Object.entries(values)) {
+    const validationResult = validationRules[key](value);
+    results[key] = {
+      validationName: key,
+      valid: validationResult.valid,
+      validationMessage: validationResult.validationMessage,
+    };
+  }
+  return results;
+};
+export const validateFormInputs = (
   values: Record<string, string>,
   validationRules: Record<
     string,
