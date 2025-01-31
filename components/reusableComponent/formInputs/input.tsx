@@ -371,7 +371,7 @@ export const CustomFileInput = ({
           className="hidden"
         />
         <label
-          className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+          className="cursor-pointer bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
           htmlFor={name}
         >
           {customButtonName}
