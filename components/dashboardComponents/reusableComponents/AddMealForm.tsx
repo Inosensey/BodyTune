@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 // Components
@@ -11,7 +11,7 @@ import {
 } from "@/components/reusableComponent/formInputs/input";
 
 // Utils
-import FormValidation from "@/utils/validation";
+import FormValidation, { validateFormInputs } from "@/utils/validation";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -97,14 +97,24 @@ const MealFormValidationInitials: MealFormValidations = {
 };
 
 const AddMealForm = ({ setToggleAddMealForm }: props) => {
-  // States
+  // Init Values
   const initUUID = crypto.randomUUID();
-  const [mealValidations, setMealStepValidations] =
-    useState<MealFormValidations>(MealFormValidationInitials);
+
+  // Refs
+  const ingredientRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const ingredientContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // States
+  const [latestIngredientKey, setLatestIngredientKey] = useState<string | null>(
+    null
+  );
+  const [mealValidations, setMealValidations] = useState<MealFormValidations>(
+    MealFormValidationInitials
+  );
   const [mealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
     MealFormInputValInitial
   );
-  
+
   const [ingredientInputVal, setIngredientInputVal] =
     useState<IngredientInputTypes>({
       [`ingredient${initUUID}`]: {
@@ -123,8 +133,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     });
   const [ingredientValidations, setIngredientValidations] =
     useState<IngredientInputValidation>({
-      [`ingredient${initUUID}`]: { 
-        ingredientValid: null, 
+      [`ingredient${initUUID}`]: {
+        ingredientValid: null,
         ingredientValidationMessage: "",
         caloriesValid: null,
         caloriesValidationMessage: "",
@@ -134,7 +144,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
         carbsValidationMessage: "",
         fatValid: null,
         fatValidationMessage: "",
-       },
+      },
     });
 
   // Events
@@ -150,15 +160,13 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
 
     const validationResult: validation = FormValidation(validationParams);
 
-    setMealStepValidations((prev) => ({
+    setMealValidations((prev) => ({
       ...prev,
       [validationResult.validationName!]: {
         valid: validationResult.valid,
         validationMessage: validationResult.validationMessage,
       },
     }));
-
-    checkValidations(validationResult);
 
     setMealFormInputVal((prev) => ({
       ...prev,
@@ -175,16 +183,13 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
 
     const validationResult: validation = FormValidation(validationParams);
 
-    setMealStepValidations((prev) => ({
+    setMealValidations((prev) => ({
       ...prev,
       [validationResult.validationName!]: {
         valid: validationResult.valid,
         validationMessage: validationResult.validationMessage,
       },
     }));
-
-    // const allInputValidationResult = checkAllInputValidations();
-    checkValidations(validationResult);
 
     setMealFormInputVal((prev) => ({ ...prev, [name]: value }));
   };
@@ -207,11 +212,10 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
       [name!]: {
         ...prev[name],
         [`${validationResult.validationName}Valid`!]: validationResult.valid,
-        [`${validationResult.validationName}ValidationMessage`!]: validationResult.validationMessage,
+        [`${validationResult.validationName}ValidationMessage`!]:
+          validationResult.validationMessage,
       },
     }));
-
-    checkValidations(validationResult);
 
     setIngredientInputVal((prev) => ({
       ...prev,
@@ -222,12 +226,13 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
     }));
   };
 
+  // Validations
   const checkValidations = (
     validationInfo: stepValidationResult | validation
   ) => {
-    let isValid = true; // Track overall validation state
+    let isValid = true;
     for (const [key, value] of Object.entries(validationInfo)) {
-      setMealStepValidations((prev) => ({
+      setMealValidations((prev) => ({
         ...prev,
         [key]: {
           valid: value.valid,
@@ -235,12 +240,104 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
         },
       }));
       if (value.valid === false) {
-        isValid = false; // If any validation fails, set isValid to false
+        isValid = false;
       }
     }
 
     return isValid;
   };
+
+  const checkIngredientValidations = (validationInfo:{[key: string]: stepValidationResult}) => {
+    let isValid = true;
+    Object.entries(validationInfo!).map(([parentKey, parentValue]) => {
+      Object.entries(parentValue!).map(([, childValue]) => {
+      setIngredientValidations((prev) => ({
+        ...prev,
+        [parentKey]: {
+          ...prev[parentKey],
+          [`${childValue.validationName.replace("Value", "")}Valid`!]: childValue.valid,
+          [`${childValue.validationName.replace("Value", "")}ValidationMessage`!]:
+          childValue.validationMessage,
+        },
+      }));
+      if (childValue.valid === false) {
+        isValid = false;
+      }
+      });
+    });
+    return isValid;
+  }
+
+  const getAllIngredientValues = () => {
+    const ingredientsValues: { [key: string]: { [key: string]: string } } = {};
+    Object.entries(ingredientInputVal!).map(([parentKey, parentValue]) => {
+      Object.entries(parentValue!).map(([childKey, childValue]) => {
+        if (childKey.includes("Value")) {
+          ingredientsValues[parentKey] = {
+            ...(ingredientsValues[parentKey] || {}), // Preserve existing child keys
+            [childKey]: childValue as string, // Add the new key-value pair
+          };
+        }
+      });
+    });
+    return ingredientsValues;
+  };
+
+  const validationRules = {
+    mealName: (value: string) =>
+      FormValidation({ stateName: "mealName", value }),
+    cookingInstruction: (value: string) =>
+      FormValidation({ stateName: "cookingInstruction", value }),
+    ingredientValue: (value: string) =>
+      FormValidation({ stateName: "ingredientValue", value }),
+    caloriesValue: (value: string) =>
+      FormValidation({ stateName: "caloriesValue", value }),
+    proteinsValue: (value: string) =>
+      FormValidation({ stateName: "proteinsValue", value }),
+    carbsValue: (value: string) =>
+      FormValidation({ stateName: "carbsValue", value }),
+    fatValue: (value: string) =>
+      FormValidation({ stateName: "fatValue", value }),
+  };
+
+  const checkAllInputValidations = () => {
+    const generalMealDetailsValue = {
+      mealName: mealFormInputVal.mealName,
+      cookingInstruction: mealFormInputVal.cookingInstruction,
+    };
+    const ingredientValues = getAllIngredientValues();
+    const mealValidationResult = validateFormInputs(
+      generalMealDetailsValue,
+      validationRules
+    );
+    let ingredientValidationResult: { [key: string]: stepValidationResult } =
+      {};
+    Object.entries(ingredientValues).map(([parentKey, parentValue]) => {
+      const result = validateFormInputs(parentValue, validationRules);
+      ingredientValidationResult = {
+        ...ingredientValidationResult,
+        [parentKey]: result,
+      };
+    });
+    return { ingredientValidationResult, mealValidationResult };
+  };
+
+  // UseEffect
+  useEffect(() => {
+    if (latestIngredientKey && ingredientRefs.current[latestIngredientKey]) {
+      const newIngredientInput = ingredientRefs.current[latestIngredientKey];
+      newIngredientInput?.focus();
+
+      // Scroll to the new ingredient
+      ingredientContainerRef.current?.scrollTo({
+        top: ingredientContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+    setLatestIngredientKey(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ingredientInputVal]);
+
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
@@ -294,10 +391,18 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                 Ingredients
               </p>
               <div className="flex flex-col gap-3 mt-2">
-                <div className="flex flex-col gap-2 pr-2 overflow-auto max-h-[250px]">
+                <div
+                  ref={ingredientContainerRef}
+                  className="flex flex-col gap-2 pr-2 overflow-auto max-h-[250px]"
+                >
                   {Object.entries(ingredientInputVal!).map(
                     ([key, value], index) => (
-                      <div key={key}>
+                      <div
+                        ref={(el) => {
+                          ingredientRefs.current[key] = el;
+                        }}
+                        key={key}
+                      >
                         <div className="w-full">
                           <Input
                             name={`${key}`}
@@ -311,7 +416,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                             autoComplete="off"
                             valid={ingredientValidations[key].ingredientValid}
                             validationMessage={
-                              ingredientValidations[key].ingredientValidationMessage
+                              ingredientValidations[key]
+                                .ingredientValidationMessage
                             }
                             deletableInput={index === 0 ? false : true}
                             deleteInputFn={() => {
@@ -342,7 +448,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                               autoComplete="off"
                               valid={ingredientValidations[key].caloriesValid}
                               validationMessage={
-                                ingredientValidations[key].caloriesValidationMessage
+                                ingredientValidations[key]
+                                  .caloriesValidationMessage
                               }
                             />
                           </div>
@@ -358,7 +465,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                               autoComplete="off"
                               valid={ingredientValidations[key].proteinsValid}
                               validationMessage={
-                                ingredientValidations[key].proteinsValidationMessage
+                                ingredientValidations[key]
+                                  .proteinsValidationMessage
                               }
                             />
                           </div>
@@ -374,7 +482,8 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                               autoComplete="off"
                               valid={ingredientValidations[key].carbsValid}
                               validationMessage={
-                                ingredientValidations[key].carbsValidationMessage
+                                ingredientValidations[key]
+                                  .carbsValidationMessage
                               }
                             />
                           </div>
@@ -405,6 +514,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       const ingredientCount =
                         Object.keys(ingredientInputVal).length + 1;
                       const uuid = crypto.randomUUID();
+                      setLatestIngredientKey(`ingredient${uuid}`);
                       setIngredientInputVal((prev) => ({
                         ...prev,
                         [`ingredient${uuid}`]: {
@@ -424,7 +534,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       setIngredientValidations((prev) => ({
                         ...prev,
                         [`ingredient${uuid}`]: {
-                          ingredientValid: null, 
+                          ingredientValid: null,
                           ingredientValidationMessage: "",
                           caloriesValid: null,
                           caloriesValidationMessage: "",
@@ -499,15 +609,14 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                 />
               </motion.div>
             </div>
-
             <div className="w-max mx-auto mt-4">
               <motion.button
-                whileHover={{
-                  scale: 1.1,
-                  transition: { duration: 0.2 },
+                onClick={() => {
+                  const validationResults = checkAllInputValidations();
+                  checkValidations(validationResults.mealValidationResult);
+                  checkIngredientValidations(validationResults.ingredientValidationResult);
                 }}
-                whileTap={{ scale: 0.9 }}
-                className="flex gap-1 items-center bg-secondary text-white font-quickSand font-semibold w-full rounded-md p-1 px-2"
+                className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
                 type="button"
               >
                 <MdiFoodDrumstickOutline
