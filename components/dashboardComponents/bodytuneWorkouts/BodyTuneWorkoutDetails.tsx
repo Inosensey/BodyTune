@@ -49,24 +49,24 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
 
   return (
     <Overlay>
-      <div className="w-[50%] h-screen flex items-center justify-center">
-        <div className="flex flex-col bg-lightPrimary laptop:w-[95%] laptop:h-[85%] rounded-lg p-4">
-          <div className="flex justify-center gap-4 laptop:w-[100%] laptop:h-[5%]">
-            <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
-              BodyTune Workout Details
-            </p>
-            <div
-              onClick={() => setToggleBodyTuneWorkoutDetails(false)}
-              className="cursor-pointer group"
-            >
-              <FontAwesomeIcon
-                icon={faXmarkCircle}
-                className="text-[#D3F0D1] text-2xl transition duration-200 group-hover:text-[#a3e09f]"
-              />
-            </div>
+      <div className="w-full phone:h-full laptop:h-[95%] flex flex-col justify-center tablet:items-center">
+        <div className="flex items-center justify-center gap-4 w-[100%] h-[8%]">
+          <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
+            BodyTune Workout Details
+          </p>
+          <div
+            onClick={() => setToggleBodyTuneWorkoutDetails(false)}
+            className="cursor-pointer group"
+          >
+            <FontAwesomeIcon
+              icon={faXmarkCircle}
+              className="text-[#D3F0D1] text-2xl transition duration-200 group-hover:text-[#a3e09f]"
+            />
           </div>
+        </div>
+        <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-4 tablet:w-[85%]">
           <div className="flex flex-col gap-2 laptop:h-[95%]">
-            <div className="flex flex-col gap-2 bg-primary w-[100%] p-4 rounded-md font-quickSand font-bold h-[20%] overflow-auto">
+            <div className="flex flex-col gap-2 bg-primary w-[100%] p-4 rounded-md font-quickSand font-bold h-[30%] overflow-auto">
               <p className="font-dmSans">
                 Plan Name:{" "}
                 <span className="font-normal text-lightSecondary">
@@ -91,9 +91,10 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                 </p>
               </div>
             </div>
-            <div className="p-4 w-[100%] flex flex-col h-[100%] bg-primary gap-1">
-              <div className="w-full flex flex-col gap-1 h-[75%]">
-                <div className="flex h-max gap-1">
+            <div className="p-4 flex flex-col bg-primary gap-1 laptop:h-[70%] laptop:w-[100%]">
+              <div className="w-full flex flex-col gap-1 phone:h-[650px] laptop:h-[100%]">
+                <label className="font-dmSans font-bold">Select Date:</label>
+                <div className="flex flex-wrap h-max gap-1">
                   {weekDates.map((date: string, index: number) => (
                     <div
                       className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -121,7 +122,7 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                   >
                     <motion.div
                       variants={exerciseAnimationVariant}
-                      className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                      className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                     >
                       <div className="flex flex-col">
                         <p className="font-bold text-[#a3e09f]">Bench Press</p>
@@ -140,13 +141,13 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                           height={200}
                           src="/assets/svg/healthy-1.svg"
                           alt="Preview"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </motion.div>
                     <motion.div
                       variants={exerciseAnimationVariant}
-                      className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                      className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                     >
                       <div className="flex flex-col">
                         <p className="font-bold text-[#a3e09f]">Bench Press</p>
@@ -165,13 +166,13 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                           height={200}
                           src="/assets/svg/healthy-1.svg"
                           alt="Preview"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </motion.div>
                     <motion.div
                       variants={exerciseAnimationVariant}
-                      className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                      className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                     >
                       <div className="flex flex-col">
                         <p className="font-bold text-[#a3e09f]">Bench Press</p>
@@ -190,13 +191,13 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                           height={200}
                           src="/assets/svg/healthy-1.svg"
                           alt="Preview"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </motion.div>
                     <motion.div
                       variants={exerciseAnimationVariant}
-                      className="font-dmSans flex flex-col gap-1 laptop:w-[200px] h-max p-2 bg-lightPrimary rounded-md"
+                      className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                     >
                       <div className="flex flex-col">
                         <p className="font-bold text-[#a3e09f]">Bench Press</p>
@@ -215,7 +216,7 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                           height={200}
                           src="/assets/svg/healthy-1.svg"
                           alt="Preview"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </motion.div>
