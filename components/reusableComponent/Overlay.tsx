@@ -21,7 +21,7 @@ const Overlay = ({ children }: props) => {
       variants={overlayVariants}
       initial="hidden"
       animate="show"
-      className="fixed z-50 left-0 top-0 w-screen h-screen bg-black/[.54] flex justify-center laptop:items-center"
+      className="fixed z-50 left-0 top-0 w-screen phone:h-[100%] laptop:h-screen bg-black/[.54] flex justify-center laptop:items-center"
     >
       {children}
     </motion.div>
