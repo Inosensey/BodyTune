@@ -33,10 +33,6 @@ body {
 }
 
 /* Custom Scrollbar */
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-}
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -56,5 +52,19 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@media screen and (min-width: 280px) {
+  /* width */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
   }
 }
