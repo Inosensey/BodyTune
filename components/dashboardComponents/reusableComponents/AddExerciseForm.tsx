@@ -14,7 +14,7 @@ import {
 } from "@/components/reusableComponent/formInputs/input";
 
 // Utils
-import FormValidation from "@/utils/validation";
+import FormValidation, { validateFormInputs } from "@/utils/validation";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,7 +30,7 @@ interface props {
   setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface ExerciseFormInputTypes {
-  title: string;
+  exerciseName: string;
   shortDescription: string;
   difficulty: string;
   equipment: string;
@@ -40,7 +40,7 @@ interface ExerciseFormInputTypes {
   youtubeLink: string;
 }
 interface ExerciseFormValidations {
-  title: {
+  exerciseName: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -81,7 +81,7 @@ interface radioButtonInfo {
 
 // Initials
 const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
-  title: "",
+  exerciseName: "",
   shortDescription: "",
   difficulty: "",
   equipment: "",
@@ -91,7 +91,7 @@ const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
   youtubeLink: "",
 };
 const ExerciseFormValidationInitials: ExerciseFormValidations = {
-  title: {
+  exerciseName: {
     valid: null,
     validationMessage: "",
   },
@@ -112,7 +112,7 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     validationMessage: "",
   },
   measurement: {
-    valid: null,
+    valid: true,
     validationMessage: "",
   },
   exerciseDemo: {
@@ -205,7 +205,6 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
     if (files && files[0]) {
       const file = files[0];
       if (!allowedTypes.includes(file.type)) {
-        alert("Invalid file type. Please select a JPEG, PNG, or GIF file.");
         event.target.value = "";
         setExerciseStepValidations((prev) => ({
           ...prev,
@@ -225,16 +224,37 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("File content as base64:", e.target?.result);
+        // console.log("File content as base64:", e.target?.result);
+        setExerciseFormInputVal((prev) => ({ ...prev, exerciseDemo: e.target?.result as string }));
         setDemoSrc(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
   const radioOnChange = (value: string, name: string) => {
+
+    const validationParams = {
+      stateName: name,
+      value: value,
+    };
+
+    const validationResult: validation = FormValidation(validationParams);
+
+    setExerciseStepValidations((prev) => ({
+      ...prev,
+      [validationResult.validationName!]: {
+        valid: validationResult.valid,
+        validationMessage: validationResult.validationMessage,
+      },
+    }));
+
+    // const allInputValidationResult = checkAllInputValidations();
+    checkValidations(validationResult);
+
     setExerciseFormInputVal((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validations
   const checkValidations = (
     validationInfo: stepValidationResult | validation
   ) => {
@@ -254,10 +274,37 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
 
     return isValid;
   };
+  const validationRules = {
+    exerciseName: (value: string) =>
+      FormValidation({ stateName: "exerciseName", value }),
+    difficulty: (value: string) =>
+      FormValidation({ stateName: "difficulty", value }),
+    measurementType: (value: string) =>
+      FormValidation({ stateName: "measurementType", value }),
+    measurement: (value: string) =>
+      FormValidation({ stateName: "measurement", value }),
+    exerciseDemo: (value: string) =>
+      FormValidation({ stateName: "exerciseDemo", value }),
+  };
+  const checkAllInputValidations = () => {
+    const exerciseInputsValues = {
+      exerciseName: exerciseFormInputVal.exerciseName,
+      difficulty: exerciseFormInputVal.difficulty,
+      measurementType: exerciseFormInputVal.measurementType,
+      measurement: exerciseFormInputVal.measurement,
+      exerciseDemo: exerciseFormInputVal.exerciseDemo,
+    };
+    const exerciseValidationResults = validateFormInputs(
+      exerciseInputsValues,
+      validationRules
+    );
+    checkValidations(exerciseValidationResults)
+  };
+
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] laptop:w-[30%]">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] tablet:w-[60%] laptop:w-[40%] desktop:w-[30%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Exercise
@@ -273,21 +320,23 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
             </div>
           </div>
           <div className="flex flex-col gap-3 mt-4">
-            <motion.div className="w-full">
+            <motion.div className="phone:w-12/12 laptop:w-8/12">
               <Input
                 name="exerciseName"
                 placeholder="Enter the Name of the Exercise"
-                state={exerciseFormInputVal.title}
+                state={exerciseFormInputVal.exerciseName}
                 type="text"
                 label="Exercise Name"
                 onChange={onChange}
                 onBlur={onChange}
                 autoComplete="off"
-                valid={exerciseValidations.title.valid}
-                validationMessage={exerciseValidations.title.validationMessage}
+                valid={exerciseValidations.exerciseName.valid}
+                validationMessage={
+                  exerciseValidations.exerciseName.validationMessage
+                }
               />
             </motion.div>
-            <motion.div className="w-full">
+            <motion.div className="phone:w-12/12 laptop:w-8/12">
               <TextareaInput
                 name="shortDescription"
                 state={exerciseFormInputVal.shortDescription}
@@ -302,7 +351,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 }
               />
             </motion.div>
-            <motion.div className="w-full">
+            <motion.div className="phone:w-12/12 laptop:w-8/12">
               <Input
                 name="equipment"
                 placeholder="Enter the Equipment of the Exercise"
@@ -313,7 +362,9 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 onBlur={onChange}
                 autoComplete="off"
                 valid={exerciseValidations.equipment.valid}
-                validationMessage={exerciseValidations.equipment.validationMessage}
+                validationMessage={
+                  exerciseValidations.equipment.validationMessage
+                }
               />
             </motion.div>
             <RadioButtonGroup
@@ -321,6 +372,10 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
               radioButtonGroupLabel="Difficulty"
               radioButtons={difficultyRadioButtons}
               selectedRadio={exerciseFormInputVal.difficulty}
+              valid={exerciseValidations.difficulty.valid}
+              validationMessage={
+                exerciseValidations.difficulty.validationMessage
+              }
             />
 
             <RadioButtonGroup
@@ -328,9 +383,13 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
               radioButtonGroupLabel="Measurement Type"
               radioButtons={measurementTypeRadioButtons}
               selectedRadio={exerciseFormInputVal.measurementType}
+              valid={exerciseValidations.measurementType.valid}
+              validationMessage={
+                exerciseValidations.measurementType.validationMessage
+              }
             />
             {exerciseFormInputVal.measurementType === "Reps" && (
-              <motion.div className="w-1/2">
+              <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Reps per set"
@@ -348,7 +407,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
               </motion.div>
             )}
             {exerciseFormInputVal.measurementType === "Time" && (
-              <motion.div className="w-1/2">
+              <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Duration per set"
@@ -365,7 +424,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 />
               </motion.div>
             )}
-            <motion.div className="w-1/2 flex flex-col gap-2">
+            <motion.div className="w-2/2 flex flex-col gap-2">
               <CustomFileInput
                 customButtonName="Choose a File"
                 label="Upload an image or GIF to show the exercise."
@@ -383,11 +442,11 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                   width={200}
                   height={200}
                   alt="Preview"
-                  className="w-full h-44 object-cover"
+                  className="w-full h-44 object-contain"
                 />
               )}
             </motion.div>
-            <motion.div className="w-8/12">
+            <motion.div className="phone:w-12/12 tablet:w-8/12">
               <Input
                 name="youtubeLink"
                 placeholder="Youtube link to the Exercise"
@@ -406,6 +465,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
           </div>
           <div className="w-max mx-auto mt-4">
             <motion.button
+              onClick={() => checkAllInputValidations()}
               className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
               type="button"
             >
