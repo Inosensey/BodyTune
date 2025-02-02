@@ -60,6 +60,8 @@ interface radioButtonGroupParams {
   selectedRadio: string;
   radioButtonGroupLabel: string;
   radioButtons: radioButtonInfo[];
+  valid?: null | boolean | undefined;
+  validationMessage?: string;
 }
 
 export const Input = <T extends string | number>({
@@ -287,6 +289,8 @@ export const RadioButtonGroup = ({
   radioButtonGroupLabel,
   radioButtons,
   selectedRadio,
+  valid = null,
+  validationMessage = "",
 }: radioButtonGroupParams) => {
   // Variants
   const childContainer = {
@@ -298,7 +302,13 @@ export const RadioButtonGroup = ({
     },
   };
   return (
-    <motion.div variants={childContainer} className="w-full">
+    <motion.div
+      variants={childContainer}
+      className="px-2 py-1 w-full rounded-lg"
+      style={{
+        border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
+      }}
+    >
       <div className="flex flex-col">
         <label className="phone:text-sm font-quickSand font-semibold">
           {radioButtonGroupLabel}:
@@ -337,6 +347,17 @@ export const RadioButtonGroup = ({
           </div>
         ))}
       </div>
+      {valid != null ? (
+        valid === true ? (
+          ""
+        ) : (
+          <span className="text-[0.75rem] text-red-500 font-bold">
+            {validationMessage}
+          </span>
+        )
+      ) : (
+        ""
+      )}
     </motion.div>
   );
 };
@@ -351,17 +372,17 @@ export const CustomFileInput = ({
   onChange,
 }: fileInputParam) => {
   return (
-    <div className="flex flex-col w-full laptop:w-full gap-2">
+    <div
+      className="flex flex-col phone:w-full gap-2 px-2 py-1 w-full rounded-lg"
+      style={{
+        border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
+      }}
+    >
       <label className="phone:text-sm font-quickSand font-semibold">
         {label}
       </label>
 
-      <div
-        className="w-full relative"
-        style={{
-          border: valid === null ? "" : valid ? "" : "1px solid rgb(239 68 68)",
-        }}
-      >
+      <div className="w-full relative">
         <input
           type="file"
           name={name}
@@ -371,7 +392,7 @@ export const CustomFileInput = ({
           className="hidden"
         />
         <label
-          className="cursor-pointer bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+          className="cursor-pointer bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-1/2 rounded-md py-1 px-2 flex flex-col-reverse items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
           htmlFor={name}
         >
           {customButtonName}
