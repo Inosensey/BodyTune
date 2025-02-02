@@ -11,6 +11,7 @@ const config: Config = {
       phone: '280px',
       mdphone: '420px',
       tablet: '576px',
+      mdtablet: '676px',
       laptop: '992px',
       desktop: '1280px',
       larger: '1920px'
