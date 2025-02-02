@@ -44,8 +44,7 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
 
   return (
     <Overlay>
-      <div className="w-[50%] h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary laptop:w-[95%] laptop:h-[85%] rounded-lg p-4">
+      <div className="w-full phone:h-full laptop:h-[95%] flex flex-col justify-center tablet:items-center">
           <div className="flex justify-center gap-4 laptop:w-[100%] laptop:h-[5%]">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               BodyTune Meal Details
@@ -60,6 +59,7 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
               />
             </div>
           </div>
+          <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-4 tablet:w-[95%]">
           <div className="flex flex-col gap-2 laptop:h-[95%]">
             <div className="flex flex-col gap-2 bg-primary w-[100%] p-4 rounded-md font-quickSand font-bold h-[20%]  overflow-auto">
               <p className="font-dmSans">
@@ -91,7 +91,10 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
               <div className="p-4 w-[100%] flex flex-col h-[100%] bg-primary gap-1">
                 <div className="w-full flex flex-col gap-1 h-[100%]">
                   <div className="flex flex-col gap-1">
-                    <div className="flex h-max gap-1">
+                    <label className="font-dmSans font-bold">
+                      Select Date:
+                    </label>
+                    <div className="flex flex-wrap h-max gap-1">
                       {weekDates.map((date: string, index: number) => (
                         <div
                           className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -110,7 +113,11 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                         </div>
                       ))}
                     </div>
-                    <div className="flex gap-1 h-max">
+                    <div className="flex flex-col gap-1">
+                      <label className="font-dmSans font-bold">
+                        Select Meal:
+                      </label>
+                      <div className="flex flex-wrap h-max gap-1">
                       {mealPlanTabs.map((meal: string, index: number) => (
                         <div
                           className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
@@ -128,6 +135,7 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                           </p>
                         </div>
                       ))}
+                      </div>
                     </div>
                   </div>
                   {selectedMealTab === "Breakfast" && (
@@ -186,11 +194,11 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
@@ -218,7 +226,7 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 px-2 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto "
+                      className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto"
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -269,11 +277,11 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
@@ -301,7 +309,7 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 px-2 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto "
+                      className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto" 
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -352,11 +360,11 @@ const BodyTuneMealDetails = ({ setToggleBodyTuneMealDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
