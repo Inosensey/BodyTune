@@ -67,24 +67,26 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
 
   return (
     <Overlay>
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 w-[95%] h-[85%] overflow-auto">
-          <div className="flex justify-center gap-4 w-[100%] h-[5%]">
-            <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
-              BodyTune Details
-            </p>
-            <div
-              onClick={() => setToggleBodyTuneDetails(false)}
-              className="cursor-pointer group"
-            >
-              <FontAwesomeIcon
-                icon={faXmarkCircle}
-                className="text-[#D3F0D1] text-2xl transition duration-200 group-hover:text-[#a3e09f]"
-              />
-            </div>
+      <div className="w-full phone:h-full laptop:h-[95%] flex flex-col justify-center tablet:items-center">
+        <div className="flex items-center justify-center gap-4 w-[100%] h-[8%]">
+          <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
+            BodyTune Details
+          </p>
+          <div
+            onClick={() => {
+              setToggleBodyTuneDetails(false);
+            }}
+            className="cursor-pointer group"
+          >
+            <FontAwesomeIcon
+              icon={faXmarkCircle}
+              className="text-[#D3F0D1] text-2xl transition duration-200 group-hover:text-[#a3e09f]"
+            />
           </div>
+        </div>
+        <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-4 tablet:w-[95%]">
           <div className="flex gap-1 h-[95%] flex-col">
-            <div className="flex flex-col gap-2 bg-primary p-4 rounded-md font-quickSand font-bold h-[20%] phone:w-12/12 phone:overflow-auto laptop:w-max">
+            <div className="flex flex-col gap-2 bg-primary p-4 rounded-md font-quickSand font-bold phone:w-12/12 laptop:overflow-auto laptop:w-max laptop:h-[20%] ">
               <p className="font-dmSans">
                 Plan Name:{" "}
                 <span className="font-normal text-lightSecondary">
@@ -104,9 +106,9 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                 </span>
               </p>
             </div>
-            <div className="w-full h-[80%] flex gap-2 phone:flex-col laptop:flex-row">
-              <div className="p-4 flex flex-col h-[100%] bg-primary gap-1 desktop:w-[100%] laptop:w-[50%]">
-                <div className="flex flex-col gap-1 h-[25%] overflow-auto">
+            <div className="w-full flex gap-2 laptop:h-[80%] phone:flex-col laptop:flex-row">
+              <div className="p-4 flex flex-col bg-primary gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]">
+                <div className="flex flex-col gap-1 laptop:h-[25%] laptop:overflow-auto">
                   <p className="font-quickSand font-bold">
                     Meal Plan Name:
                     <span className="font-normal text-lightSecondary">
@@ -126,8 +128,11 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                     </p>
                   </div>
                 </div>
-                <div className="w-full flex flex-col gap-1 h-[75%]">
+                <div className="w-full flex flex-col gap-1 h-[72%]">
                   <div className="flex flex-col gap-1">
+                    <label className="font-dmSans font-bold">
+                      Select Date:
+                    </label>
                     <div className="flex flex-wrap h-max gap-1">
                       {weekDates.map((date: string, index: number) => (
                         <div
@@ -147,24 +152,29 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                         </div>
                       ))}
                     </div>
-                    <div className="flex gap-1 h-max">
-                      {mealPlanTabs.map((meal: string, index: number) => (
-                        <div
-                          className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                          key={index}
-                          onClick={() => setSelectedMealTab(meal)}
-                        >
-                          <p
-                            className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                              selectedMealTab === meal
-                                ? "text-[#ffffff]"
-                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                            }`}
+                    <div className="flex flex-col gap-1">
+                      <label className="font-dmSans font-bold">
+                        Select Meal:
+                      </label>
+                      <div className="flex flex-wrap h-max gap-1">
+                        {mealPlanTabs.map((meal: string, index: number) => (
+                          <div
+                            className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                            key={index}
+                            onClick={() => setSelectedMealTab(meal)}
                           >
-                            {meal}
-                          </p>
-                        </div>
-                      ))}
+                            <p
+                              className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                                selectedMealTab === meal
+                                  ? "text-[#ffffff]"
+                                  : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                              }`}
+                            >
+                              {meal}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   {selectedMealTab === "Breakfast" && (
@@ -172,7 +182,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto"
+                      className="py-1 flex flex-col gap-[0.1rem] w-[100%] laptop:h-[100%] laptop:overflow-auto"
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -223,11 +233,11 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
@@ -255,7 +265,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 px-2 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto "
+                      className="py-1 flex flex-col gap-[0.1rem] w-[100%] laptop:h-[100%] laptop:overflow-auto"
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -306,11 +316,11 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
@@ -338,7 +348,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       variants={fadeVariants}
                       initial="hidden"
                       animate="show"
-                      className="py-1 px-2 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto "
+                      className="py-1 flex flex-col gap-[0.1rem] w-[100%] laptop:h-[100%] laptop:overflow-auto"
                     >
                       <div className="flex flex-col justify-between w-[100%]">
                         <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0 underline">
@@ -389,11 +399,11 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           </div>
                         </div>
                       </div>
-                      <div>
+                      <div className="phone:h-[250px]">
                         <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                           Cooking Instructions:
                         </label>
-                        <p className="font-dmSans text-white text-sm">
+                        <p className="font-dmSans text-white text-sm phone:h-[90%] phone:overflow-auto">
                           Lorem ipsum dolor sit amet consectetur adipisicing
                           elit. Deserunt sapiente excepturi cupiditate! Maiores
                           eligendi quia voluptatum necessitatibus aut et quos
@@ -418,8 +428,8 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                   )}
                 </div>
               </div>
-              <div className="p-4 flex flex-col h-[100%] bg-primary gap-1  desktop:w-[100%] laptop:w-[50%]">
-                <div className="flex flex-col gap-1 h-[25%] overflow-auto">
+              <div className="p-4 flex flex-col bg-primary gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]">
+                <div className="flex flex-col gap-1 laptop:h-[25%] laptop:overflow-auto">
                   <p className="font-quickSand font-bold">
                     Exercise Plan Name:
                     <span className="font-normal text-lightSecondary">
@@ -439,7 +449,8 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                     </p>
                   </div>
                 </div>
-                <div className="w-full flex flex-col gap-1 h-[75%]">
+                <div className="w-full flex flex-col gap-1 phone:h-[650px] laptop:h-[70%]">
+                  <label className="font-dmSans font-bold">Select Date:</label>
                   <div className="flex flex-wrap h-max gap-1">
                     {weekDates.map((date: string, index: number) => (
                       <div
@@ -459,7 +470,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                       </div>
                     ))}
                   </div>
-                  <div className="py-1 flex flex-col gap-[0.1rem] h-[100%] w-[100%] overflow-auto">
+                  <div className="py-1 flex flex-col gap-[0.1rem h-[100%] w-[100%] overflow-auto">
                     <motion.div
                       variants={exerciseContainerAnimationVariant}
                       initial="hidden"
@@ -474,9 +485,15 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold laptop:text-sm">Beginner</p>
-                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
-                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold laptop:text-sm">
+                            Beginner
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            3 sets x 8–10 reps
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            Barbell
+                          </p>
                           <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
@@ -487,7 +504,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                             height={200}
                             src="/assets/svg/healthy-1.svg"
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         </div>
                       </motion.div>
@@ -499,9 +516,15 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold laptop:text-sm">Beginner</p>
-                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
-                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold laptop:text-sm">
+                            Beginner
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            3 sets x 8–10 reps
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            Barbell
+                          </p>
                           <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
@@ -512,7 +535,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                             height={200}
                             src="/assets/svg/healthy-1.svg"
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         </div>
                       </motion.div>
@@ -524,9 +547,15 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold laptop:text-sm">Beginner</p>
-                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
-                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold laptop:text-sm">
+                            Beginner
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            3 sets x 8–10 reps
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            Barbell
+                          </p>
                           <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
@@ -537,7 +566,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                             height={200}
                             src="/assets/svg/healthy-1.svg"
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         </div>
                       </motion.div>
@@ -549,9 +578,15 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                           <p className="font-bold text-[#a3e09f]">
                             Bench Press
                           </p>
-                          <p className="font-semibold laptop:text-sm">Beginner</p>
-                          <p className="font-semibold laptop:text-sm">3 sets x 8–10 reps</p>
-                          <p className="font-semibold laptop:text-sm">Barbell</p>
+                          <p className="font-semibold laptop:text-sm">
+                            Beginner
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            3 sets x 8–10 reps
+                          </p>
+                          <p className="font-semibold laptop:text-sm">
+                            Barbell
+                          </p>
                           <p className="font-semibold cursor-pointer underline laptop:text-sm">
                             Bench Press Youtube Link
                           </p>
@@ -562,7 +597,7 @@ const BodyTuneDetails = ({ setToggleBodyTuneDetails }: props) => {
                             height={200}
                             src="/assets/svg/healthy-1.svg"
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         </div>
                       </motion.div>
