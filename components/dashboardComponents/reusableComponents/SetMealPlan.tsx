@@ -155,37 +155,65 @@ const SetMealPlan = ({
                 </p>
               </>
             )}
-            <div className="relative pl-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]">
-              <label className="phone:text-sm font-quickSand font-semibold">
-                Choose a Meal Plan
-              </label>
-              <div className={`flex flex-col w-full gap-2 bg-primary`}>
-                <select
-                  className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-                  onChange={selectOnChange}
-                  name="mealPlan"
-                  defaultValue={mealPlanFieldsVal.selectedMealPlan}
-                >
-                  <option
-                    className="bg-primary font-quickSand"
-                    value="0"
-                    disabled
+            <div
+              className="relative flex flex-wrap items-center gap-1 w-12/12"
+              style={{ flexDirection: showMealPlanHtml ? "row" : "column" }}
+            >
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Filter Meal Plans
+                </label>
+                <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="mealPlan"
+                    defaultValue={1}
                   >
-                    Meal Plans
-                  </option>
-                  <option className="bg-primary font-quickSand" value="1">
-                    Meal Plan1
-                  </option>
-                  <option className="bg-primary font-quickSand" value="2">
-                    Meal Plan2
-                  </option>
-                  <option className="bg-primary font-quickSand" value="3">
-                    Meal Plan3
-                  </option>
-                  <option className="bg-primary font-quickSand" value="4">
-                    Meal Plan4
-                  </option>
-                </select>
+                    <option className="bg-primary font-quickSand" value="1">
+                      All
+                    </option>
+                    <option className="bg-primary font-quickSand" value="2">
+                      Saved Meal Plans
+                    </option>
+                    <option className="bg-primary font-quickSand" value="3">
+                      Created Meal Plans
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Choose a Meal Plan
+                </label>
+                <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="mealPlan"
+                    defaultValue={mealPlanFieldsVal.selectedMealPlan}
+                  >
+                    <option
+                      className="bg-primary font-quickSand"
+                      value="0"
+                      disabled
+                    >
+                      Meal Plans
+                    </option>
+                    <option className="bg-primary font-quickSand" value="1">
+                      Meal Plan1
+                    </option>
+                    <option className="bg-primary font-quickSand" value="2">
+                      Meal Plan2
+                    </option>
+                    <option className="bg-primary font-quickSand" value="3">
+                      Meal Plan3
+                    </option>
+                    <option className="bg-primary font-quickSand" value="4">
+                      Meal Plan4
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
