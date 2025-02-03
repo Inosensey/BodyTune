@@ -27,6 +27,7 @@ interface props {
 
 // Initials
 import { weekDates } from "@/utils/initials";
+import TablerBarbell from "@/icons/TablerBarbellLight";
 const exercisePlanInitials: exercisePlanInterface = {
   selectedExercisePlan: 0,
   exercisePlanName: "",
@@ -171,44 +172,72 @@ const SetExercisePlan = ({
                 </p>
               </>
             )}
-            <div className="pl-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]">
-              <label className="phone:text-sm font-quickSand font-semibold">
-                Choose a Exercise Plan
-              </label>
-              <div className={`flex flex-col w-full gap-2 bg-primary`}>
-                <select
-                  className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-                  onChange={selectOnChange}
-                  name="exercisePlan"
-                  defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
-                >
-                  <option
-                    className="bg-primary font-quickSand"
-                    value="0"
-                    disabled
+            <div
+              className="relative flex flex-wrap items-center gap-1 w-12/12"
+              style={{ flexDirection: showExercisePlanHtml ? "row" : "column" }}
+            >
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Filter Exercise Plans
+                </label>
+                <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="mealPlan"
+                    defaultValue={1}
                   >
-                    Exercise Plans
-                  </option>
-                  <option className="bg-primary font-quickSand" value="1">
-                    Exercise Plan1
-                  </option>
-                  <option className="bg-primary font-quickSand" value="2">
-                    Exercise Plan2
-                  </option>
-                  <option className="bg-primary font-quickSand" value="3">
-                    Exercise Plan3
-                  </option>
-                  <option className="bg-primary font-quickSand" value="4">
-                    Exercise Plan4
-                  </option>
-                </select>
+                    <option className="bg-primary font-quickSand" value="1">
+                      All
+                    </option>
+                    <option className="bg-primary font-quickSand" value="2">
+                      Saved Exercise Plans
+                    </option>
+                    <option className="bg-primary font-quickSand" value="3">
+                      Created Exercise Plans
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Choose a Exercise Plan
+                </label>
+                <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="exercisePlan"
+                    defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
+                  >
+                    <option
+                      className="bg-primary font-quickSand"
+                      value="0"
+                      disabled
+                    >
+                      Exercise Plans
+                    </option>
+                    <option className="bg-primary font-quickSand" value="1">
+                      Exercise Plan1
+                    </option>
+                    <option className="bg-primary font-quickSand" value="2">
+                      Exercise Plan2
+                    </option>
+                    <option className="bg-primary font-quickSand" value="3">
+                      Exercise Plan3
+                    </option>
+                    <option className="bg-primary font-quickSand" value="4">
+                      Exercise Plan4
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
         </div>
         {showExercisePlanHtml && (
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] flex-col midtablet:flex-1 mdtablet:h-[80%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[34%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[24%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
@@ -258,57 +287,92 @@ const SetExercisePlan = ({
               </div>
               <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
                 <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">
-                      Exercise name
-                    </p>
-                    <p className="truncate">Exercise Difficulty</p>
-                    <p className="truncate">Exercise measurement</p>
-                    <p className="truncate">Equipment Name</p>
+                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
+                    <div className="flex items-center gap-1">
+                      <TablerBarbell
+                        color="#D3F0D1"
+                        width="1.3em"
+                        height="1.3em"
+                      />
+                      <p className="truncate font-bold text-lightSecondary">
+                        Deadlifts
+                      </p>
+                    </div>
+                    <p className="truncate">Beginner</p>
+                    <p className="truncate">4 sets x 8–10 reps</p>
+                    <p className="truncate">Barbell</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">
-                      Exercise name
-                    </p>
-                    <p className="truncate">Exercise Difficulty</p>
-                    <p className="truncate">Exercise measurement</p>
-                    <p className="truncate">Equipment Name</p>
+                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
+                    <div className="flex items-center gap-1">
+                      <TablerBarbell
+                        color="#D3F0D1"
+                        width="1.3em"
+                        height="1.3em"
+                      />
+                      <p className="truncate font-bold text-lightSecondary">
+                        Deadlifts
+                      </p>
+                    </div>
+                    <p className="truncate">Beginner</p>
+                    <p className="truncate">4 sets x 8–10 reps</p>
+                    <p className="truncate">Barbell</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">
-                      Exercise name
-                    </p>
-                    <p className="truncate">Exercise Difficulty</p>
-                    <p className="truncate">Exercise measurement</p>
-                    <p className="truncate">Equipment Name</p>
+                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
+                    <div className="flex items-center gap-1">
+                      <TablerBarbell
+                        color="#D3F0D1"
+                        width="1.3em"
+                        height="1.3em"
+                      />
+                      <p className="truncate font-bold text-lightSecondary">
+                        Deadlifts
+                      </p>
+                    </div>
+                    <p className="truncate">Beginner</p>
+                    <p className="truncate">4 sets x 8–10 reps</p>
+                    <p className="truncate">Barbell</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">
-                      Exercise name
-                    </p>
-                    <p className="truncate">Exercise Difficulty</p>
-                    <p className="truncate">Exercise measurement</p>
-                    <p className="truncate">Equipment Name</p>
+                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
+                    <div className="flex items-center gap-1">
+                      <TablerBarbell
+                        color="#D3F0D1"
+                        width="1.3em"
+                        height="1.3em"
+                      />
+                      <p className="truncate font-bold text-lightSecondary">
+                        Deadlifts
+                      </p>
+                    </div>
+                    <p className="truncate">Beginner</p>
+                    <p className="truncate">4 sets x 8–10 reps</p>
+                    <p className="truncate">Barbell</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
                   </div>
-                  <div className="rounded-md flex flex-col gap-1 font-quickSand border-[1.5px] border-lightSecondary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <p className="truncate font-bold text-lightSecondary">
-                      Exercise name
-                    </p>
-                    <p className="truncate">Exercise Difficulty</p>
-                    <p className="truncate">Exercise measurement</p>
-                    <p className="truncate">Equipment Name</p>
+                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
+                    <div className="flex items-center gap-1">
+                      <TablerBarbell
+                        color="#D3F0D1"
+                        width="1.3em"
+                        height="1.3em"
+                      />
+                      <p className="truncate font-bold text-lightSecondary">
+                        Deadlifts
+                      </p>
+                    </div>
+                    <p className="truncate">Beginner</p>
+                    <p className="truncate">4 sets x 8–10 reps</p>
+                    <p className="truncate">Barbell</p>
                     <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
                       View
                     </button>
