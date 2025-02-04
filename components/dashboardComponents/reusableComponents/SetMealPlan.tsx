@@ -27,6 +27,50 @@ interface meaPlanInterface {
   mealPlanName: string;
 }
 
+interface MealInfoTypes {
+  mealName: string;
+  shortDescription: string;
+  cookingInstruction: string;
+}
+interface IngredientTypes {
+  [key: string]: {
+    id: string;
+    ingredientName: string;
+    ingredientValue: string;
+    caloriesName: string;
+    caloriesValue: string;
+    proteinsName: string;
+    proteinsValue: string;
+    carbsName: string;
+    carbsValue: string;
+    fatName: string;
+    fatValue: string;
+  };
+}
+interface nutritionTypes {
+  caloriesValue: number;
+  proteinsValue: number;
+  carbsValue: number;
+  fatValue: number;
+}
+interface mealPlanType {
+  breakFast: {
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
+  lunch: {
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
+  dinner: {
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
+}
+
 // Initials
 import { weekDates } from "@/utils/initials";
 const mealPlanFieldsInit: meaPlanInterface = {
@@ -40,6 +84,23 @@ const ingredientsDummyData: Array<string> = [
   "Butter",
   "Paprika",
 ];
+const mealPlanInitial: mealPlanType = {
+  breakFast: {
+    mealInfo: undefined,
+    ingredients: undefined,
+    nutrition: undefined,
+  },
+  lunch: {
+    mealInfo: undefined,
+    ingredients: undefined,
+    nutrition: undefined,
+  },
+  dinner: {
+    mealInfo: undefined,
+    ingredients: undefined,
+    nutrition: undefined,
+  },
+};
 
 const SetMealPlan = ({
   setSelectedOption,
@@ -51,50 +112,17 @@ const SetMealPlan = ({
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(false);
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
+  const [mealPlan, setMealPlan] = useState<mealPlanType>(mealPlanInitial);
+  const [selectedMeal, setSelectedMeal] = useState<string>("");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
-    // const validationParams = {
-    //   stateName: name,
-    //   value: value,
-    // };
-
-    // const validationResult: validation = FormValidation(validationParams);
-
-    // setMealStepValidations((prev) => ({
-    //   ...prev,
-    //   [validationResult.validationName!]: {
-    //     valid: validationResult.valid,
-    //     validationMessage: validationResult.validationMessage,
-    //   },
-    // }));
-
-    // const allInputValidationResult = checkAllInputValidations();
     // checkValidations(validationResult);
     setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value, options } = event.target;
-
-    // const validationParams = {
-    //   stateName: name,
-    //   value: value,
-    // };
-
-    // const validationResult: validation = FormValidation(validationParams);
-
-    // setFirstStepValidation((prev) => ({
-    //   ...prev,
-    //   [validationResult.validationName!]: {
-    //     valid: validationResult.valid,
-    //     validationMessage: validationResult.validationMessage,
-    //   },
-    // }));
-
-    // const allInputValidationResult = checkAllInputValidations();
-    // checkValidations(validationResult);
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
       setMealPlanFieldsVal((prev) => ({
@@ -220,7 +248,7 @@ const SetMealPlan = ({
         </div>
         {showMealPlanHtml && (
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] flex-col midtablet:flex-1 mdtablet:h-[80%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[24%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[34%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="mealPlanName"
@@ -257,20 +285,93 @@ const SetMealPlan = ({
             </div>
             <div className="flex gap-1 justify-between phone:flex-col mdtablet:flex-1 mdtablet:flex-row">
               <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
-                <div className="w-[100%] flex flex-col justify-center items-center">
-                  <Image
-                    src="/assets/svg/healthy-1.svg"
-                    width={200}
-                    height={200}
-                    alt="Logo"
-                  />
-                  <p
-                    onClick={() => setToggleAddMealForm(true)}
-                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                  >
-                    Make a Breakfast Meal
-                  </p>
-                </div>
+                {mealPlan.breakFast.mealInfo ? (
+                  <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
+                    <div className="flex justify-between w-[100%]">
+                      <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
+                        {mealPlan.breakFast.mealInfo.mealName}
+                      </p>
+                      <button className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary">
+                        Edit
+                      </button>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Ingredients:
+                      </label>
+                      <div className="flex gap-1">
+                        <p className="font-dmSans text-white text-sm">
+                          {Object.entries(mealPlan.breakFast.ingredients!)
+                            .map(([, value]) => value.ingredientValue)
+                            .join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Nutrition:
+                      </label>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Calories:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.breakFast.nutrition?.caloriesValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Protein:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.breakFast.nutrition?.proteinsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Carbs:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.breakFast.nutrition?.carbsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">Fat:</p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.breakFast.nutrition?.fatValue}g
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Cooking Instructions:
+                      </label>
+                      <p className="font-dmSans text-white text-sm">
+                        {mealPlan.breakFast.mealInfo.shortDescription}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-[100%] flex flex-col justify-center items-center">
+                    <Image
+                      src="/assets/svg/healthy-1.svg"
+                      width={200}
+                      height={200}
+                      alt="Logo"
+                    />
+                    <p
+                      onClick={() => {
+                        setToggleAddMealForm(true);
+                        setSelectedMeal("Breakfast");
+                      }}
+                      className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                    >
+                      Make a Breakfast Meal
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
                 <div className="w-[100%] flex flex-col justify-center items-center">
@@ -281,7 +382,10 @@ const SetMealPlan = ({
                     alt="Logo"
                   />
                   <p
-                    onClick={() => setToggleAddMealForm(true)}
+                    onClick={() => {
+                      setToggleAddMealForm(true);
+                      setSelectedMeal("Lunch");
+                    }}
                     className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
                   >
                     Make a Lunch Meal
@@ -297,7 +401,10 @@ const SetMealPlan = ({
                     alt="Logo"
                   />
                   <p
-                    onClick={() => setToggleAddMealForm(true)}
+                    onClick={() => {
+                      setToggleAddMealForm(true);
+                      setSelectedMeal("Dinner");
+                    }}
                     className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
                   >
                     Make a Dinner Meal
@@ -370,7 +477,11 @@ const SetMealPlan = ({
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddMealForm && (
-          <AddMealForm setToggleAddMealForm={setToggleAddMealForm} />
+          <AddMealForm
+            selectedMeal={selectedMeal}
+            setMealPlan={setMealPlan}
+            setToggleAddMealForm={setToggleAddMealForm}
+          />
         )}
       </AnimatePresence>
     </>
