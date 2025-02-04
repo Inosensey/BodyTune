@@ -75,6 +75,13 @@ interface IngredientInputValidation {
   };
 }
 
+interface nutritionTypes {
+  caloriesValue: number;
+  proteinsValue: number;
+  carbsValue: number;
+  fatValue: number;
+}
+
 // Initials
 const MealFormInputValInitial: MealFormInputTypes = {
   mealName: "",
@@ -95,6 +102,12 @@ const MealFormValidationInitials: MealFormValidations = {
     validationMessage: "",
   },
 };
+const nutritionInitial: nutritionTypes = {
+  caloriesValue: 0,
+  proteinsValue: 0,
+  carbsValue: 0,
+  fatValue: 0,
+}
 
 const AddMealForm = ({ setToggleAddMealForm }: props) => {
   // Init Values
@@ -114,6 +127,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
   const [mealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
     MealFormInputValInitial
   );
+  const [nutrition, setNutrition] = useState<nutritionTypes>(nutritionInitial);
 
   const [ingredientInputVal, setIngredientInputVal] =
     useState<IngredientInputTypes>({
@@ -225,6 +239,25 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
       },
     }));
   };
+  const calculateNutrition = () => {
+    let caloriesValue= 0;
+    let proteinsValue = 0;
+    let carbsValue = 0;
+    let fatValue = 0;
+    Object.entries(ingredientInputVal!).map(
+      ([, value]) => {
+        caloriesValue = caloriesValue + parseFloat(value.caloriesValue === "" ? "0" : value.caloriesValue);
+        proteinsValue = proteinsValue + parseFloat(value.proteinsValue === "" ? "0" : value.proteinsValue);
+        carbsValue = carbsValue + parseFloat(value.carbsValue === "" ? "0" : value.carbsValue);
+        fatValue = fatValue + parseFloat(value.fatValue === "" ? "0" : value.fatValue);
+        setNutrition(() => ({
+          caloriesValue: caloriesValue,
+          proteinsValue: proteinsValue,
+          carbsValue: carbsValue,
+          fatValue: fatValue,
+        }))
+    })
+  };
 
   // Validations
   const checkValidations = (
@@ -335,6 +368,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
       });
     }
     setLatestIngredientKey(null);
+    calculateNutrition()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ingredientInputVal]);
 
@@ -565,25 +599,25 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Calories:
                       </p>
-                      <p className="font-quickSand text-sm">0</p>
+                      <p className="font-quickSand text-sm">{nutrition.caloriesValue}g</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Protein:
                       </p>
-                      <p className="font-quickSand text-sm">0g</p>
+                      <p className="font-quickSand text-sm">{nutrition.proteinsValue}g</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Carbs:
                       </p>
-                      <p className="font-quickSand text-sm">0g</p>
+                      <p className="font-quickSand text-sm">{nutrition.carbsValue}g</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Fat:
                       </p>
-                      <p className="font-quickSand text-sm">0g</p>
+                      <p className="font-quickSand text-sm">{nutrition.fatValue}g</p>
                     </div>
                   </div>
                 </div>
@@ -613,8 +647,13 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
               <motion.button
                 onClick={() => {
                   const validationResults = checkAllInputValidations();
-                  checkValidations(validationResults.mealValidationResult);
-                  checkIngredientValidations(validationResults.ingredientValidationResult);
+                  const MealInfoValidation = checkValidations(validationResults.mealValidationResult);
+                  const ingredientValidationResult = checkIngredientValidations(validationResults.ingredientValidationResult);
+                  if(MealInfoValidation && ingredientValidationResult){
+                    console.log("All Valid");
+                    console.log(mealFormInputVal);
+                    console.log(ingredientInputVal);
+                  }
                 }}
                 className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
                 type="button"
