@@ -23,9 +23,6 @@ import {
 
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
-interface props {
-  setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
-}
 interface MealFormInputTypes {
   mealName: string;
   shortDescription: string;
@@ -81,6 +78,30 @@ interface nutritionTypes {
   carbsValue: number;
   fatValue: number;
 }
+interface mealPlanType {
+  breakFast: {
+    mealInfo: MealFormInputTypes|undefined;
+    ingredients: IngredientInputTypes|undefined;
+    nutrition: nutritionTypes|undefined
+  }
+  lunch: {
+    mealInfo: MealFormInputTypes|undefined;
+    ingredients: IngredientInputTypes|undefined;
+    nutrition: nutritionTypes|undefined
+  }
+  dinner: {
+    mealInfo: MealFormInputTypes|undefined;
+    ingredients: IngredientInputTypes|undefined;
+    nutrition: nutritionTypes|undefined
+  }
+}
+
+interface props {
+  setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedMeal: string,
+  setMealPlan: React.Dispatch<React.SetStateAction<mealPlanType>> 
+}
+
 
 // Initials
 const MealFormInputValInitial: MealFormInputTypes = {
@@ -109,7 +130,7 @@ const nutritionInitial: nutritionTypes = {
   fatValue: 0,
 }
 
-const AddMealForm = ({ setToggleAddMealForm }: props) => {
+const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) => {
   // Init Values
   const initUUID = crypto.randomUUID();
 
@@ -378,7 +399,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
         <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] desktop:w-[32%] larger:w-[25%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
-              Add Meal
+              Add {selectedMeal} Meal
             </p>
             <div
               onClick={() => setToggleAddMealForm(false)}
@@ -590,7 +611,7 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                     />
                   </button>
                 </div>
-                <div className="w-max">
+                <div className="w-12/12 flex gap-1 flex-wrap">
                   <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                     Nutrition:
                   </label>
@@ -650,9 +671,41 @@ const AddMealForm = ({ setToggleAddMealForm }: props) => {
                   const MealInfoValidation = checkValidations(validationResults.mealValidationResult);
                   const ingredientValidationResult = checkIngredientValidations(validationResults.ingredientValidationResult);
                   if(MealInfoValidation && ingredientValidationResult){
-                    console.log("All Valid");
-                    console.log(mealFormInputVal);
-                    console.log(ingredientInputVal);
+                    if(selectedMeal === "Breakfast"){
+                      setMealPlan((prev) => ({
+                        ...prev,
+                        breakFast: {
+                          mealInfo: mealFormInputVal,
+                          ingredients: ingredientInputVal,
+                          nutrition: nutrition
+                        },
+                        dinner: prev!.lunch,
+                        lunch: prev!.dinner,
+                      }))
+                    } else if(selectedMeal === "Lunch"){
+                      setMealPlan((prev) => ({
+                        ...prev,
+                        lunch: {
+                          mealInfo: mealFormInputVal,
+                          ingredients: ingredientInputVal,
+                          nutrition: nutrition
+                        },
+                        dinner: prev!.lunch,
+                        breakFast: prev!.dinner,
+                      }))
+                    } else if(selectedMeal === "Dinner"){
+                      setMealPlan((prev) => ({
+                        ...prev,
+                        dinner: {
+                          mealInfo: mealFormInputVal,
+                          ingredients: ingredientInputVal,
+                          nutrition: nutrition
+                        },
+                        lunch: prev!.lunch,
+                        breakFast: prev!.dinner,
+                      }))
+                    }
+                    setToggleAddMealForm(false)
                   }
                 }}
                 className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
