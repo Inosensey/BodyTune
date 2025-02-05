@@ -77,13 +77,6 @@ const mealPlanFieldsInit: meaPlanInterface = {
   selectedMealPlan: 0,
   mealPlanName: "",
 };
-const ingredientsDummyData: Array<string> = [
-  "Chicken",
-  "Salt",
-  "Pepper",
-  "Butter",
-  "Paprika",
-];
 const mealPlanInitial: mealPlanType = {
   breakFast: {
     mealInfo: undefined,
@@ -114,6 +107,7 @@ const SetMealPlan = ({
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [mealPlan, setMealPlan] = useState<mealPlanType>(mealPlanInitial);
   const [selectedMeal, setSelectedMeal] = useState<string>("");
+  const [formAction, setFormAction] = useState<string>("Add");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,10 +129,10 @@ const SetMealPlan = ({
   };
   return (
     <>
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col h-full" 
+          style={{ width: `${showMealPlanHtml ? "100%" : "max"}` }}>
         <div
-          // style={{ height: `${showMealPlanHtml && "27%"}` }}
-          className="bg-black rounded-t-lg pt-4 py-2 w-full"
+          className="bg-black rounded-t-lg pt-4 py-2 w-12/12"
         >
           <div
             className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
@@ -247,7 +241,7 @@ const SetMealPlan = ({
           </div>
         </div>
         {showMealPlanHtml && (
-          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full max-w-[1150px] flex-col midtablet:flex-1 mdtablet:h-[80%]">
+          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 flex-col midtablet:flex-1 mdtablet:h-[80%] laptop:w-12/12">
             <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[34%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
@@ -291,7 +285,14 @@ const SetMealPlan = ({
                       <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
                         {mealPlan.breakFast.mealInfo.mealName}
                       </p>
-                      <button className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary">
+                      <button
+                        onClick={() => {
+                          setToggleAddMealForm(true);
+                          setFormAction("Edit");
+                          setSelectedMeal("Breakfast");
+                        }}
+                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary"
+                      >
                         Edit
                       </button>
                     </div>
@@ -349,7 +350,7 @@ const SetMealPlan = ({
                         Cooking Instructions:
                       </label>
                       <p className="font-dmSans text-white text-sm">
-                        {mealPlan.breakFast.mealInfo.shortDescription}
+                        {mealPlan.breakFast.mealInfo.cookingInstruction}
                       </p>
                     </div>
                   </div>
@@ -364,6 +365,7 @@ const SetMealPlan = ({
                     <p
                       onClick={() => {
                         setToggleAddMealForm(true);
+                        setFormAction("Add");
                         setSelectedMeal("Breakfast");
                       }}
                       className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
@@ -374,101 +376,198 @@ const SetMealPlan = ({
                 )}
               </div>
               <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
-                <div className="w-[100%] flex flex-col justify-center items-center">
-                  <Image
-                    src="/assets/svg/healthy-1.svg"
-                    width={200}
-                    height={200}
-                    alt="Logo"
-                  />
-                  <p
-                    onClick={() => {
-                      setToggleAddMealForm(true);
-                      setSelectedMeal("Lunch");
-                    }}
-                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                  >
-                    Make a Lunch Meal
-                  </p>
-                </div>
-              </div>
-              <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
-                <div className="w-[100%] hidden flex-col justify-center items-center">
-                  <Image
-                    src="/assets/svg/healthy-1.svg"
-                    width={200}
-                    height={200}
-                    alt="Logo"
-                  />
-                  <p
-                    onClick={() => {
-                      setToggleAddMealForm(true);
-                      setSelectedMeal("Dinner");
-                    }}
-                    className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
-                  >
-                    Make a Dinner Meal
-                  </p>
-                </div>
-                <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
-                  <div className="flex justify-between w-[100%]">
-                    <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
-                      Delicious Chicken
-                    </p>
-                    <button className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary">
-                      Edit
-                    </button>
-                  </div>
-                  <div>
-                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
-                      Ingredients:
-                    </label>
-                    <div className="flex gap-1">
+                {mealPlan.lunch.mealInfo ? (
+                  <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
+                    <div className="flex justify-between w-[100%]">
+                      <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
+                        {mealPlan.lunch.mealInfo.mealName}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setToggleAddMealForm(true);
+                          setFormAction("Edit");
+                          setSelectedMeal("Lunch");
+                        }}
+                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Ingredients:
+                      </label>
+                      <div className="flex gap-1">
+                        <p className="font-dmSans text-white text-sm">
+                          {Object.entries(mealPlan.lunch.ingredients!)
+                            .map(([, value]) => value.ingredientValue)
+                            .join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Nutrition:
+                      </label>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Calories:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.lunch.nutrition?.caloriesValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Protein:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.lunch.nutrition?.proteinsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Carbs:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.lunch.nutrition?.carbsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">Fat:</p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.lunch.nutrition?.fatValue}g
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Cooking Instructions:
+                      </label>
                       <p className="font-dmSans text-white text-sm">
-                        {ingredientsDummyData.join(", ")}
+                        {mealPlan.lunch.mealInfo.cookingInstruction}
                       </p>
                     </div>
                   </div>
-                  <div>
-                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
-                      Nutrition:
-                    </label>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <div className="flex items-center gap-1">
-                        <p className="font-dmSans text-white text-sm">
-                          Calories:
-                        </p>
-                        <p className="font-quickSand text-sm">0</p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <p className="font-dmSans text-white text-sm">
-                          Protein:
-                        </p>
-                        <p className="font-quickSand text-sm">0g</p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <p className="font-dmSans text-white text-sm">Carbs:</p>
-                        <p className="font-quickSand text-sm">0g</p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <p className="font-dmSans text-white text-sm">Fat:</p>
-                        <p className="font-quickSand text-sm">0g</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
-                      Cooking Instructions:
-                    </label>
-                    <p className="font-dmSans text-white text-sm">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Deserunt sapiente excepturi cupiditate! Maiores eligendi
-                      quia voluptatum necessitatibus aut et quos nostrum
-                      incidunt iusto sequi laudantium quidem non, provident
-                      tenetur qui.
+                ) : (
+                  <div className="w-[100%] flex flex-col justify-center items-center">
+                    <Image
+                      src="/assets/svg/healthy-1.svg"
+                      width={200}
+                      height={200}
+                      alt="Logo"
+                    />
+                    <p
+                      onClick={() => {
+                        setToggleAddMealForm(true);
+                        setFormAction("Add");
+                        setSelectedMeal("Lunch");
+                      }}
+                      className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                    >
+                      Make a Lunch Meal
                     </p>
                   </div>
-                </div>
+                )}
+              </div>
+              <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
+                {mealPlan.dinner.mealInfo ? (
+                  <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
+                    <div className="flex justify-between w-[100%]">
+                      <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
+                        {mealPlan.dinner.mealInfo.mealName}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setToggleAddMealForm(true);
+                          setFormAction("Edit");
+                          setSelectedMeal("Dinner");
+                        }}
+                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Ingredients:
+                      </label>
+                      <div className="flex gap-1">
+                        <p className="font-dmSans text-white text-sm">
+                          {Object.entries(mealPlan.dinner.ingredients!)
+                            .map(([, value]) => value.ingredientValue)
+                            .join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Nutrition:
+                      </label>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Calories:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.dinner.nutrition?.caloriesValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Protein:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.dinner.nutrition?.proteinsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">
+                            Carbs:
+                          </p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.dinner.nutrition?.carbsValue}g
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <p className="font-dmSans text-white text-sm">Fat:</p>
+                          <p className="font-quickSand text-sm">
+                            {mealPlan.dinner.nutrition?.fatValue}g
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                        Cooking Instructions:
+                      </label>
+                      <p className="font-dmSans text-white text-sm">
+                        {mealPlan.dinner.mealInfo.cookingInstruction}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-[100%] flex flex-col justify-center items-center">
+                    <Image
+                      src="/assets/svg/healthy-1.svg"
+                      width={200}
+                      height={200}
+                      alt="Logo"
+                    />
+                    <p
+                      onClick={() => {
+                        setToggleAddMealForm(true);
+                        setFormAction("Add");
+                        setSelectedMeal("Dinner");
+                      }}
+                      className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
+                    >
+                      Make a Dinner Meal
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -481,6 +580,8 @@ const SetMealPlan = ({
             selectedMeal={selectedMeal}
             setMealPlan={setMealPlan}
             setToggleAddMealForm={setToggleAddMealForm}
+            formAction={formAction}
+            mealPlan={mealPlan}
           />
         )}
       </AnimatePresence>
