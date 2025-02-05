@@ -80,28 +80,29 @@ interface nutritionTypes {
 }
 interface mealPlanType {
   breakFast: {
-    mealInfo: MealFormInputTypes|undefined;
-    ingredients: IngredientInputTypes|undefined;
-    nutrition: nutritionTypes|undefined
-  }
+    mealInfo: MealFormInputTypes | undefined;
+    ingredients: IngredientInputTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
   lunch: {
-    mealInfo: MealFormInputTypes|undefined;
-    ingredients: IngredientInputTypes|undefined;
-    nutrition: nutritionTypes|undefined
-  }
+    mealInfo: MealFormInputTypes | undefined;
+    ingredients: IngredientInputTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
   dinner: {
-    mealInfo: MealFormInputTypes|undefined;
-    ingredients: IngredientInputTypes|undefined;
-    nutrition: nutritionTypes|undefined
-  }
+    mealInfo: MealFormInputTypes | undefined;
+    ingredients: IngredientInputTypes | undefined;
+    nutrition: nutritionTypes | undefined;
+  };
 }
 
 interface props {
   setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMeal: string,
-  setMealPlan: React.Dispatch<React.SetStateAction<mealPlanType>> 
+  selectedMeal: string;
+  setMealPlan: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  mealPlan: mealPlanType;
+  formAction: string;
 }
-
 
 // Initials
 const MealFormInputValInitial: MealFormInputTypes = {
@@ -128,9 +129,15 @@ const nutritionInitial: nutritionTypes = {
   proteinsValue: 0,
   carbsValue: 0,
   fatValue: 0,
-}
+};
 
-const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) => {
+const AddMealForm = ({
+  setToggleAddMealForm,
+  selectedMeal,
+  setMealPlan,
+  formAction,
+  mealPlan,
+}: props) => {
   // Init Values
   const initUUID = crypto.randomUUID();
 
@@ -260,24 +267,78 @@ const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) 
       },
     }));
   };
+
+  const setInitialFormValues = () => {
+    if (formAction === "Edit") {
+      let mealType = "";
+      if(selectedMeal === "Breakfast") {
+        mealType = "breakFast";
+      } else if(selectedMeal === "Lunch") {
+        mealType = "lunch";
+      } else if(selectedMeal === "Dinner") {
+        mealType = "dinner"; 
+      }
+      setMealFormInputVal(mealPlan[mealType as keyof mealPlanType].mealInfo!);
+      setIngredientInputVal(mealPlan[mealType as keyof mealPlanType].ingredients!);
+      setNutrition(mealPlan[mealType as keyof mealPlanType].nutrition!);
+      Object.entries(mealPlan[mealType as keyof mealPlanType].ingredients!).map(([, value]) => {
+        setIngredientValidations((prev) => ({
+          ...prev,
+          [`ingredient${value.id}`]: {
+            ingredientValid: null,
+            ingredientValidationMessage: "",
+            caloriesValid: null,
+            caloriesValidationMessage: "",
+            proteinsValid: null,
+            proteinsValidationMessage: "",
+            carbsValid: null,
+            carbsValidationMessage: "",
+            fatValid: null,
+            fatValidationMessage: "",
+          },
+        }));
+      });
+    }
+  };
   const calculateNutrition = () => {
-    let caloriesValue= 0;
+    let caloriesValue = 0;
     let proteinsValue = 0;
     let carbsValue = 0;
     let fatValue = 0;
-    Object.entries(ingredientInputVal!).map(
-      ([, value]) => {
-        caloriesValue = caloriesValue + parseFloat(value.caloriesValue === "" ? "0" : value.caloriesValue);
-        proteinsValue = proteinsValue + parseFloat(value.proteinsValue === "" ? "0" : value.proteinsValue);
-        carbsValue = carbsValue + parseFloat(value.carbsValue === "" ? "0" : value.carbsValue);
-        fatValue = fatValue + parseFloat(value.fatValue === "" ? "0" : value.fatValue);
-        setNutrition(() => ({
-          caloriesValue: caloriesValue,
-          proteinsValue: proteinsValue,
-          carbsValue: carbsValue,
-          fatValue: fatValue,
-        }))
-    })
+    Object.entries(ingredientInputVal!).map(([, value]) => {
+      caloriesValue =
+        caloriesValue +
+        parseFloat(value.caloriesValue === "" ? "0" : value.caloriesValue);
+      proteinsValue =
+        proteinsValue +
+        parseFloat(value.proteinsValue === "" ? "0" : value.proteinsValue);
+      carbsValue =
+        carbsValue +
+        parseFloat(value.carbsValue === "" ? "0" : value.carbsValue);
+      fatValue =
+        fatValue + parseFloat(value.fatValue === "" ? "0" : value.fatValue);
+      setNutrition(() => ({
+        caloriesValue: caloriesValue,
+        proteinsValue: proteinsValue,
+        carbsValue: carbsValue,
+        fatValue: fatValue,
+      }));
+    });
+  };
+
+  const getAllIngredientValues = () => {
+    const ingredientsValues: { [key: string]: { [key: string]: string } } = {};
+    Object.entries(ingredientInputVal!).map(([parentKey, parentValue]) => {
+      Object.entries(parentValue!).map(([childKey, childValue]) => {
+        if (childKey.includes("Value")) {
+          ingredientsValues[parentKey] = {
+            ...(ingredientsValues[parentKey] || {}), // Preserve existing child keys
+            [childKey]: childValue as string, // Add the new key-value pair
+          };
+        }
+      });
+    });
+    return ingredientsValues;
   };
 
   // Validations
@@ -301,40 +362,30 @@ const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) 
     return isValid;
   };
 
-  const checkIngredientValidations = (validationInfo:{[key: string]: stepValidationResult}) => {
+  const checkIngredientValidations = (validationInfo: {
+    [key: string]: stepValidationResult;
+  }) => {
     let isValid = true;
     Object.entries(validationInfo!).map(([parentKey, parentValue]) => {
       Object.entries(parentValue!).map(([, childValue]) => {
-      setIngredientValidations((prev) => ({
-        ...prev,
-        [parentKey]: {
-          ...prev[parentKey],
-          [`${childValue.validationName.replace("Value", "")}Valid`!]: childValue.valid,
-          [`${childValue.validationName.replace("Value", "")}ValidationMessage`!]:
-          childValue.validationMessage,
-        },
-      }));
-      if (childValue.valid === false) {
-        isValid = false;
-      }
-      });
-    });
-    return isValid;
-  }
-
-  const getAllIngredientValues = () => {
-    const ingredientsValues: { [key: string]: { [key: string]: string } } = {};
-    Object.entries(ingredientInputVal!).map(([parentKey, parentValue]) => {
-      Object.entries(parentValue!).map(([childKey, childValue]) => {
-        if (childKey.includes("Value")) {
-          ingredientsValues[parentKey] = {
-            ...(ingredientsValues[parentKey] || {}), // Preserve existing child keys
-            [childKey]: childValue as string, // Add the new key-value pair
-          };
+        setIngredientValidations((prev) => ({
+          ...prev,
+          [parentKey]: {
+            ...prev[parentKey],
+            [`${childValue.validationName.replace("Value", "")}Valid`!]:
+              childValue.valid,
+            [`${childValue.validationName.replace(
+              "Value",
+              ""
+            )}ValidationMessage`!]: childValue.validationMessage,
+          },
+        }));
+        if (childValue.valid === false) {
+          isValid = false;
         }
       });
     });
-    return ingredientsValues;
+    return isValid;
   };
 
   const validationRules = {
@@ -389,9 +440,13 @@ const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) 
       });
     }
     setLatestIngredientKey(null);
-    calculateNutrition()
+    calculateNutrition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ingredientInputVal]);
+  useEffect(() => {
+    setInitialFormValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Overlay>
@@ -620,25 +675,33 @@ const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) 
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Calories:
                       </p>
-                      <p className="font-quickSand text-sm">{nutrition.caloriesValue}g</p>
+                      <p className="font-quickSand text-sm">
+                        {nutrition.caloriesValue}g
+                      </p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Protein:
                       </p>
-                      <p className="font-quickSand text-sm">{nutrition.proteinsValue}g</p>
+                      <p className="font-quickSand text-sm">
+                        {nutrition.proteinsValue}g
+                      </p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Carbs:
                       </p>
-                      <p className="font-quickSand text-sm">{nutrition.carbsValue}g</p>
+                      <p className="font-quickSand text-sm">
+                        {nutrition.carbsValue}g
+                      </p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Fat:
                       </p>
-                      <p className="font-quickSand text-sm">{nutrition.fatValue}g</p>
+                      <p className="font-quickSand text-sm">
+                        {nutrition.fatValue}g
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -668,44 +731,48 @@ const AddMealForm = ({ setToggleAddMealForm, selectedMeal, setMealPlan}: props) 
               <motion.button
                 onClick={() => {
                   const validationResults = checkAllInputValidations();
-                  const MealInfoValidation = checkValidations(validationResults.mealValidationResult);
-                  const ingredientValidationResult = checkIngredientValidations(validationResults.ingredientValidationResult);
-                  if(MealInfoValidation && ingredientValidationResult){
-                    if(selectedMeal === "Breakfast"){
+                  const MealInfoValidation = checkValidations(
+                    validationResults.mealValidationResult
+                  );
+                  const ingredientValidationResult = checkIngredientValidations(
+                    validationResults.ingredientValidationResult
+                  );
+                  if (MealInfoValidation && ingredientValidationResult) {
+                    if (selectedMeal === "Breakfast") {
                       setMealPlan((prev) => ({
                         ...prev,
                         breakFast: {
                           mealInfo: mealFormInputVal,
                           ingredients: ingredientInputVal,
-                          nutrition: nutrition
+                          nutrition: nutrition,
                         },
                         dinner: prev!.lunch,
                         lunch: prev!.dinner,
-                      }))
-                    } else if(selectedMeal === "Lunch"){
+                      }));
+                    } else if (selectedMeal === "Lunch") {
                       setMealPlan((prev) => ({
                         ...prev,
                         lunch: {
                           mealInfo: mealFormInputVal,
                           ingredients: ingredientInputVal,
-                          nutrition: nutrition
+                          nutrition: nutrition,
                         },
                         dinner: prev!.lunch,
                         breakFast: prev!.dinner,
-                      }))
-                    } else if(selectedMeal === "Dinner"){
+                      }));
+                    } else if (selectedMeal === "Dinner") {
                       setMealPlan((prev) => ({
                         ...prev,
                         dinner: {
                           mealInfo: mealFormInputVal,
                           ingredients: ingredientInputVal,
-                          nutrition: nutrition
+                          nutrition: nutrition,
                         },
                         lunch: prev!.lunch,
                         breakFast: prev!.dinner,
-                      }))
+                      }));
                     }
-                    setToggleAddMealForm(false)
+                    setToggleAddMealForm(false);
                   }
                 }}
                 className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
