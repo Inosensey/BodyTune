@@ -69,7 +69,7 @@ const MutateForm = ({ personalInfo }: props) => {
           <CreationOption label="How would you like to create your BodyTune" setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="h-max max-w-[800px] tablet:w-[100%] laptop:w-[100%]">
+            <div className="h-max max-w-[800px] tablet:w-[100%] laptop:w-[100%] mb-1">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -89,7 +89,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 2 && (
-              <div className="flex flex-1 justify-center h-[75%]">
+              <div className="flex flex-1 justify-center h-[75%] phone:w-full laptop:w-[90%]">
                 <SetMealPlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
