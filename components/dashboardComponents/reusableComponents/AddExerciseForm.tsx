@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -26,9 +26,6 @@ import {
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
 import TablerBarbell from "@/icons/TablerBarbellLight";
-interface props {
-  setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
-}
 interface ExerciseFormInputTypes {
   exerciseName: string;
   shortDescription: string;
@@ -124,6 +121,12 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     validationMessage: "",
   },
 };
+interface props {
+  setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setExercises: React.Dispatch<React.SetStateAction<ExerciseFormInputTypes[]>>;
+  formAction: string;
+  selectedExercise: ExerciseFormInputTypes
+}
 
 // Fixed values
 const difficultyRadioButtons: radioButtonInfo[] = [
@@ -156,7 +159,7 @@ const measurementTypeRadioButtons: radioButtonInfo[] = [
   },
 ];
 
-const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
+const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, selectedExercise }: props) => {
   // States
   const [exerciseValidations, setExerciseStepValidations] =
     useState<ExerciseFormValidations>(ExerciseFormValidationInitials);
@@ -224,7 +227,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        // console.log("File content as base64:", e.target?.result);
+        console.log("File content as base64:", e.target?.result);
         setExerciseFormInputVal((prev) => ({ ...prev, exerciseDemo: e.target?.result as string }));
         setDemoSrc(e.target?.result as string);
       };
@@ -298,13 +301,27 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
       exerciseInputsValues,
       validationRules
     );
-    checkValidations(exerciseValidationResults)
+    const valid = checkValidations(exerciseValidationResults)
+    return valid;
   };
 
+  const setInitials = () => {
+    if (formAction === "Edit") {
+      setExerciseFormInputVal(selectedExercise);
+    } else {
+      setExerciseFormInputVal(ExerciseFormInputValInitial);
+    }
+  }
+
+  // useEffect
+  useEffect(() => {
+    setInitials();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] tablet:w-[60%] laptop:w-[40%] desktop:w-[30%]">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] tablet:w-[60%] laptop:w-[25%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Exercise
@@ -320,7 +337,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
             </div>
           </div>
           <div className="flex flex-col gap-3 mt-4">
-            <motion.div className="phone:w-12/12 laptop:w-8/12">
+            <motion.div className="phone:w-12/12">
               <Input
                 name="exerciseName"
                 placeholder="Enter the Name of the Exercise"
@@ -336,7 +353,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 }
               />
             </motion.div>
-            <motion.div className="phone:w-12/12 laptop:w-8/12">
+            <motion.div className="phone:w-12/12">
               <TextareaInput
                 name="shortDescription"
                 state={exerciseFormInputVal.shortDescription}
@@ -351,7 +368,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 }
               />
             </motion.div>
-            <motion.div className="phone:w-12/12 laptop:w-8/12">
+            <motion.div className="phone:w-12/12">
               <Input
                 name="equipment"
                 placeholder="Enter the Equipment of the Exercise"
@@ -429,7 +446,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 customButtonName="Choose a File"
                 label="Upload an image or GIF to show the exercise."
                 name="exerciseDemo"
-                state={exerciseFormInputVal.exerciseDemo}
+                state={""}
                 valid={exerciseValidations.exerciseDemo.valid}
                 validationMessage={
                   exerciseValidations.exerciseDemo.validationMessage
@@ -446,7 +463,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
                 />
               )}
             </motion.div>
-            <motion.div className="phone:w-12/12 tablet:w-8/12">
+            <motion.div className="phone:w-12/12">
               <Input
                 name="youtubeLink"
                 placeholder="Youtube link to the Exercise"
@@ -465,7 +482,13 @@ const AddExerciseForm = ({ setToggleAddExerciseForm }: props) => {
           </div>
           <div className="w-max mx-auto mt-4">
             <motion.button
-              onClick={() => checkAllInputValidations()}
+              onClick={() => {
+                const isValid = checkAllInputValidations()
+                if(isValid) {
+                  setExercises((prev) => [...prev, exerciseFormInputVal]);
+                  setToggleAddExerciseForm(false);
+                }
+              }}
               className="flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold w-full rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
               type="button"
             >
