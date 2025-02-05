@@ -12,6 +12,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 // Types
+interface ExerciseType {
+  exerciseName: string;
+  shortDescription: string;
+  difficulty: string;
+  equipment: string;
+  measurementType: string;
+  measurement: string;
+  exerciseDemo: string;
+  youtubeLink: string;
+}
 interface exercisePlanInterface {
   selectedExercisePlan: number;
   exercisePlanName: string;
@@ -28,9 +38,20 @@ interface props {
 // Initials
 import { weekDates } from "@/utils/initials";
 import TablerBarbell from "@/icons/TablerBarbellLight";
+import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 const exercisePlanInitials: exercisePlanInterface = {
   selectedExercisePlan: 0,
   exercisePlanName: "",
+};
+const ExerciseValInitial: ExerciseType = {
+  exerciseName: "",
+  shortDescription: "",
+  difficulty: "",
+  equipment: "",
+  measurementType: "",
+  measurement: "",
+  exerciseDemo: "",
+  youtubeLink: "",
 };
 const SetExercisePlan = ({
   setSelectedOption,
@@ -39,82 +60,24 @@ const SetExercisePlan = ({
 }: props) => {
   // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
-  // const [isZoomed, setIsZoomed] = useState<number | null>(null);
   const [showExercisePlanHtml, setShowExercisePanHtml] =
     useState<boolean>(false);
-  const [toggleAddExerciseForm, setTogglAddExerciseForm] =
+  const [toggleAddExerciseForm, setToggleAddExerciseForm] =
     useState<boolean>(false);
   const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
     useState<exercisePlanInterface>(exercisePlanInitials);
-  // const [initialPositions, setInitialPositions] = useState<
-  //   { x: number; y: number }[]
-  // >([]);
-  // const [divs, setDivs] = useState<number[]>([]);
-
-  // Refs for each motion.div
-  // const motionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  // const addMotionDiv = () => {
-  //   setDivs((prev) => [...prev, prev.length]); // Adds new div identifier to trigger re-render
-  // };
-
-  // useEffect(() => {
-  //   // Capture initial positions when the motion divs are added
-  //   motionRefs.current.forEach((ref, index) => {
-  //     if (ref) {
-  //       const rect = ref.getBoundingClientRect();
-  //       setInitialPositions((prev) => {
-  //         const newPositions = [...prev];
-  //         newPositions[index] = { x: rect.left, y: rect.top };
-  //         return newPositions;
-  //       });
-  //     }
-  //   });
-  // }, [divs]);
+  const [exercises, setExercises] = useState<ExerciseType[]>([]);
+  const [selectedExercise, setSelectedExercise] =
+    useState<ExerciseType>(ExerciseValInitial);
+  const [formAction, setFormAction] = useState<string>("");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
-    // const validationParams = {
-    //   stateName: name,
-    //   value: value,
-    // };
-
-    // const validationResult: validation = FormValidation(validationParams);
-
-    // setMealStepValidations((prev) => ({
-    //   ...prev,
-    //   [validationResult.validationName!]: {
-    //     valid: validationResult.valid,
-    //     validationMessage: validationResult.validationMessage,
-    //   },
-    // }));
-
-    // const allInputValidationResult = checkAllInputValidations();
-    // checkValidations(validationResult);
     setExercisePlanFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value, options } = event.target;
-
-    // const validationParams = {
-    //   stateName: name,
-    //   value: value,
-    // };
-
-    // const validationResult: validation = FormValidation(validationParams);
-
-    // setFirstStepValidation((prev) => ({
-    //   ...prev,
-    //   [validationResult.validationName!]: {
-    //     valid: validationResult.valid,
-    //     validationMessage: validationResult.validationMessage,
-    //   },
-    // }));
-
-    // const allInputValidationResult = checkAllInputValidations();
-    // checkValidations(validationResult);
     if (name === "exercisePlan") {
       setExercisePlanFieldsVal((prev) => ({
         ...prev,
@@ -124,6 +87,12 @@ const SetExercisePlan = ({
       setExercisePlanFieldsVal((prev) => ({ ...prev, [name]: value }));
     }
     setShowExercisePanHtml(true);
+  };
+
+  const removeAnExercise = (indexToBeRemove: number) => {
+    setExercises((prevItems) =>
+      prevItems.filter((_, index) => index !== indexToBeRemove)
+    );
   };
   return (
     <>
@@ -275,7 +244,10 @@ const SetExercisePlan = ({
             <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[75%]">
               <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
                 <button
-                  onClick={() => setTogglAddExerciseForm(true)}
+                  onClick={() => {
+                    setFormAction("Add");
+                    setToggleAddExerciseForm(true);
+                  }}
                   className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
                 >
                   Add an Exercise
@@ -285,136 +257,50 @@ const SetExercisePlan = ({
                   />
                 </button>
               </div>
-              <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
-                <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
-                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <div className="flex items-center gap-1">
-                      <TablerBarbell
-                        color="#D3F0D1"
-                        width="1.3em"
-                        height="1.3em"
-                      />
-                      <p className="truncate font-bold text-lightSecondary">
-                        Deadlifts
-                      </p>
-                    </div>
-                    <p className="truncate">Beginner</p>
-                    <p className="truncate">4 sets x 8–10 reps</p>
-                    <p className="truncate">Barbell</p>
-                    <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
-                      View
-                    </button>
-                  </div>
-                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <div className="flex items-center gap-1">
-                      <TablerBarbell
-                        color="#D3F0D1"
-                        width="1.3em"
-                        height="1.3em"
-                      />
-                      <p className="truncate font-bold text-lightSecondary">
-                        Deadlifts
-                      </p>
-                    </div>
-                    <p className="truncate">Beginner</p>
-                    <p className="truncate">4 sets x 8–10 reps</p>
-                    <p className="truncate">Barbell</p>
-                    <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
-                      View
-                    </button>
-                  </div>
-                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <div className="flex items-center gap-1">
-                      <TablerBarbell
-                        color="#D3F0D1"
-                        width="1.3em"
-                        height="1.3em"
-                      />
-                      <p className="truncate font-bold text-lightSecondary">
-                        Deadlifts
-                      </p>
-                    </div>
-                    <p className="truncate">Beginner</p>
-                    <p className="truncate">4 sets x 8–10 reps</p>
-                    <p className="truncate">Barbell</p>
-                    <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
-                      View
-                    </button>
-                  </div>
-                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <div className="flex items-center gap-1">
-                      <TablerBarbell
-                        color="#D3F0D1"
-                        width="1.3em"
-                        height="1.3em"
-                      />
-                      <p className="truncate font-bold text-lightSecondary">
-                        Deadlifts
-                      </p>
-                    </div>
-                    <p className="truncate">Beginner</p>
-                    <p className="truncate">4 sets x 8–10 reps</p>
-                    <p className="truncate">Barbell</p>
-                    <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
-                      View
-                    </button>
-                  </div>
-                  <div className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm">
-                    <div className="flex items-center gap-1">
-                      <TablerBarbell
-                        color="#D3F0D1"
-                        width="1.3em"
-                        height="1.3em"
-                      />
-                      <p className="truncate font-bold text-lightSecondary">
-                        Deadlifts
-                      </p>
-                    </div>
-                    <p className="truncate">Beginner</p>
-                    <p className="truncate">4 sets x 8–10 reps</p>
-                    <p className="truncate">Barbell</p>
-                    <button className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary">
-                      View
-                    </button>
+              {exercises.length !== 0 && (
+                <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
+                  <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
+                    {exercises.map((exercise: ExerciseType, index: number) => (
+                      <div
+                        key={index}
+                        className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            <TablerBarbell
+                              color="#D3F0D1"
+                              width="1.3em"
+                              height="1.3em"
+                            />
+                            <p className="truncate font-bold text-lightSecondary">
+                              {exercise.exerciseName}
+                            </p>
+                          </div>{" "}
+                          <button onClick={() => removeAnExercise(index)}>
+                            <FontAwesomeIcon
+                              icon={faXmarkCircle}
+                              className="text-fadedWarningColor text-lg"
+                            />
+                          </button>
+                        </div>
+                        <p className="truncate">{exercise.difficulty}</p>
+                        <p className="truncate">{exercise.measurement}</p>
+                        <p className="truncate">{exercise.equipment}</p>
+                        <button
+                          onClick={() => {
+                            setFormAction("Edit");
+                            setToggleAddExerciseForm(true);
+                            setSelectedExercise(exercise);
+                          }}
+                          className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary"
+                        >
+                          View
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                {/* {divs.map((_, index) => (
-                  <div
-                    key={index}
-                    className="w-[80px] flex border-[1.5px] border-lightSecondary"
-                  >
-                    <motion.div
-                      className={`w-[80px] flex font-dmSans text-sm cursor-pointer absolute`}
-                      animate={
-                        isZoomed === index
-                          ? {
-                              x: "-50%", // Compensate for alignment
-                              y: "-50%", // Adjust vertical alignment
-                              top: "50%", // Center vertically
-                              left: "50%", // Center horizontally
-                              height: "50%",
-                              transition: { duration: 0.5, ease: "linear" },
-                            }
-                          : isZoomed === null
-                          ? {} // No animation when unzoomed and in flex
-                          : {
-                              x: initialPositions[index]?.x ?? 0,
-                              y: initialPositions[index]?.y ?? 0,
-                              transition: { duration: 0.5, ease: "linear" },
-                            }
-                      }
-                      onClick={() =>
-                        setIsZoomed((prev) => (prev === index ? null : index))
-                      }
-                    >
-                      <p>
-                        The container of this text will scale to the center of
-                        the screen when clicked
-                      </p>
-                    </motion.div>
-                  </div>
-                ))} */}
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -422,7 +308,12 @@ const SetExercisePlan = ({
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddExerciseForm && (
-          <AddExerciseForm setToggleAddExerciseForm={setTogglAddExerciseForm} />
+          <AddExerciseForm
+            setExercises={setExercises}
+            formAction={formAction}
+            selectedExercise={selectedExercise}
+            setToggleAddExerciseForm={setToggleAddExerciseForm}
+          />
         )}
       </AnimatePresence>
     </>
