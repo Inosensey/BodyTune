@@ -60,12 +60,12 @@ const MutateForm = ({ personalInfo }: props) => {
       <div className="h-[83%] flex flex-col flex-1 gap-1 items-center">
         {selectedOption === "" ? (
           <CreationOption
-            label="How would you like to create your Workout Plan"
+            label="How would you like to create your Meal Plan"
             setSelectOption={setSelectedOption}
           />
         ) : (
-          <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="h-max max-w-[800px] tablet:w-[100%] laptop:w-[100%]">
+          <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full ">
+            <div className="h-max max-w-[800px] mb-1">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
