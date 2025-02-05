@@ -62,10 +62,10 @@ const Sidebar = () => {
         <motion.div
           variants={sidebarVariant}
           animate={sidebarAnimation}
-          className="top-0 left-0 h-full bg-black w-[280px] overflow-auto phone:fixed phone:-left-[100%] laptop:relative laptop:-left-[0%]"
+          className="top-0 left-0 h-full bg-black overflow-auto phone:fixed phone:-left-[100%] laptop:relative laptop:-left-[0%] phone:w-[250px] laptop:w-[280px]"
         >
           <div
-            className="py-4 flex flex-col items-center gap-1"
+            className="py-4 flex flex-col items-center gap-1 "
             data-testid="header-container"
           >
             <Image
