@@ -286,8 +286,6 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
       FormValidation({ stateName: "measurementType", value }),
     measurement: (value: string) =>
       FormValidation({ stateName: "measurement", value }),
-    exerciseDemo: (value: string) =>
-      FormValidation({ stateName: "exerciseDemo", value }),
   };
   const checkAllInputValidations = () => {
     const exerciseInputsValues = {
@@ -295,7 +293,6 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
       difficulty: exerciseFormInputVal.difficulty,
       measurementType: exerciseFormInputVal.measurementType,
       measurement: exerciseFormInputVal.measurement,
-      exerciseDemo: exerciseFormInputVal.exerciseDemo,
     };
     const exerciseValidationResults = validateFormInputs(
       exerciseInputsValues,
