@@ -65,7 +65,7 @@ const MutateForm = ({ personalInfo }: props) => {
           />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="w-max phone:h-[14%] laptop:h-[15%]">
+            <div className="h-max max-w-[800px] mb-1">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
