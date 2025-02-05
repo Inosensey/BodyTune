@@ -33,6 +33,9 @@ const FormValidation = (data: params): validationInfo => {
     case "city":
     case "note":
     case "exerciseName":
+    case "difficulty":
+    case "measurementType":
+    case "measurement":
     case "mealName":
     case "cookingInstruction":
       return validateString(data);
@@ -46,7 +49,6 @@ const FormValidation = (data: params): validationInfo => {
     case "carbsValue":
     case "fatValue":
       return validateIngredientInput(data);
-      break;
     default:
       return {
         validationName: "",
@@ -189,7 +191,7 @@ const validateString = (data: params): validationInfo => {
       validationMessage: "This field is required",
     });
   }
-  if(data.stateName === "mealName" || data.stateName === "cookingInstruction") {
+  if(data.stateName === "mealName" || data.stateName === "cookingInstruction" || data.stateName === "exerciseName" || data.stateName === "measurement") {
     return (validationInfo = {
       validationName: data.stateName,
       valid: true,
