@@ -21,7 +21,7 @@ const BreadCrumbs = ({
   setProgress
 }: props) => {
   return (
-    <div className="flex border-[1.5px] border-secondary w-full">
+    <div className="flex border-[1.5px] border-secondary w-full mx-auto">
       {breadCrumbs.map((breadcrumb: InterfaceBreadCrumbs) => (
         <motion.div
           onClick={() => {
