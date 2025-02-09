@@ -5,7 +5,7 @@ import FollowerProfile from "@/components/dashboardComponents/connections/Follow
 
 const FollowerProfilePage = () => {
   return (
-    <div className='px-4 mt-4 w-full'>
+    <div className="w-full laptop:px-4 laptop:mt-4">
         <FollowerProfile />
     </div>
   )
