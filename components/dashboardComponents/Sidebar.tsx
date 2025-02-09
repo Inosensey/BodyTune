@@ -12,11 +12,11 @@ import MaterialSymbolsLightOverviewOutline from "@/icons/MaterialSymbolsLightOve
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 import TablerBarbell from "@/icons/TablerBarbell";
 import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
-import SolarSettingsLinear from "@/icons/SolarSettingsLinear";
 import IcBaselinePeopleOutline from "@/icons/IcBaselinePeopleOutline";
 import SolarExitLineDuotone from "@/icons/SolarExitLineDuotone";
 import SolarRoundedMagniferLinear from "@/icons/SolarRoundedMagniferLinear";
 import { useState } from "react";
+import IcOutlinePerson from "@/icons/IcOutlinePerson";
 
 // Variants
 const sidebarVariant = {
@@ -296,7 +296,7 @@ const Sidebar = () => {
                   animateSidebar(false);
                 }
               }}
-              href={"#"}
+              href={"/dashboard/profile"}
             >
               <motion.div
                 whileHover={{
@@ -307,9 +307,9 @@ const Sidebar = () => {
               >
                 <div className="flex gap-1">
                   <p className="font-dmSans font-semibold text-lightSecondary">
-                    Tune-Up Center
+                    Profile & Preferences
                   </p>
-                  <SolarSettingsLinear
+                  <IcOutlinePerson
                     color="#D3F0D1"
                     width="1.3em"
                     height="1.3em"
@@ -319,7 +319,7 @@ const Sidebar = () => {
                   data-testid="settings-link-description"
                   className="font-quickSand text-[0.8rem] text-[#b3b3b3]"
                 >
-                  Adjust preferences and settings
+                  Manage your profile, and preferences
                 </p>
               </motion.div>
             </Link>
