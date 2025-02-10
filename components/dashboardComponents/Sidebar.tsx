@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useAnimation } from "framer-motion";
+
+// Components
+import LoadingPopUp from "../reusableComponent/loadingAnimation/LoadingPopUp";
 
 // Actions
 import { signOut } from "@/actions/authActions";
@@ -15,7 +19,6 @@ import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
 import IcBaselinePeopleOutline from "@/icons/IcBaselinePeopleOutline";
 import SolarExitLineDuotone from "@/icons/SolarExitLineDuotone";
 import SolarRoundedMagniferLinear from "@/icons/SolarRoundedMagniferLinear";
-import { useState } from "react";
 import IcOutlinePerson from "@/icons/IcOutlinePerson";
 
 // Variants
@@ -37,6 +40,8 @@ const sidebarVariant = {
 const Sidebar = () => {
   // states
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   // useAnimation
   const sidebarAnimation = useAnimation();
@@ -329,7 +334,11 @@ const Sidebar = () => {
                 transition: { duration: 0.2 },
               }}
               className="flex flex-col py-2 px-[0.6rem] cursor-pointer"
-              onClick={() => signOut()}
+              onClick={() => {
+                setMessage("Logging you out... 🔄 See you next time! 👋")
+                setIsLoggingOut(true);
+                signOut()
+              }}
             >
               <div className="flex gap-1">
                 <p className="font-dmSans font-semibold text-lightSecondary">
@@ -367,6 +376,12 @@ const Sidebar = () => {
           className="w-[100%] h-[3px] bg-lightSecondary rounded-md origin-bottom-left transition-all duration-100 ease-in-out"
         ></span>
       </div>
+
+      
+      <LoadingPopUp
+        isLoading={isLoggingOut}
+        message={message}
+      />
     </>
   );
 };
