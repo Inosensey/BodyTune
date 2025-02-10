@@ -6,9 +6,12 @@ import SolarHeartAngleOutline from "@/icons/SolarHeartAngleOutline";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
+import TablerEdit from "@/icons/TablerEdit";
+import TablerTrashX from "@/icons/TablerTrashX";
 
 // Types
 interface props {
+  author: string;
   bodyTunePlanName: string;
   mealPlanName: string;
   exercisePlanName: string;
@@ -18,6 +21,7 @@ interface props {
 }
 
 const BodyTuneCard = ({
+  author,
   bodyTunePlanName,
   exercisePlanName,
   likes,
@@ -27,13 +31,28 @@ const BodyTuneCard = ({
 }: props) => {
   return (
     <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
-      <p className="text-base font-bold text-lightSecondary underline">
-        {bodyTunePlanName}
-      </p>
+      <div className="flex justify-between">
+        <div className="flex flex-col">
+          <p className="text-base font-bold text-lightSecondary underline">
+            {bodyTunePlanName}
+          </p>
+          <p className="font-semibold text-sm">{author}</p>
+        </div>
+        <div className="flex items-center justify-center gap-1">
+          <span title="Edit" className="cursor-pointer">
+            <TablerEdit color="#B58E1C" width="1.5em" height="1.5em" />
+          </span>
+          <span title="Delete" className="cursor-pointer">
+            <TablerTrashX color="#dc3545" width="1.5em" height="1.5em" />
+          </span>
+        </div>
+      </div>
       <div className="flex flex-col gap-2 justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <p className="font-sm font-bold text-sm underline">{exercisePlanName}</p>
+            <p className="font-sm font-bold text-sm underline">
+              {exercisePlanName}
+            </p>
             <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
           </div>
           <div className="flex flex-wrap gap-1 font-dmSans font-semibold text-xs">
@@ -56,7 +75,9 @@ const BodyTuneCard = ({
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
-            <p className="font-sm font-bold text-sm underline">{mealPlanName}</p>
+            <p className="font-sm font-bold text-sm underline">
+              {mealPlanName}
+            </p>
             <MdiFoodDrumstickOutline
               color="#D3F0D1"
               width="1.3em"
