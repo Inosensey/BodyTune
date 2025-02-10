@@ -1,12 +1,12 @@
 import React, { SVGProps } from "react";
 
-type TablerBarbellProps = SVGProps<SVGSVGElement> & {
+type TablerTrashXProps = SVGProps<SVGSVGElement> & {
   color: string;
   width?: string;
   height?: string;
 };
 
-export function TablerBarbell(props: TablerBarbellProps) {
+export function TablerTrashX(props: TablerTrashXProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,9 +21,9 @@ export function TablerBarbell(props: TablerBarbellProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="2"
-        d="M2 12h1m3-4H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2m0-9v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1m3 5h6m0-5v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1m3 1h2a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2m4-4h-1"
+        d="M4 7h16M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3m-5 5l4 4m0-4l-4 4"
       ></path>
     </svg>
   );
 }
-export default TablerBarbell;
+export default TablerTrashX;

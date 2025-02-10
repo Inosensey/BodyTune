@@ -16,8 +16,8 @@ export function TablerBarbell(props: TablerBarbellProps) {
       {...props}
     >
       <path
-        fill={props.color}
-        stroke="currentColor"
+        fill="none"
+        stroke={props.color}
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="2"
