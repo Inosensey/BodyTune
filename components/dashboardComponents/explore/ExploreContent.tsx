@@ -249,6 +249,7 @@ const ExploreContent = () => {
               >
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -259,6 +260,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -269,6 +271,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -279,6 +282,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -289,6 +293,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -299,6 +304,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -309,6 +315,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneCard
+                    author="Philip Mathew Dingcong"
                     bodyTunePlanName="Beginner Friendly Plan"
                     exercisePlanName="Exercise Plan Name"
                     mealPlanName="Meal Plan Name"
@@ -319,6 +326,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneWorkoutCard
+                    author="Philip Mathew Dingcong"
                     exercisePlanName="Exercise Plan Name"
                     likes="44521"
                     views="4451"
@@ -329,6 +337,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneWorkoutCard
+                    author="Philip Mathew Dingcong"
                     exercisePlanName="Exercise Plan Name"
                     likes="44521"
                     views="4451"
@@ -339,6 +348,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneWorkoutCard
+                    author="Philip Mathew Dingcong"
                     exercisePlanName="Exercise Plan Name"
                     likes="44521"
                     views="4451"
@@ -349,6 +359,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneMealCard
+                    author="Philip Mathew Dingcong"
                     mealPlanName="Meal Plan Name"
                     likes="44521"
                     views="4451"
@@ -357,6 +368,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneMealCard
+                    author="Philip Mathew Dingcong"
                     mealPlanName="Meal Plan Name"
                     likes="44521"
                     views="4451"
@@ -365,6 +377,7 @@ const ExploreContent = () => {
                 </motion.div>
                 <motion.div variants={childAnimationVariant}>
                   <BodyTuneMealCard
+                    author="Philip Mathew Dingcong"
                     mealPlanName="Meal Plan Name"
                     likes="44521"
                     views="4451"
