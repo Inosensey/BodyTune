@@ -112,6 +112,7 @@ const BodyTuneWorkoutsContent = () => {
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
@@ -120,6 +121,7 @@ const BodyTuneWorkoutsContent = () => {
                 }
               />
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
@@ -128,6 +130,7 @@ const BodyTuneWorkoutsContent = () => {
                 }
               />
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
@@ -136,6 +139,7 @@ const BodyTuneWorkoutsContent = () => {
                 }
               />
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
@@ -144,6 +148,7 @@ const BodyTuneWorkoutsContent = () => {
                 }
               />
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
@@ -152,6 +157,7 @@ const BodyTuneWorkoutsContent = () => {
                 }
               />
               <BodyTuneWorkoutCard
+                author="Philip Mathew Dingcong"
                 exercisePlanName="Exercise Plan Name"
                 likes="44521"
                 views="4451"
