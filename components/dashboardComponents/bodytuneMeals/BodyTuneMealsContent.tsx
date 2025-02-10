@@ -112,30 +112,35 @@ const BodyTuneMealsContent = () => {
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
               <BodyTuneMealCard
+                author="Philip Mathew Dingcong"
                 mealPlanName="Meal Plan Name"
                 likes="44521"
                 views="4451"
                 setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
               />
               <BodyTuneMealCard
+                author="Philip Mathew Dingcong"
                 mealPlanName="Meal Plan Name"
                 likes="44521"
                 views="4451"
                 setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
               />
               <BodyTuneMealCard
+                author="Philip Mathew Dingcong"
                 mealPlanName="Meal Plan Name"
                 likes="44521"
                 views="4451"
                 setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
               />
               <BodyTuneMealCard
+                author="Philip Mathew Dingcong"
                 mealPlanName="Meal Plan Name"
                 likes="44521"
                 views="4451"
                 setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
               />
               <BodyTuneMealCard
+                author="Philip Mathew Dingcong"
                 mealPlanName="Meal Plan Name"
                 likes="44521"
                 views="4451"
