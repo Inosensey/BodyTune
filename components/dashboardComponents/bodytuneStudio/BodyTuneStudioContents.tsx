@@ -132,6 +132,7 @@ const BodyTuneStudioContents = () => {
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
               <BodyTuneCard
+                author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
                 mealPlanName="Meal Plan Name"
@@ -140,6 +141,7 @@ const BodyTuneStudioContents = () => {
                 setToggleBodyTuneDetails={setToggleBodyTuneDetails}
               />
               <BodyTuneCard
+                author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
                 mealPlanName="Meal Plan Name"
@@ -148,6 +150,7 @@ const BodyTuneStudioContents = () => {
                 setToggleBodyTuneDetails={setToggleBodyTuneDetails}
               />
               <BodyTuneCard
+                author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
                 mealPlanName="Meal Plan Name"
@@ -156,6 +159,7 @@ const BodyTuneStudioContents = () => {
                 setToggleBodyTuneDetails={setToggleBodyTuneDetails}
               />
               <BodyTuneCard
+                author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
                 mealPlanName="Meal Plan Name"
@@ -164,6 +168,7 @@ const BodyTuneStudioContents = () => {
                 setToggleBodyTuneDetails={setToggleBodyTuneDetails}
               />
               <BodyTuneCard
+                author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
                 mealPlanName="Meal Plan Name"
