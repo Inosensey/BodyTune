@@ -7,3 +7,17 @@ export const weekDates: Array<string> = [
     "Saturday",
     "Sunday",
 ]
+
+export const bmiClassifications: Array<string> = [
+    "Beginner",
+    "Underweight",
+    "Healthy weight",
+    "Overweight",
+    "Obesity",
+]
+
+export const workoutDifficulties: Array<string> = [
+    "Beginner",
+    "Amateur",
+    "Expert",
+]
