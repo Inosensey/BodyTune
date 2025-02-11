@@ -50,7 +50,7 @@ const MutateForm = ({ personalInfo }: props) => {
   const [progress, setProgress] = useState<number>(1);
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
-      <div className="phone:h-[17%] laptop:h-[16%]">
+      <div className="phone:h-[17%] laptop:h-[12%]">
         <DashboardHeader
           headerText="Create Your Meal Plan"
           headerDescription="Design a meal plan tailored to your taste and nutrition goals."
@@ -84,7 +84,7 @@ const MutateForm = ({ personalInfo }: props) => {
               </div>
             )}
             {progress === 2 && (
-              <div className="flex flex-1 justify-center h-[75%]">
+              <div className="flex flex-1 justify-center h-[75%] phone:w-full laptop:w-[90%]">
                 <SetMealPlan
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
