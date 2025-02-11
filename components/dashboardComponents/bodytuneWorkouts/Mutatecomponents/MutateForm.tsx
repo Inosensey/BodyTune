@@ -50,7 +50,7 @@ const MutateForm = ({ personalInfo }: props) => {
   const [progress, setProgress] = useState<number>(1);
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
-      <div className="phone:h-[17%] laptop:h-[16%]">
+      <div className="phone:h-[17%] laptop:h-[12%]">
         <DashboardHeader
           headerText="Create Your Workout Plan"
           headerDescription="Design a workout routine that fits your goals and lifestyle."
