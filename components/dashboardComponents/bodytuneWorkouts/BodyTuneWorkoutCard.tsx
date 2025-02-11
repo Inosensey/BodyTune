@@ -53,16 +53,10 @@ const BodyTuneWorkoutCard = ({
               Beginner
             </p>
             <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Underweight
+              Amateur
             </p>
             <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Healthy weight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Overweight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Obesity
+              Expert
             </p>
           </div>
         </div>
