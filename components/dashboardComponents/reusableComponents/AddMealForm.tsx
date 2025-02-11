@@ -23,11 +23,7 @@ import {
 
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
-interface MealFormInputTypes {
-  mealName: string;
-  shortDescription: string;
-  cookingInstruction: string;
-}
+import { IngredientTypes, IngredientInputValidation, MealInfoTypes, nutritionTypes } from "@/types/mealTypes";
 interface MealFormValidations {
   mealName: {
     valid: boolean | null;
@@ -42,56 +38,21 @@ interface MealFormValidations {
     validationMessage: string;
   };
 }
-interface IngredientInputTypes {
-  [key: string]: {
-    id: string;
-    ingredientName: string;
-    ingredientValue: string;
-    caloriesName: string;
-    caloriesValue: string;
-    proteinsName: string;
-    proteinsValue: string;
-    carbsName: string;
-    carbsValue: string;
-    fatName: string;
-    fatValue: string;
-  };
-}
-interface IngredientInputValidation {
-  [key: string]: {
-    ingredientValid: boolean | null;
-    ingredientValidationMessage: string;
-    caloriesValid: boolean | null;
-    caloriesValidationMessage: string;
-    proteinsValid: boolean | null;
-    proteinsValidationMessage: string;
-    carbsValid: boolean | null;
-    carbsValidationMessage: string;
-    fatValid: boolean | null;
-    fatValidationMessage: string;
-  };
-}
 
-interface nutritionTypes {
-  caloriesValue: number;
-  proteinsValue: number;
-  carbsValue: number;
-  fatValue: number;
-}
 interface mealPlanType {
   breakFast: {
-    mealInfo: MealFormInputTypes | undefined;
-    ingredients: IngredientInputTypes | undefined;
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
     nutrition: nutritionTypes | undefined;
   };
   lunch: {
-    mealInfo: MealFormInputTypes | undefined;
-    ingredients: IngredientInputTypes | undefined;
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
     nutrition: nutritionTypes | undefined;
   };
   dinner: {
-    mealInfo: MealFormInputTypes | undefined;
-    ingredients: IngredientInputTypes | undefined;
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
     nutrition: nutritionTypes | undefined;
   };
 }
@@ -105,7 +66,7 @@ interface props {
 }
 
 // Initials
-const MealFormInputValInitial: MealFormInputTypes = {
+const MealFormInputValInitial: MealInfoTypes = {
   mealName: "",
   shortDescription: "",
   cookingInstruction: "",
@@ -152,13 +113,13 @@ const AddMealForm = ({
   const [mealValidations, setMealValidations] = useState<MealFormValidations>(
     MealFormValidationInitials
   );
-  const [mealFormInputVal, setMealFormInputVal] = useState<MealFormInputTypes>(
+  const [mealFormInputVal, setMealFormInputVal] = useState<MealInfoTypes>(
     MealFormInputValInitial
   );
   const [nutrition, setNutrition] = useState<nutritionTypes>(nutritionInitial);
 
   const [ingredientInputVal, setIngredientInputVal] =
-    useState<IngredientInputTypes>({
+    useState<IngredientTypes>({
       [`ingredient${initUUID}`]: {
         id: initUUID,
         ingredientName: `Ingredients 1`,
@@ -737,41 +698,25 @@ const AddMealForm = ({
                   const ingredientValidationResult = checkIngredientValidations(
                     validationResults.ingredientValidationResult
                   );
+                  let mealType = "";
                   if (MealInfoValidation && ingredientValidationResult) {
-                    if (selectedMeal === "Breakfast") {
-                      setMealPlan((prev) => ({
-                        ...prev,
-                        breakFast: {
-                          mealInfo: mealFormInputVal,
-                          ingredients: ingredientInputVal,
-                          nutrition: nutrition,
-                        },
-                        dinner: prev!.lunch,
-                        lunch: prev!.dinner,
-                      }));
-                    } else if (selectedMeal === "Lunch") {
-                      setMealPlan((prev) => ({
-                        ...prev,
-                        lunch: {
-                          mealInfo: mealFormInputVal,
-                          ingredients: ingredientInputVal,
-                          nutrition: nutrition,
-                        },
-                        dinner: prev!.lunch,
-                        breakFast: prev!.dinner,
-                      }));
-                    } else if (selectedMeal === "Dinner") {
-                      setMealPlan((prev) => ({
-                        ...prev,
-                        dinner: {
-                          mealInfo: mealFormInputVal,
-                          ingredients: ingredientInputVal,
-                          nutrition: nutrition,
-                        },
-                        lunch: prev!.lunch,
-                        breakFast: prev!.dinner,
-                      }));
+                    
+                    if(selectedMeal === "Breakfast") {
+                      mealType = "breakFast";
+                    } else if(selectedMeal === "Lunch") {
+                      mealType = "lunch";
+                    } else if(selectedMeal === "Dinner") {
+                      mealType = "dinner"; 
                     }
+                    setMealPlan((prev) => ({
+                      ...prev,
+                      [mealType as keyof mealPlanType]: {
+                        mealInfo: mealFormInputVal,
+                        ingredients: ingredientInputVal,
+                        nutrition: nutrition,
+                      },
+                    }));
+                    
                     setToggleAddMealForm(false);
                   }
                 }}
