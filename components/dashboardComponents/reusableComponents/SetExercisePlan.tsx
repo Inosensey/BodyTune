@@ -36,7 +36,7 @@ interface props {
 }
 
 // Initials
-import { weekDates } from "@/utils/initials";
+import { weekDates, workoutDifficulties } from "@/utils/initials";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 const exercisePlanInitials: exercisePlanInterface = {
@@ -60,6 +60,9 @@ const SetExercisePlan = ({
 }: props) => {
   // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
+  const [selectedDifficulties, setSelectedDifficulties] = useState<
+    Array<string>
+  >([]);
   const [showExercisePlanHtml, setShowExercisePanHtml] =
     useState<boolean>(false);
   const [toggleAddExerciseForm, setToggleAddExerciseForm] =
@@ -96,7 +99,10 @@ const SetExercisePlan = ({
   };
   return (
     <>
-      <div className="flex flex-col h-full w-full">
+      <div
+        className="flex flex-col h-full"
+        style={{ width: `${showExercisePlanHtml ? "100%" : "320px"}` }}
+      >
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
           <div
             className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
@@ -123,7 +129,51 @@ const SetExercisePlan = ({
           </div>
           <div className="mt-2 flex flex-col gap-2">
             {!showExercisePlanHtml && (
-              <>
+              <div className="flex flex-col justify-center items-center">
+                <div className="px-2 flex flex-col gap-1 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]">
+                  <label className="font-dmSans phone:text-sm">
+                    Select Workout Difficulties:
+                  </label>
+                  <div className="flex flex-wrap gap-1">
+                    {workoutDifficulties.map(
+                      (difficulty: string, index: number) => (
+                        <div
+                          className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
+                            selectedDifficulties.includes(difficulty)
+                              ? "bg-secondary"
+                              : "bg-none"
+                          }`}
+                          key={index}
+                          onClick={() => {
+                            if (selectedDifficulties.includes(difficulty)) {
+                              setSelectedDifficulties(
+                                selectedDifficulties.filter(
+                                  (workoutDifficulty: string) =>
+                                    workoutDifficulty !== difficulty
+                                )
+                              );
+                            } else {
+                              setSelectedDifficulties((prev) => [
+                                ...prev,
+                                difficulty,
+                              ]);
+                            }
+                          }}
+                        >
+                          <p
+                            className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
+                              selectedDifficulties.includes(difficulty)
+                                ? "text-[#ffffff]"
+                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                            }`}
+                          >
+                            {difficulty}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
                 <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
                   <button
                     onClick={() => setShowExercisePanHtml(true)}
@@ -139,7 +189,7 @@ const SetExercisePlan = ({
                 <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
                   OR
                 </p>
-              </>
+              </div>
             )}
             <div
               className="relative flex flex-wrap items-center gap-1 w-12/12"
@@ -206,7 +256,7 @@ const SetExercisePlan = ({
         </div>
         {showExercisePlanHtml && (
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1 mdtablet:h-[80%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[28%]">
+            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[36%]">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
@@ -240,8 +290,52 @@ const SetExercisePlan = ({
                   </div>
                 ))}
               </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-dmSans phone:text-sm">
+                  Select Workout Difficulties:
+                </label>
+                <div className="flex flex-wrap gap-1">
+                  {workoutDifficulties.map(
+                    (difficulty: string, index: number) => (
+                      <div
+                        className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
+                          selectedDifficulties.includes(difficulty)
+                            ? "bg-secondary"
+                            : "bg-none"
+                        }`}
+                        key={index}
+                        onClick={() => {
+                          if (selectedDifficulties.includes(difficulty)) {
+                            setSelectedDifficulties(
+                              selectedDifficulties.filter(
+                                (workoutDifficulty: string) =>
+                                  workoutDifficulty !== difficulty
+                              )
+                            );
+                          } else {
+                            setSelectedDifficulties((prev) => [
+                              ...prev,
+                              difficulty,
+                            ]);
+                          }
+                        }}
+                      >
+                        <p
+                          className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
+                            selectedDifficulties.includes(difficulty)
+                              ? "text-[#ffffff]"
+                              : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                          }`}
+                        >
+                          {difficulty}
+                        </p>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[75%]">
+            <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[64%]">
               <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
                 <button
                   onClick={() => {
