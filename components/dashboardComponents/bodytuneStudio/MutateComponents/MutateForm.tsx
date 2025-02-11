@@ -57,7 +57,7 @@ const MutateForm = ({ personalInfo }: props) => {
 
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
-      <div className="phone:h-[17%] laptop:h-[16%]">
+      <div className="phone:h-[17%] laptop:h-[12%]">
         <DashboardHeader
           headerText="Create Your BodyTune"
           headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
