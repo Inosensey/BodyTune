@@ -20,7 +20,7 @@ interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
-    React.SetStateAction<InterfaceBreadCrumbs>
+  React.SetStateAction<InterfaceBreadCrumbs>
   >;
   personalInfo: TableRow<"personal_information">;
 }
@@ -28,6 +28,7 @@ interface generalInfoType {
   weight: string;
   height: string;
   experience: string;
+  bmi: string;
 }
 
 interface generalInfoValidation {
@@ -43,9 +44,14 @@ interface generalInfoValidation {
     valid: boolean | null;
     validationMessage: string;
   };
+  bmi: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
 }
 
 // Initials
+import { bmiClassifications, workoutDifficulties } from "@/utils/initials";
 const generalInfoValidationInitials: generalInfoValidation = {
   height: {
     valid: null,
@@ -59,8 +65,11 @@ const generalInfoValidationInitials: generalInfoValidation = {
     valid: null,
     validationMessage: "",
   },
+  bmi: {
+    valid: null,
+    validationMessage: "",
+  }
 };
-const experiences: Array<string> = ["Beginner", "Intermediate", "Expert"];
 
 const SetGeneralInfo = ({
   setSelectedOption,
@@ -73,6 +82,7 @@ const SetGeneralInfo = ({
     height: personalInfo.height!.toString(),
     weight: personalInfo.weight!.toString(),
     experience: "",
+    bmi: "",
   });
   const [generalInfoValidation, setGeneralInfoValidation] =
     useState<generalInfoValidation>(generalInfoValidationInitials);
@@ -213,19 +223,54 @@ const SetGeneralInfo = ({
             <select
               className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
               onChange={selectOnChange}
-              name="birthMonth"
+              name="experience"
               defaultValue={generalInfoFieldsVal.experience}
             >
               <option className="bg-primary font-quickSand" value="" disabled>
                 Experience
               </option>
-              {experiences.map((experience: string) => (
+              {workoutDifficulties.map((experience: string) => (
                 <option
                   className="bg-primary font-quickSand"
                   key={experience}
                   value={experience}
                 >
                   {experience}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div
+          style={{
+            border:
+              generalInfoValidation.bmi.valid === null ||
+              generalInfoValidation.bmi.valid
+                ? ""
+                : "1px solid rgb(239 68 68)",
+          }}
+          className="relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]"
+        >
+          <label className="phone:text-sm font-quickSand font-semibold">
+            Choose BMI Classification
+          </label>
+          <div className={`flex flex-col w-full gap-2 bg-primary`}>
+            <select
+              className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+              onChange={selectOnChange}
+              name="bmi"
+              defaultValue={generalInfoFieldsVal.bmi}
+            >
+              <option className="bg-primary font-quickSand" value="" disabled>
+                BMI Classification
+              </option>
+              {bmiClassifications.map((bmi: string) => (
+                <option
+                  className="bg-primary font-quickSand"
+                  key={bmi}
+                  value={bmi}
+                >
+                  {bmi}
                 </option>
               ))}
             </select>
