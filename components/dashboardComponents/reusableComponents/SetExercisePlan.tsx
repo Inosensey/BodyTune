@@ -127,53 +127,9 @@ const SetExercisePlan = ({
               </p>
             </div>
           </div>
-          <div className="mt-2 flex flex-col gap-2">
+          <div className="flex flex-col">
             {!showExercisePlanHtml && (
               <div className="flex flex-col justify-center items-center">
-                <div className="px-2 flex flex-col gap-1 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]">
-                  <label className="font-dmSans phone:text-sm">
-                    Select Workout Difficulties:
-                  </label>
-                  <div className="flex flex-wrap gap-1">
-                    {workoutDifficulties.map(
-                      (difficulty: string, index: number) => (
-                        <div
-                          className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
-                            selectedDifficulties.includes(difficulty)
-                              ? "bg-secondary"
-                              : "bg-none"
-                          }`}
-                          key={index}
-                          onClick={() => {
-                            if (selectedDifficulties.includes(difficulty)) {
-                              setSelectedDifficulties(
-                                selectedDifficulties.filter(
-                                  (workoutDifficulty: string) =>
-                                    workoutDifficulty !== difficulty
-                                )
-                              );
-                            } else {
-                              setSelectedDifficulties((prev) => [
-                                ...prev,
-                                difficulty,
-                              ]);
-                            }
-                          }}
-                        >
-                          <p
-                            className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
-                              selectedDifficulties.includes(difficulty)
-                                ? "text-[#ffffff]"
-                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                            }`}
-                          >
-                            {difficulty}
-                          </p>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
                 <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
                   <button
                     onClick={() => setShowExercisePanHtml(true)}
@@ -271,25 +227,6 @@ const SetExercisePlan = ({
                   validationMessage={""}
                 />
               </motion.div>
-              <div className="flex flex-wrap gap-1">
-                {weekDates.map((date: string, index: number) => (
-                  <div
-                    className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                    key={index}
-                    onClick={() => setSelectedWeekDate(date)}
-                  >
-                    <p
-                      className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                        selectedWeekDate === date
-                          ? "text-[#ffffff]"
-                          : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                      }`}
-                    >
-                      {date}
-                    </p>
-                  </div>
-                ))}
-              </div>
               <div className="flex flex-col gap-1">
                 <label className="font-dmSans phone:text-sm">
                   Select Workout Difficulties:
@@ -332,6 +269,30 @@ const SetExercisePlan = ({
                       </div>
                     )
                   )}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-dmSans phone:text-sm">
+                Select Day:
+                </label>
+                <div className="flex flex-wrap gap-1">
+                  {weekDates.map((date: string, index: number) => (
+                    <div
+                      className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                      key={index}
+                      onClick={() => setSelectedWeekDate(date)}
+                    >
+                      <p
+                        className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                          selectedWeekDate === date
+                            ? "text-[#ffffff]"
+                            : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                        }`}
+                      >
+                        {date}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
