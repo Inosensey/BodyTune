@@ -211,8 +211,8 @@ const SetExercisePlan = ({
           </div>
         </div>
         {showExercisePlanHtml && (
-          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1 mdtablet:h-[80%]">
-            <div className="flex flex-col gap-2 phone:h-[35%] tablet:h-[43%] laptop:h-[36%]">
+          <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1">
+            <div className="flex flex-col gap-2 ">
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
@@ -296,7 +296,7 @@ const SetExercisePlan = ({
                 </div>
               </div>
             </div>
-            <div className="flex w-full flex-col gap-1 overflow-auto justify-start phone:h-[69%] tablet:h-[64%]">
+            <div className="flex w-full gap-1 flex-col overflow-auto justify-start">
               <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
                 <button
                   onClick={() => {
@@ -314,7 +314,7 @@ const SetExercisePlan = ({
               </div>
               {exercises.length !== 0 && (
                 <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
-                  <div className="flex flex-wrap gap-1 w-[100%] pt-4 overflow-auto flex-row">
+                  <div className="flex flex-wrap gap-1 w-[100%] overflow-auto flex-row">
                     {exercises.map((exercise: ExerciseType, index: number) => (
                       <div
                         key={index}
