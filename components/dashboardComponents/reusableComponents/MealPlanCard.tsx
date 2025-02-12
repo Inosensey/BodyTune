@@ -28,7 +28,7 @@ const MealPlanCard = ({
   mealType
 }: props) => {
   return (
-    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[300px] mdtablet:h-[100%] mdtablet:w-[33%]">
+    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[380px] mdtablet:w-[33%]">
       {meal.mealInfo ? (
         <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
           <div className="flex justify-between w-[100%]">
@@ -99,7 +99,7 @@ const MealPlanCard = ({
           </div>
         </div>
       ) : (
-        <div className="w-[100%] flex flex-col justify-center items-center">
+        <div className="w-[100%] h-[100%] flex flex-col justify-center items-center">
           <Image
             src="/assets/svg/healthy-1.svg"
             width={200}
