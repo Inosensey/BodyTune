@@ -98,6 +98,7 @@ const MutateForm = ({ personalInfo }: props) => {
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
+                  Icon={TablerBarbell}
                 />
               </div>
             )}
