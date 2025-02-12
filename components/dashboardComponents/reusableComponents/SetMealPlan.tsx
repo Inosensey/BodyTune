@@ -30,8 +30,8 @@ interface props {
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
 }
-interface meaPlanInterface {
-  selectedMealPlan: number;
+interface mealPlanInterface {
+  selectedMealPlan: string;
   mealPlanName: string;
 }
 interface mealPlanType {
@@ -53,8 +53,8 @@ interface mealPlanType {
 }
 
 // Initials
-const mealPlanFieldsInit: meaPlanInterface = {
-  selectedMealPlan: 0,
+const mealPlanFieldsInit: mealPlanInterface = {
+  selectedMealPlan: "0",
   mealPlanName: "",
 };
 const mealPlanInitial: mealPlanType = {
@@ -81,7 +81,7 @@ const SetMealPlan = ({
   setSelectedBreadCrumb,
 }: props) => {
   const [mealPlanFieldsVal, setMealPlanFieldsVal] =
-    useState<meaPlanInterface>(mealPlanFieldsInit);
+    useState<mealPlanInterface>(mealPlanFieldsInit);
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(false);
@@ -98,13 +98,13 @@ const SetMealPlan = ({
     setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value, options } = event.target;
+    const { name, value } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
       setActionType("Select");
       setMealPlanFieldsVal((prev) => ({
         ...prev,
-        mealPlanName: options[event.target.selectedIndex].text,
+        mealPlanName: value,
       }));
     } else {
       setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
@@ -214,7 +214,7 @@ const SetMealPlan = ({
                         className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
-                        defaultValue={mealPlanFieldsVal.selectedMealPlan}
+                        value={`${mealPlanFieldsVal.selectedMealPlan}`}
                       >
                         <option
                           className="bg-primary font-quickSand"
@@ -366,8 +366,7 @@ const SetMealPlan = ({
                         className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
-                        defaultValue={mealPlanFieldsVal.selectedMealPlan}
-                        value={mealPlanFieldsVal.selectedMealPlan}
+                        defaultValue={0}
                       >
                         <option
                           className="bg-primary font-quickSand"
