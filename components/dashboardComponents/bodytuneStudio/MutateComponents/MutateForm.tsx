@@ -69,7 +69,7 @@ const MutateForm = ({ personalInfo }: props) => {
           <CreationOption label="How would you like to create your BodyTune" setSelectOption={setSelectedOption} />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
-            <div className="h-max max-w-[800px] tablet:w-[100%] laptop:w-[100%] mb-1">
+            <div className="h-max max-w-[800px] mb-1">
               <BreadCrumbs
                 breadCrumbs={BreadCrumbsInitials}
                 setSelectedBreadCrumb={setSelectedBreadCrumb}
@@ -112,6 +112,7 @@ const MutateForm = ({ personalInfo }: props) => {
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
+                  Icon={SolarStarsMinimalisticLineDuotone}
                 />
               </div>
             )}
