@@ -10,7 +10,8 @@ const config: Config = {
     screens: {
       phone: '280px',
       mdphone: '420px',
-      tablet: '481px',
+      tablet: '576px',
+      mdtablet: '676px',
       laptop: '992px',
       desktop: '1280px',
       larger: '1920px'
@@ -33,6 +34,14 @@ const config: Config = {
         textGray: "#e0e1dd", // Existing gray text color
         ctaBackground: "#3E8E41", // Forest Green (CTA background)
         ctaText: "#FFFFFF", // White (CTA text)
+        warningColor: "#dc3545",
+        fadedWarningColor: "#e05260",
+
+        // Notifications theme
+        newFollower: "#4A9B50",
+        comment: "#B07A42",
+        achievement: "#B58E1C",
+        notificationTextColor: "#e0e1dd"
       },
       fontFamily: {
         dmSans: ['var(--font-dm-sans)'],

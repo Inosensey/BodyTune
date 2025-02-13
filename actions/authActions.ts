@@ -24,7 +24,8 @@ export const signUpWithEmail = async (
   formData: FormData
 ): Promise<
   formReturnType<{ user: User | null; session: Session | null } | []>
-> => {
+  > => {
+  const cookieStore = await cookies()
   const accountInfo: credentials = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -85,8 +86,9 @@ export const signUpWithEmail = async (
     );
     if (mutateTermsAndConditionsRes.error) {
       return mutateTermsAndConditionsRes;
-    }
-
+    }  
+    cookieStore.set('userHaverPersonalInformation', "true", { secure: true })
+    
     return {
       success: true,
       error: false,
@@ -186,7 +188,7 @@ export const mutatePersonalInformation = async (
         user_id: userId,
         name: personalInfo.name,
         birth_date: date,
-        gender: parseInt(personalInfo.gender),
+        gender: personalInfo.gender,
         weight: parseFloat(personalInfo.weight),
         height: parseFloat(personalInfo.height),
       });
@@ -271,6 +273,7 @@ export const loginWithEmail = async (
   prevState: formReturnType<[]>,
   formData: FormData
 ): Promise<formReturnType<[]>> => {
+  const cookieStore = await cookies()
   const credentials: { email: string; password: string } = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -291,6 +294,7 @@ export const loginWithEmail = async (
       };
     }
     
+    cookieStore.set('userHaverPersonalInformation', "true", { secure: true })
     return {
       success: true,
       error: false,
@@ -368,6 +372,7 @@ export const loginWithThirdParty = async (
 
 export const signOut = async () => {
   const supabase = await createSSR();
+  const cookieStore = await cookies()
   try {
     const { error } = await supabase.auth.signOut({ scope: "local" });
 
@@ -379,6 +384,8 @@ export const signOut = async () => {
         message: `There is an error Signing Out: ${error.message}`,
       };
     }
+    
+    cookieStore.delete('userHaverPersonalInformation')
   } catch (error: unknown) {
     const errorMessage: string =
       error instanceof Error
