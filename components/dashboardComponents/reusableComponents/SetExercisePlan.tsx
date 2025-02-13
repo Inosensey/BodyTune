@@ -73,6 +73,7 @@ const SetExercisePlan = ({
   const [selectedExercise, setSelectedExercise] =
     useState<ExerciseType>(ExerciseValInitial);
   const [formAction, setFormAction] = useState<string>("");
+  const [actionType, setActionType] = useState<string>("");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +87,7 @@ const SetExercisePlan = ({
         ...prev,
         exercisePlanName: options[event.target.selectedIndex].text,
       }));
+      setActionType("Select");
     } else {
       setExercisePlanFieldsVal((prev) => ({ ...prev, [name]: value }));
     }
@@ -104,214 +106,308 @@ const SetExercisePlan = ({
         style={{ width: `${showExercisePlanHtml ? "100%" : "320px"}` }}
       >
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
-          <div
-            className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
-            onClick={() => {
-              setSelectedOption("");
-              setProgress(1);
-              setSelectedBreadCrumb({
-                id: 1,
-                title: "Body Metrics",
-                shortDescription: "Set weight, height, and experience",
-              });
-            }}
-          >
-            <IcOutlineArrowBackIosNew
-              color="#4B6F64"
-              width="1.7em"
-              height="1.7em"
-            />
-            <div>
-              <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
-                Return to BodyTune creation options
-              </p>
+          <div className="flex items-center gap-1 pr-2 cursor-pointer w-full">
+            <div
+              className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
+              onClick={() => {
+                setSelectedOption("");
+                setProgress(1);
+                setSelectedBreadCrumb({
+                  id: 1,
+                  title: "Body Metrics",
+                  shortDescription: "Set weight, height, and experience",
+                });
+              }}
+            >
+              <IcOutlineArrowBackIosNew
+                color="#4B6F64"
+                width="1.7em"
+                height="1.7em"
+              />
+              <div>
+                <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
+                  Return to BodyTune creation options
+                </p>
+              </div>
             </div>
+            {actionType !== "" &&
+              (actionType !== "New" ? (
+                <button
+                  onClick={() => setActionType("New")}
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+                >
+                  Create Exercise Plan
+                </button>
+              ) : (
+                <button
+                  onClick={() => setActionType("Select")}
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+                >
+                  Select Exercise Plan
+                </button>
+              ))}
           </div>
           <div className="flex flex-col">
             {!showExercisePlanHtml && (
-              <div className="flex flex-col justify-center items-center">
-                <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
-                  <button
-                    onClick={() => setShowExercisePanHtml(true)}
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
-                  >
-                    Create a New Plan
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      className="text-white text-lg"
-                    />
-                  </button>
-                </div>
-                <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
-                  OR
-                </p>
-              </div>
-            )}
-            <div
-              className="relative flex flex-wrap items-center gap-1 w-12/12"
-              style={{ flexDirection: showExercisePlanHtml ? "row" : "column" }}
-            >
-              <div className="relative pl-2 w-[270px]">
-                <label className="phone:text-sm font-quickSand font-semibold">
-                  Filter Exercise Plans
-                </label>
-                <div className={`flex flex-col w-full gap-2 bg-primary`}>
-                  <select
-                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-                    onChange={selectOnChange}
-                    name="mealPlan"
-                    defaultValue={1}
-                  >
-                    <option className="bg-primary font-quickSand" value="1">
-                      All
-                    </option>
-                    <option className="bg-primary font-quickSand" value="2">
-                      Saved Exercise Plans
-                    </option>
-                    <option className="bg-primary font-quickSand" value="3">
-                      Created Exercise Plans
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div className="relative pl-2 w-[270px]">
-                <label className="phone:text-sm font-quickSand font-semibold">
-                  Choose a Exercise Plan
-                </label>
-                <div className={`flex flex-col w-full gap-2 bg-primary`}>
-                  <select
-                    className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-                    onChange={selectOnChange}
-                    name="exercisePlan"
-                    defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
-                  >
-                    <option
-                      className="bg-primary font-quickSand"
-                      value="0"
-                      disabled
+              <>
+                <div className="flex flex-col justify-center items-center">
+                  <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
+                    <button
+                      onClick={() => {
+                        setActionType("New");
+                        setShowExercisePanHtml(true);
+                      }}
+                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
                     >
-                      Exercise Plans
-                    </option>
-                    <option className="bg-primary font-quickSand" value="1">
-                      Exercise Plan1
-                    </option>
-                    <option className="bg-primary font-quickSand" value="2">
-                      Exercise Plan2
-                    </option>
-                    <option className="bg-primary font-quickSand" value="3">
-                      Exercise Plan3
-                    </option>
-                    <option className="bg-primary font-quickSand" value="4">
-                      Exercise Plan4
-                    </option>
-                  </select>
+                      Create a New Plan
+                      <FontAwesomeIcon
+                        icon={faPlusSquare}
+                        className="text-white text-lg"
+                      />
+                    </button>
+                  </div>
+                  <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
+                    OR
+                  </p>
                 </div>
-              </div>
-            </div>
+                <div
+                  className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
+                  style={{
+                    flexDirection: showExercisePlanHtml ? "row" : "column",
+                  }}
+                >
+                  <div className="relative pl-2 w-[270px]">
+                    <label className="phone:text-sm font-quickSand font-semibold">
+                      Filter Exercise Plans
+                    </label>
+                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                      <select
+                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        onChange={selectOnChange}
+                        name="mealPlan"
+                        defaultValue={1}
+                      >
+                        <option className="bg-primary font-quickSand" value="1">
+                          All
+                        </option>
+                        <option className="bg-primary font-quickSand" value="2">
+                          Saved Exercise Plans
+                        </option>
+                        <option className="bg-primary font-quickSand" value="3">
+                          Created Exercise Plans
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="relative pl-2 w-[270px]">
+                    <label className="phone:text-sm font-quickSand font-semibold">
+                      Choose a Exercise Plan
+                    </label>
+                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                      <select
+                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        onChange={selectOnChange}
+                        name="exercisePlan"
+                        defaultValue={
+                          exercisePlanFieldsVal.selectedExercisePlan
+                        }
+                      >
+                        <option
+                          className="bg-primary font-quickSand"
+                          value="0"
+                          disabled
+                        >
+                          Exercise Plans
+                        </option>
+                        <option className="bg-primary font-quickSand" value="1">
+                          Exercise Plan1
+                        </option>
+                        <option className="bg-primary font-quickSand" value="2">
+                          Exercise Plan2
+                        </option>
+                        <option className="bg-primary font-quickSand" value="3">
+                          Exercise Plan3
+                        </option>
+                        <option className="bg-primary font-quickSand" value="4">
+                          Exercise Plan4
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
+
         {showExercisePlanHtml && (
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1">
-            <div className="flex flex-col gap-2 ">
-              <motion.div className="phone:w-4/12 min-w-[260px]">
-                <Input
-                  name="exercisePlanName"
-                  placeholder="Enter the name of the Exercise Plan"
-                  state={exercisePlanFieldsVal.exercisePlanName}
-                  type="text"
-                  label="Exercise Plan Name"
-                  onChange={onChange}
-                  onBlur={onChange}
-                  autoComplete="off"
-                  valid={null}
-                  validationMessage={""}
-                />
-              </motion.div>
-              <div className="flex flex-col gap-1">
-                <label className="font-dmSans phone:text-sm">
-                  Select Workout Difficulties:
-                </label>
-                <div className="flex flex-wrap gap-1">
-                  {workoutDifficulties.map(
-                    (difficulty: string, index: number) => (
-                      <div
-                        className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
-                          selectedDifficulties.includes(difficulty)
-                            ? "bg-secondary"
-                            : "bg-none"
-                        }`}
-                        key={index}
-                        onClick={() => {
-                          if (selectedDifficulties.includes(difficulty)) {
-                            setSelectedDifficulties(
-                              selectedDifficulties.filter(
-                                (workoutDifficulty: string) =>
-                                  workoutDifficulty !== difficulty
-                              )
-                            );
-                          } else {
-                            setSelectedDifficulties((prev) => [
-                              ...prev,
-                              difficulty,
-                            ]);
-                          }
-                        }}
+            {actionType === "New" ? (
+              <div className="flex flex-col gap-2 ">
+                <motion.div className="phone:w-4/12 min-w-[260px]">
+                  <Input
+                    name="exercisePlanName"
+                    placeholder="Enter the name of the Exercise Plan"
+                    state={exercisePlanFieldsVal.exercisePlanName}
+                    type="text"
+                    label="Exercise Plan Name"
+                    onChange={onChange}
+                    onBlur={onChange}
+                    autoComplete="off"
+                    valid={null}
+                    validationMessage={""}
+                  />
+                </motion.div>
+              </div>
+            ) : (
+              <div
+                className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
+                style={{
+                  flexDirection: showExercisePlanHtml ? "row" : "column",
+                }}
+              >
+                <div className="relative pl-2 w-[270px]">
+                  <label className="phone:text-sm font-quickSand font-semibold">
+                    Filter Exercise Plans
+                  </label>
+                  <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <select
+                      className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                      onChange={selectOnChange}
+                      name="mealPlan"
+                      defaultValue={1}
+                    >
+                      <option className="bg-primary font-quickSand" value="1">
+                        All
+                      </option>
+                      <option className="bg-primary font-quickSand" value="2">
+                        Saved Exercise Plans
+                      </option>
+                      <option className="bg-primary font-quickSand" value="3">
+                        Created Exercise Plans
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div className="relative pl-2 w-[270px]">
+                  <label className="phone:text-sm font-quickSand font-semibold">
+                    Choose a Exercise Plan
+                  </label>
+                  <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <select
+                      className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                      onChange={selectOnChange}
+                      name="exercisePlan"
+                      defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
+                    >
+                      <option
+                        className="bg-primary font-quickSand"
+                        value="0"
+                        disabled
                       >
-                        <p
-                          className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
-                            selectedDifficulties.includes(difficulty)
-                              ? "text-[#ffffff]"
-                              : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                          }`}
-                        >
-                          {difficulty}
-                        </p>
-                      </div>
-                    )
-                  )}
+                        Exercise Plans
+                      </option>
+                      <option className="bg-primary font-quickSand" value="1">
+                        Exercise Plan1
+                      </option>
+                      <option className="bg-primary font-quickSand" value="2">
+                        Exercise Plan2
+                      </option>
+                      <option className="bg-primary font-quickSand" value="3">
+                        Exercise Plan3
+                      </option>
+                      <option className="bg-primary font-quickSand" value="4">
+                        Exercise Plan4
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="font-dmSans phone:text-sm">
-                Select Day:
-                </label>
-                <div className="flex flex-wrap gap-1">
-                  {weekDates.map((date: string, index: number) => (
+            )}
+            <div className="flex flex-col gap-1">
+              <label className="font-dmSans phone:text-sm">
+                Select Workout Difficulties:
+              </label>
+              <div className="flex flex-wrap gap-1">
+                {workoutDifficulties.map(
+                  (difficulty: string, index: number) => (
                     <div
-                      className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                      className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
+                        selectedDifficulties.includes(difficulty)
+                          ? "bg-secondary"
+                          : "bg-none"
+                      }`}
                       key={index}
-                      onClick={() => setSelectedWeekDate(date)}
+                      onClick={() => {
+                        if (selectedDifficulties.includes(difficulty)) {
+                          setSelectedDifficulties(
+                            selectedDifficulties.filter(
+                              (workoutDifficulty: string) =>
+                                workoutDifficulty !== difficulty
+                            )
+                          );
+                        } else {
+                          setSelectedDifficulties((prev) => [
+                            ...prev,
+                            difficulty,
+                          ]);
+                        }
+                      }}
                     >
                       <p
-                        className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                          selectedWeekDate === date
+                        className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
+                          selectedDifficulties.includes(difficulty)
                             ? "text-[#ffffff]"
                             : "text-[#b3b3b3] group-hover:text-[#ffffff]"
                         }`}
                       >
-                        {date}
+                        {difficulty}
                       </p>
                     </div>
-                  ))}
-                </div>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-dmSans phone:text-sm">Select Day:</label>
+              <div className="flex flex-wrap gap-1">
+                {weekDates.map((date: string, index: number) => (
+                  <div
+                    className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                    key={index}
+                    onClick={() => setSelectedWeekDate(date)}
+                  >
+                    <p
+                      className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                        selectedWeekDate === date
+                          ? "text-[#ffffff]"
+                          : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                      }`}
+                    >
+                      {date}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
             <div className="flex w-full gap-1 flex-col overflow-auto justify-start">
-              <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
-                <button
-                  onClick={() => {
-                    setFormAction("Add");
-                    setToggleAddExerciseForm(true);
-                  }}
-                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
-                >
-                  Add an Exercise
-                  <FontAwesomeIcon
-                    icon={faPlusSquare}
-                    className="text-white text-xl"
-                  />
-                </button>
-              </div>
+              {actionType === "New" && (
+                <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
+                  <button
+                    onClick={() => {
+                      setFormAction("Add");
+                      setToggleAddExerciseForm(true);
+                    }}
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+                  >
+                    Add an Exercise
+                    <FontAwesomeIcon
+                      icon={faPlusSquare}
+                      className="text-white text-xl"
+                    />
+                  </button>
+                </div>
+              )}
               {exercises.length !== 0 && (
                 <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
                   <div className="flex flex-wrap gap-1 w-[100%] overflow-auto flex-row">
