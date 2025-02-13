@@ -6,7 +6,7 @@ import { encryptUserId } from "@/utils/encrypter";
 
 // Types
 import { TableRow } from "@/types/database.types";
-import MutateForm from "@/components/dashboardComponents/bodytuneWorkouts/MutateComponents/MutateForm";
+import MutateForm from "@/components/dashboardComponents/bodytuneWorkouts/Mutatecomponents/MutateForm";
 
 const CreateWorkoutPage = async () => {
     const user = await getUser();

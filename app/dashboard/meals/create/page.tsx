@@ -6,7 +6,7 @@ import { encryptUserId } from "@/utils/encrypter";
 
 // Types
 import { TableRow } from "@/types/database.types";
-import MutateForm from "@/components/dashboardComponents/bodytuneMeals/MutateComponents/MutateForm";
+import MutateForm from "@/components/dashboardComponents/bodytuneMeals/Mutatecomponents/MutateForm";
 
 const CreateMealPage = async () => {
     const user = await getUser();
