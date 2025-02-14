@@ -5,7 +5,7 @@ import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 
 // Action
-import { profileSetUp } from "@/actions/authActions";
+import { profileSetUp, signOut } from "@/actions/authActions";
 
 // Components
 import ThirdStep from "../signUp/steps/ThirdStep";
@@ -23,6 +23,7 @@ import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/Loadin
 // Types
 import { registerInputType, stepsValidation } from "@/types/inputTypes";
 import { formReturnType } from "@/types/formTypes";
+import SolarExitLineDuotone from "@/icons/SolarExitLineDuotone";
 
 // Initials
 const stepValidationInitials: stepsValidation = {
@@ -162,6 +163,21 @@ const ProfileSetup = () => {
         </form>
       </div>
 
+      <div
+        className="absolute bottom-[2%] right-[2%] flex flex-col py-2 px-[0.6rem] cursor-pointer border-2 border-lightSecondary rounded-lg"
+        onClick={() => {
+          setSubmitMessage("Logging you out... 🔄 See you next time! 👋");
+          setIsSubmitting(true);
+          signOut();
+        }}
+      >
+        <div className="flex gap-1 text-lg">
+          <p className="font-dmSans font-semibold text-lightSecondary">
+            Sign Out
+          </p>
+          <SolarExitLineDuotone color="#D3F0D1" width="1.5em" height="1.5em" />
+        </div>
+      </div>
       <LoadingPopUp isLoading={isSubmitting} message={submitMessage} />
     </>
   );
