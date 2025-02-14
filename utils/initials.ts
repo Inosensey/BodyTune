@@ -21,3 +21,8 @@ export const workoutDifficulties: Array<string> = [
     "Amateur",
     "Expert",
 ]
+
+export const allowedOrigins = [
+    'http://localhost:3000',
+    'https://body-tune-dev.vercel.app',
+  ];
