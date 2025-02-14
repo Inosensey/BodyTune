@@ -1,35 +1,29 @@
 "use server";
 
-import { headers } from "next/headers";
-
 import Profile from "@/components/dashboardComponents/profile/Profile";
 
 // Libs
-import getUser from "@/lib/getUser";
-
-// Utils
-import { encryptUserId } from "@/utils/encrypter";
+import getUserInformation from "@/lib/getUserInformation";
 
 // Types
 import { TableRow } from "@/types/database.types";
 
 const ProfilePage = async () => {
-    const user = await getUser();
-    const userId = user.data.user!.id;
-    const encryptedUserId = encryptUserId(userId);
-    const headerInfo = headers();
-    const res = await fetch(
-      `http://localhost:3000/api/supabase/getUserInformation?user=${encryptedUserId}`,
-      {
-        headers: { cookie: headerInfo.get("cookie")! },
-        next: { tags: ["personalInformation"] },
-        cache: "force-cache",
-      }
-    );
-    const personalInformation: { response: TableRow<"personal_information">[] } = await res.json();
+  const res = await getUserInformation();
+  let userInformation:
+    | { response: TableRow<"personal_information">[] }
+    | { response: [] } = { response: [] };
+  if (res) {
+    userInformation = await res.json();
+  } else {
+    userInformation  = { response: [] };
+  }
+  const personalInformation:
+    | { response: TableRow<"personal_information">[] }
+    | [] = userInformation;
   return (
     <div className="w-full laptop:px-4 laptop:mt-4">
-        <Profile personalInfo={personalInformation.response[0]} />
+      <Profile personalInfo={personalInformation.response[0]} />
     </div>
   );
 };
