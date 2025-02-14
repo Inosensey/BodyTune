@@ -17,7 +17,7 @@ const getUserInformation = async () => {
 
     if (origin && allowedOrigins.includes(origin)) {
         const res = await fetch(
-            `http://localhost:3000/api/supabase/getUserInformation?user=${encryptedUserId}`,
+            `${origin}/api/supabase/getUserInformation?user=${encryptedUserId}`,
             {
             headers: { cookie: headerInfo.get("cookie")! },
             next: { tags: ["personalInformation"] },
