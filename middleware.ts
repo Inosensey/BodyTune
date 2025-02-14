@@ -23,6 +23,13 @@ export async function middleware(request: NextRequest) {
       // }
     }
   }
+  
+  if (request.nextUrl.pathname.startsWith("/profileSetup")) {
+    const userHaverPersonalInformation = await checkIfUserHaverPersonalInformation(user.data.user!.id)
+    if(userHaverPersonalInformation) {
+      return NextResponse.rewrite(new URL("/dashboard", request.url));
+    }
+  }
   // update user's auth session
   return await updateSession(request);
 }
