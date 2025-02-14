@@ -1,9 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
-import getUser from "@/lib/getUser";
-import { encryptUserId } from "@/utils/encrypter";
-
+import getUserInformation from "@/lib/getUserInformation";
 // Components
 import MutateForm from "@/components/dashboardComponents/profile/MutateComponents/MutateForm";
 
@@ -11,19 +8,18 @@ import MutateForm from "@/components/dashboardComponents/profile/MutateComponent
 import { TableRow } from "@/types/database.types";
 
 const UpdateProfilePage = async () => {
-  const user = await getUser();
-  const userId = user.data.user!.id;
-  const encryptedUserId = encryptUserId(userId);
-  const headerInfo = headers();
-  const res = await fetch(
-    `http://localhost:3000/api/supabase/getUserInformation?user=${encryptedUserId}`,
-    {
-      headers: { cookie: headerInfo.get("cookie")! },
-      next: { tags: ["personalInformation"] },
-      cache: "force-cache",
-    }
-  );
-  const personalInformation: { response: TableRow<"personal_information">[] } = await res.json();
+  const res = await getUserInformation();
+  let userInformation:
+    | { response: TableRow<"personal_information">[] }
+    | { response: [] } = { response: [] };
+  if (res) {
+    userInformation = await res.json();
+  } else {
+    userInformation = { response: [] };
+  }
+  const personalInformation:
+    | { response: TableRow<"personal_information">[] }
+    | [] = userInformation;
 
   return (
     <div className="px-4 h-screen w-full">
