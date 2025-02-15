@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   const supabase = await createSSR()
   const user = await supabase.auth.getUser();
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
-    if (!user) {
+    if (!user.data.user) {
       return NextResponse.rewrite(new URL("/login", request.url));
     } else {
       const userHaverPersonalInformation = await checkIfUserHaverPersonalInformation(user.data.user!.id)
@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   }
   
   if (request.nextUrl.pathname.startsWith("/login")) {
-    if (user) {
+    if (user.data.user) {
       return NextResponse.rewrite(new URL("/dashboard", request.url));
     }
   }
