@@ -6,11 +6,11 @@ import { createSSR } from "./utils/supabaseSSR";
 export async function middleware(request: NextRequest) {
   const supabase = await createSSR()
   const user = await supabase.auth.getUser();
-  const userHaverPersonalInformation = await checkIfUserHaverPersonalInformation(user.data.user!.id)
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     if (!user) {
       return NextResponse.rewrite(new URL("/login", request.url));
     } else {
+      const userHaverPersonalInformation = await checkIfUserHaverPersonalInformation(user.data.user!.id)
       if(!userHaverPersonalInformation) {
         return NextResponse.rewrite(new URL("/profileSetup", request.url));
       }
@@ -23,6 +23,7 @@ export async function middleware(request: NextRequest) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/profileSetup")) {
+    const userHaverPersonalInformation = await checkIfUserHaverPersonalInformation(user.data.user!.id)
     if(userHaverPersonalInformation) {
       return NextResponse.rewrite(new URL("/dashboard", request.url));
     }
