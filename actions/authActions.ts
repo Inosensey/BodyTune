@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 // import { cookies } from "next/headers";
 
 // Supabase
@@ -12,6 +12,7 @@ import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import { Provider, Session, User } from "@supabase/supabase-js";
 import { registerInputType, termsAndConditionTypes } from "@/types/inputTypes";
+import { allowedOrigins } from "@/utils/initials";
 type credentials = {
   email: string;
   password: string;
@@ -321,11 +322,25 @@ export const loginWithThirdParty = async (
 ): Promise<
   formReturnType<{ redirectLink: string; loginType: string } | []>
 > => {
-  const nextUrl = "http://localhost:3000/auth/callback?next=/dashboard";
+  
+  const headerInfo = headers();
+  const host = headerInfo.get('X-Forwarded-Host');
+  const proto = headerInfo.get('X-Forwarded-Proto');
+  const origin = `${proto}://${host}`;
+  const nextUrl = `${origin}/auth/callback?next=/dashboard`;
 
   try {
     const supabase = await createSSR();
     const provider = formData.get("provider") as Provider;
+    
+    if (origin && !allowedOrigins.includes(origin)) {
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: `Not authorized`,
+      };
+    }
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider,
       options: {
