@@ -1,0 +1,21 @@
+.breadcrumbs:not(:last-child)::after,
+.breadcrumbs:not(:last-child)::before {
+  bottom: 0;
+  clip-path: polygon(50% 50%, 0% 0%, 0 100%);
+  content: "";
+  left: 100%;
+  position: absolute;
+  top: 0;
+  transition: background 0.2s linear;
+  width: 1em;
+  z-index: 1;
+}
+
+.breadcrumbs:not(:last-child)::after {
+  background: #000;
+}
+
+.breadcrumbs:not(:last-child)::before {
+  background: #4B6F64;
+  margin-left: 1px;
+}
