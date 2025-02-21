@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Quicksand, DM_Sans } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import QueryProvider from "@/components/QueryProvider";
 
 const QuicksandFont = Quicksand({
   subsets: ["latin"],
@@ -32,7 +33,7 @@ export default function RootLayout({
         className={`${QuicksandFont.variable} ${DMSansFont.variable} antialiased bg-gradient-to-b from-lightBackground to-primary bg-no-repeat h-screen overflow-auto text-textGray`}
       >
         <NextTopLoader color="#D3F0D1" showSpinner={true} />
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
