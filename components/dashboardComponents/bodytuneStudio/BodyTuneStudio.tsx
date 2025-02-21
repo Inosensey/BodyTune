@@ -1,5 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+
+// Utils
+import {getMeals} from "@/lib/hygraphQueries"
+
 // Components
 import DashboardHeader from "../DashboardHeader";
 
@@ -8,6 +13,15 @@ import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLin
 import BodyTuneStudioContents from "./BodyTuneStudioContents";
 
 const BodyTuneStudio = () => {
+
+    // Use query
+    const { data } = useQuery({
+      queryKey: ["meals"],
+      queryFn: () => {
+        return getMeals();
+      }
+    });
+    console.log(data);
   return (
     <div className="flex flex-col gap-3 h-[99%]">
       <DashboardHeader
