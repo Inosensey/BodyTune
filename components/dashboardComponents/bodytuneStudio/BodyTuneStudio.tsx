@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-// Utils
-import {getMeals} from "@/lib/hygraphQueries"
+// lib
+import {getMeals, getWorkouts} from "@/lib/hygraphQueries"
 
 // Components
 import DashboardHeader from "../DashboardHeader";
@@ -15,13 +15,20 @@ import BodyTuneStudioContents from "./BodyTuneStudioContents";
 const BodyTuneStudio = () => {
 
     // Use query
-    const { data } = useQuery({
+    const { data: meals } = useQuery({
       queryKey: ["meals"],
       queryFn: () => {
         return getMeals();
       }
     });
-    console.log(data);
+    const { data: exercises } = useQuery({
+      queryKey: ["exercises"],
+      queryFn: () => {
+        return getWorkouts();
+      }
+    });
+    console.log(meals);
+    console.log(exercises);
   return (
     <div className="flex flex-col gap-3 h-[99%]">
       <DashboardHeader
