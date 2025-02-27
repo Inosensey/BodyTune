@@ -1,13 +1,19 @@
 "use effect";
-import React, { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 
 // Components
 import { Input } from "@/components/reusableComponent/formInputs/input";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 
+// Libs
+import {generateBodyTunePlan} from "@/lib/hygraphQueries"
+
 // Utils
-import FormValidation from "@/utils/validation";
+import { getBmi } from "@/utils/dashboardUtils";
+import FormValidation, { validateFormInputs } from "@/utils/validation";
 
 // Types
 import { TableRow } from "@/types/database.types";
@@ -20,9 +26,10 @@ interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
-  React.SetStateAction<InterfaceBreadCrumbs>
+    React.SetStateAction<InterfaceBreadCrumbs>
   >;
   personalInfo: TableRow<"personal_information">;
+  selectedCreateOption: string;
 }
 interface generalInfoType {
   weight: string;
@@ -51,7 +58,7 @@ interface generalInfoValidation {
 }
 
 // Initials
-import { bmiClassifications, workoutDifficulties } from "@/utils/initials";
+import { workoutDifficulties } from "@/utils/initials";
 const generalInfoValidationInitials: generalInfoValidation = {
   height: {
     valid: null,
@@ -68,7 +75,7 @@ const generalInfoValidationInitials: generalInfoValidation = {
   bmi: {
     valid: null,
     validationMessage: "",
-  }
+  },
 };
 
 const SetGeneralInfo = ({
@@ -76,17 +83,32 @@ const SetGeneralInfo = ({
   setProgress,
   setSelectedBreadCrumb,
   personalInfo,
+  selectedCreateOption,
 }: props) => {
   // State
-  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] = useState<generalInfoType>({
-    height: personalInfo.height!.toString(),
-    weight: personalInfo.weight!.toString(),
-    experience: "",
-    bmi: "",
-  });
+  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] =
+    useState<generalInfoType>({
+      height: personalInfo.height!.toString(),
+      weight: personalInfo.weight!.toString(),
+      experience: "",
+      bmi: "",
+    });
+  const [bmiClassificationId, setBmiClassificationId] = useState<string>("");
+  const [formIsValid, setFormIsValid] = useState<boolean>(false);
   const [generalInfoValidation, setGeneralInfoValidation] =
     useState<generalInfoValidation>(generalInfoValidationInitials);
 
+    
+  // Query 
+  const { data: bodyTunePlan, refetch: generateBodyTune } = useQuery({
+    queryKey: ["meals"],
+    queryFn: () => {
+      return generateBodyTunePlan(bmiClassificationId);
+    },
+    enabled: false,
+  });
+
+  console.log(bodyTunePlan)
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -135,6 +157,7 @@ const SetGeneralInfo = ({
     setGeneralInfoFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validations
   const checkValidations = (
     validationInfo: stepValidationResult | validation
   ) => {
@@ -154,12 +177,48 @@ const SetGeneralInfo = ({
 
     return isValid;
   };
+  const validationRules = {
+    weight: (value: string) => FormValidation({ stateName: "weight", value }),
+    height: (value: string) => FormValidation({ stateName: "height", value }),
+    experience: (value: string) =>
+      FormValidation({ stateName: "experience", value }),
+  };
+  const checkAllInputValidations = () => {
+    const generalFieldsVal = {
+      weight: generalInfoFieldsVal.weight,
+      height: generalInfoFieldsVal.height,
+      experience: generalInfoFieldsVal.experience,
+    };
+    const generalValidationResult = validateFormInputs(
+      generalFieldsVal,
+      validationRules
+    );
+    const isValid = checkValidations(generalValidationResult);
+    return isValid;
+  };
+
+  const getBodyTunePlan = (weight: number, height: number) => {
+    const isValid = checkAllInputValidations();
+    setFormIsValid(isValid)
+    if(isValid) {
+      const bmiClassification = getBmi(weight, height);
+      setBmiClassificationId(bmiClassification.id);
+    }
+  };
+
+  useEffect(() => {
+    if(formIsValid) {
+      generateBodyTune();
+    }
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[formIsValid])
   return (
     <div className="bg-black rounded-lg py-4 px-2 tablet:w-[350px]">
       <div
         className="flex items-center gap-1 cursor-pointer w-max group"
         onClick={() => {
-          setSelectedOption("")
+          setSelectedOption("");
           setProgress(1);
           setSelectedBreadCrumb({
             id: 1,
@@ -191,6 +250,7 @@ const SetGeneralInfo = ({
               onChange={onChange}
               autoComplete="off"
               valid={generalInfoValidation.weight.valid}
+              validationMessage={generalInfoValidation.weight.validationMessage}
             />
           </div>
           <div className="min-w-[10px] max-w-[120px] relative">
@@ -199,10 +259,11 @@ const SetGeneralInfo = ({
               placeholder="Height"
               state={generalInfoFieldsVal.height}
               type="text"
-              label="Height (cm)"
+              label="Height (m)"
               onChange={onChange}
               autoComplete="off"
               valid={generalInfoValidation.height.valid}
+              validationMessage={generalInfoValidation.height.validationMessage}
             />
           </div>
         </div>
@@ -240,64 +301,56 @@ const SetGeneralInfo = ({
               ))}
             </select>
           </div>
-        </div>
-        <div
-          style={{
-            border:
-              generalInfoValidation.bmi.valid === null ||
-              generalInfoValidation.bmi.valid
-                ? ""
-                : "1px solid rgb(239 68 68)",
-          }}
-          className="relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]"
-        >
-          <label className="phone:text-sm font-quickSand font-semibold">
-            Choose BMI Classification
-          </label>
-          <div className={`flex flex-col w-full gap-2 bg-primary`}>
-            <select
-              className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-              onChange={selectOnChange}
-              name="bmi"
-              defaultValue={generalInfoFieldsVal.bmi}
-            >
-              <option className="bg-primary font-quickSand" value="" disabled>
-                BMI Classification
-              </option>
-              {bmiClassifications.map((bmi: string) => (
-                <option
-                  className="bg-primary font-quickSand"
-                  key={bmi}
-                  value={bmi}
-                >
-                  {bmi}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!generalInfoValidation.experience.valid && (
+            <div className="flex flex-col gap-1 mt-1">
+              <p className="text-[0.75rem] text-red-500 font-bold font-dmSans">
+                {generalInfoValidation.experience.validationMessage}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="w-28 mx-auto mt-2">
-        <motion.button
-          onClick={() => {
-            setProgress((prev) => prev + 1);
-            setSelectedBreadCrumb({
-              id: 2,
-              title: "Meal Plan",
-              shortDescription: "Customize your daily meals",
-            });
-          }}
-          whileHover={{
-            scale: 1.1,
-            transition: { duration: 0.2 },
-          }}
-          whileTap={{ scale: 0.9 }}
-          className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
-          type="button"
-        >
-          Next
-        </motion.button>
+        {selectedCreateOption === "recommendation" ? (
+          <motion.button
+            onClick={() => {
+              getBodyTunePlan(
+                parseInt(generalInfoFieldsVal.weight),
+                parseInt(generalInfoFieldsVal.height)
+              );
+            }}
+            whileHover={{
+              scale: 1.1,
+              transition: { duration: 0.2 },
+            }}
+            whileTap={{ scale: 0.9 }}
+            className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+            type="button"
+          >
+            Generate
+          </motion.button>
+        ) : (
+          <motion.button
+            onClick={() => {
+              setProgress((prev) => prev + 1);
+              setSelectedBreadCrumb({
+                id: 2,
+                title: "Meal Plan",
+                shortDescription: "Customize your daily meals",
+              });
+            }}
+            whileHover={{
+              scale: 1.1,
+              transition: { duration: 0.2 },
+            }}
+            whileTap={{ scale: 0.9 }}
+            className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+            type="button"
+          >
+            Next
+          </motion.button>
+        )}
       </div>
     </div>
   );
