@@ -32,6 +32,7 @@ const FormValidation = (data: params): validationInfo => {
     case "state":
     case "city":
     case "note":
+    case "experience":
     case "exerciseName":
     case "difficulty":
     case "measurementType":
@@ -156,7 +157,7 @@ const validateDate = (data: params): validationInfo => {
   });
 };
 const validateNumber = (data: params): validationInfo => {
-  const numberRegex = /^\d*$/;
+  const numberRegex = /^\d*\.?\d+$/;
   if (data.value.length === 0 || data.value === "0") {
     return (validationInfo = {
       validationName: data.stateName,
