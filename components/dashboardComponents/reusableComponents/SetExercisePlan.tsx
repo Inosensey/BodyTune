@@ -10,6 +10,8 @@ import AddExerciseForm from "./AddExerciseForm";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import TablerBarbell from "@/icons/TablerBarbellLight";
+import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Types
 interface ExerciseType {
@@ -27,18 +29,19 @@ interface exercisePlanInterface {
   exercisePlanName: string;
 }
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
+import { exercisePlan } from "@/types/planTypes";
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
+  setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan | null>>
+  exercisePlanInfo: exercisePlan | null
 }
 
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
-import TablerBarbell from "@/icons/TablerBarbellLight";
-import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 const exercisePlanInitials: exercisePlanInterface = {
   selectedExercisePlan: 0,
   exercisePlanName: "",
