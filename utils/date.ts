@@ -5,5 +5,3 @@ export const breakDownDate = (date: Date) => {
 
     return { year, month, day };
 }  
-
-export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
