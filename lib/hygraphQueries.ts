@@ -1,8 +1,18 @@
 "use server";
 
-import { exercisePlan, exerciseQueryHygraphType, mealPlan, mealQueryHygraphType } from "@/types/planTypes";
+import {
+  ingredient,
+  IngredientTypes,
+  mealPlanType,
+  mealQueryHygraphType,
+  Nutrients,
+} from "@/types/mealTypes";
+import {
+  exercisePlan,
+  exerciseQueryHygraphType,
+} from "@/types/planTypes";
 
-import { days } from "@/utils/date";
+import { weekDates } from "@/utils/initials";
 
 const NEXT_HYGRAPH_ENDPOINT = process.env.NEXT_HYGRAPH_ENDPOINT;
 
@@ -90,6 +100,7 @@ const getMealsByBmi = async (bmiClassification: string) => {
       body: JSON.stringify({
         query: `query Meals {
                     meals(first: 100, where: {bmiClassification:{id: "${bmiClassification}"}}) {
+                        id,
                         mealType,
                         mealName,
                         ingredients,
@@ -148,7 +159,7 @@ const getExerciseByBmi = async (bmiClassification: string) => {
       }),
     });
     const json = await response.json();
-    return json;  
+    return json;
   } catch (error) {
     console.log("There is an error getting your Exercises", error);
     return error;
@@ -158,37 +169,104 @@ const getExerciseByBmi = async (bmiClassification: string) => {
 export const generateBodyTunePlan = async (bmiClassification: string) => {
   const mealList = await getMealsByBmi(bmiClassification);
   const exerciseList = await getExerciseByBmi(bmiClassification);
-  const mealPlan: mealPlan = setMealPlan(mealList.data.meals)
-  const exercisePlan: exercisePlan = setExercisePlan(exerciseList.data.exercises)
-  console.log(exercisePlan)
+  const mealPlan: mealPlanType = setMealPlan(mealList.data.meals);
+  const exercisePlan: exercisePlan = setExercisePlan(
+    exerciseList.data.exercises
+  );
+
   return { mealPlan, exercisePlan };
 };
 
-const setMealPlan = (meals:Array<mealQueryHygraphType>) => {
+const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
   const shuffledMeals = [...meals].sort(() => Math.random() - 0.5);
-  const mealPlan: mealPlan = {};
-  let mealIndex = 0;
+  const breakfastMeal = shuffledMeals.filter(meal => meal.mealType === "Breakfast");
+  const lunchMeal = shuffledMeals.filter(meal => meal.mealType === "Lunch");
+  const dinnerMeal = shuffledMeals.filter(meal => meal.mealType === "Dinner");
+  
+  const mealPlan: mealPlanType = {};
 
-  days.forEach(day => {
-      if (mealIndex + 3 > shuffledMeals.length) return;
+  for (let index = 0; index < weekDates.length; index++) {
+      const breakfastMealIngredientInfo = getIngredientsInfo(breakfastMeal[index].ingredients)
+      const lunchMealIngredientInfo = getIngredientsInfo(lunchMeal[index].ingredients)
+      const dinnerMealIngredientInfo = getIngredientsInfo(dinnerMeal[index].ingredients)
 
-      mealPlan[day] = {
-          Breakfast: shuffledMeals[mealIndex++],
-          Lunch: shuffledMeals[mealIndex++],
-          Dinner: shuffledMeals[mealIndex++]
+      mealPlan[weekDates[index]] = {
+          breakFast: {
+            mealInfo: {
+              mealName: breakfastMeal[index].mealName,
+              shortDescription: "",
+              cookingInstruction: breakfastMeal[index].cookingInstructions
+            },
+            ingredients: breakfastMealIngredientInfo.ingredientList,
+            nutrition: breakfastMealIngredientInfo.nutritionInfo
+          },
+          lunch: {
+            mealInfo: {
+              mealName: lunchMeal[index].mealName,
+              shortDescription: "",
+              cookingInstruction: lunchMeal[index].cookingInstructions
+            },
+            ingredients: lunchMealIngredientInfo.ingredientList,
+            nutrition: lunchMealIngredientInfo.nutritionInfo
+          },
+          dinner: {
+            mealInfo: {
+              mealName: dinnerMeal[index].mealName,
+              shortDescription: "",
+              cookingInstruction: dinnerMeal[index].cookingInstructions
+            },
+            ingredients: dinnerMealIngredientInfo.ingredientList,
+            nutrition: dinnerMealIngredientInfo.nutritionInfo
+          },
       };
-  });
+    }
 
   return mealPlan;
-}
+};
+
+const getIngredientsInfo = (ingredients: Array<ingredient>) => {
+  let ingredientList: IngredientTypes = {};
+  const nutritionInfo: Nutrients = {
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  };
+  
+  ingredients.forEach((ingredient: ingredient) => {
+    const UUID = crypto.randomUUID();
+    ingredientList = { 
+        ...ingredientList, 
+        [`ingredient${UUID}`]: {
+        id: UUID,
+        ingredientName: `Ingredients ${UUID}`,
+        ingredientValue: ingredient.name,
+        caloriesName: `Calories`,
+        caloriesValue: ingredient.nutrition.calories.toString(),
+        proteinsName: `Proteins`,
+        proteinsValue: ingredient.nutrition.protein.toString(),
+        carbsName: `Carbs`,
+        carbsValue: ingredient.nutrition.carbs.toString(),
+        fatName: `Fat`,
+        fatValue: ingredient.nutrition.fat.toString(),
+      }
+    };
+    nutritionInfo.calories += ingredient.nutrition.calories;
+    nutritionInfo.protein += ingredient.nutrition.protein;
+    nutritionInfo.carbs += ingredient.nutrition.carbs;
+    nutritionInfo.fat += ingredient.nutrition.fat;
+  });
+
+  return { ingredientList, nutritionInfo };
+};
 
 const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>) => {
   const exercisePlan: exercisePlan = {};
 
-  days.forEach(day => {
+  weekDates.forEach((day) => {
     const filteredExercises = exercises
-      .filter(exercise => exercise.day === day)
-      .map(exercise => ({
+      .filter((exercise) => exercise.day === day)
+      .map((exercise) => ({
         exerciseName: exercise.exerciseName,
         bodyPart: exercise.bodyPart,
         equipment: exercise.equipment,
@@ -198,10 +276,11 @@ const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>) => {
         exerciseDemo: exercise.exerciseDemo?.url,
         bmiClassification: 1,
         instruction: exercise.instruction,
-        youtubeLink: exercise?.youtubeLink
+        youtubeLink: exercise?.youtubeLink,
       }));
 
-    exercisePlan[day] = filteredExercises.length > 0 ? filteredExercises : "Rest Day";
+    exercisePlan[day] =
+      filteredExercises.length > 0 ? filteredExercises : "Rest Day";
   });
 
   return exercisePlan;
