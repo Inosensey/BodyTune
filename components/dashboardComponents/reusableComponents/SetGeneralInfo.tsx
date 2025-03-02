@@ -9,7 +9,7 @@ import { Input } from "@/components/reusableComponent/formInputs/input";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 
 // Libs
-import {generateBodyTunePlan} from "@/lib/hygraphQueries"
+import { generateBodyTunePlan } from "@/lib/hygraphQueries";
 
 // Utils
 import { getBmi } from "@/utils/dashboardUtils";
@@ -22,6 +22,8 @@ import {
   stepValidationResult,
   validation,
 } from "@/types/inputTypes";
+import { exercisePlan } from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -30,6 +32,10 @@ interface props {
   >;
   personalInfo: TableRow<"personal_information">;
   selectedCreateOption: string;
+  setExercisePlanInfo: React.Dispatch<
+    React.SetStateAction<exercisePlan | null>
+  >;
+  setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
 }
 interface generalInfoType {
   weight: string;
@@ -84,6 +90,8 @@ const SetGeneralInfo = ({
   setSelectedBreadCrumb,
   personalInfo,
   selectedCreateOption,
+  setExercisePlanInfo,
+  setMealPlanInfo,
 }: props) => {
   // State
   const [generalInfoFieldsVal, setGeneralInfoFieldsVal] =
@@ -98,17 +106,14 @@ const SetGeneralInfo = ({
   const [generalInfoValidation, setGeneralInfoValidation] =
     useState<generalInfoValidation>(generalInfoValidationInitials);
 
-    
-  // Query 
-  const { data: bodyTunePlan, refetch: generateBodyTune } = useQuery({
+  // Query
+  const { data, refetch: generateBodyTune } = useQuery({
     queryKey: ["meals"],
     queryFn: () => {
       return generateBodyTunePlan(bmiClassificationId);
     },
     enabled: false,
   });
-
-  console.log(bodyTunePlan)
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -199,20 +204,29 @@ const SetGeneralInfo = ({
 
   const getBodyTunePlan = (weight: number, height: number) => {
     const isValid = checkAllInputValidations();
-    setFormIsValid(isValid)
-    if(isValid) {
+    setFormIsValid(isValid);
+    if (isValid) {
       const bmiClassification = getBmi(weight, height);
       setBmiClassificationId(bmiClassification.id);
     }
   };
 
   useEffect(() => {
-    if(formIsValid) {
+    if (formIsValid) {
       generateBodyTune();
     }
-    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[formIsValid])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formIsValid]);
+  
+  useEffect(() => {
+    if (data) {
+      setMealPlanInfo(data.mealPlan);
+      setExercisePlanInfo(data.exercisePlan);
+      setFormIsValid(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   return (
     <div className="bg-black rounded-lg py-4 px-2 tablet:w-[350px]">
       <div
