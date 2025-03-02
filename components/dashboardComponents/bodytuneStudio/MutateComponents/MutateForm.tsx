@@ -17,6 +17,8 @@ import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLin
 // Types
 import { TableRow } from "@/types/database.types";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
+import { exercisePlan } from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 interface props {
   personalInfo: TableRow<"personal_information">[];
 }
@@ -45,6 +47,26 @@ const BreadCrumbsInitials: InterfaceBreadCrumbs[] = [
   },
 ];
 
+const mealPlanInitial: mealPlanType = {
+  ["Monday"]: {
+    breakFast: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
+    lunch: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
+    dinner: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
+  },
+};
+
 const MutateForm = ({ personalInfo }: props) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [selectedBreadCrumb, setSelectedBreadCrumb] =
@@ -54,7 +76,9 @@ const MutateForm = ({ personalInfo }: props) => {
       shortDescription: "Set weight, height, and experience",
     });
   const [progress, setProgress] = useState<number>(1);
-
+  const [mealPlanInfo, setMealPlanInfo] = useState<mealPlanType>(mealPlanInitial);
+  const [exercisePlanInfo, SetExercisePlanInfo] = useState<exercisePlan | null>(null);
+    
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
       <div className="phone:h-[17%] laptop:h-[12%]">
@@ -86,6 +110,8 @@ const MutateForm = ({ personalInfo }: props) => {
                   setProgress={setProgress}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   selectedCreateOption={selectedOption}
+                  setExercisePlanInfo={SetExercisePlanInfo}
+                  setMealPlanInfo={setMealPlanInfo}
                 />
               </div>
             )}
@@ -95,6 +121,8 @@ const MutateForm = ({ personalInfo }: props) => {
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
+                  mealPlanInfo={mealPlanInfo}
+                  setMealPlanInfo={setMealPlanInfo}
                 />
               </div>
             )}
@@ -104,6 +132,8 @@ const MutateForm = ({ personalInfo }: props) => {
                   setSelectedOption={setSelectedOption}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
+                  exercisePlanInfo={exercisePlanInfo}
+                  setExercisePlanInfo={SetExercisePlanInfo}
                 />
               </div>
             )}
