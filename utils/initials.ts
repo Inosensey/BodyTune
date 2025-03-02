@@ -24,6 +24,7 @@ export const workoutDifficulties: Array<string> = [
 
 export const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:3001',
     'https://body-tune.vercel.app',
     'https://body-tune-dev.vercel.app',
   ];
