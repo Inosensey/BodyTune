@@ -17,39 +17,20 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { weekDates, bmiClassifications } from "@/utils/initials";
 
 // Types
-import {
-  IngredientTypes,
-  MealInfoTypes,
-  nutritionTypes,
-} from "@/types/mealTypes";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
+import {  mealPlanType } from "@/types/mealTypes";
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
+  setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  mealPlanInfo: mealPlanType;
 }
 interface mealPlanInterface {
   selectedMealPlan: string;
   mealPlanName: string;
-}
-interface mealPlanType {
-  breakFast: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
-  };
-  lunch: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
-  };
-  dinner: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
-  };
 }
 
 // Initials
@@ -57,28 +38,13 @@ const mealPlanFieldsInit: mealPlanInterface = {
   selectedMealPlan: "0",
   mealPlanName: "",
 };
-const mealPlanInitial: mealPlanType = {
-  breakFast: {
-    mealInfo: undefined,
-    ingredients: undefined,
-    nutrition: undefined,
-  },
-  lunch: {
-    mealInfo: undefined,
-    ingredients: undefined,
-    nutrition: undefined,
-  },
-  dinner: {
-    mealInfo: undefined,
-    ingredients: undefined,
-    nutrition: undefined,
-  },
-};
 
 const SetMealPlan = ({
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
+  mealPlanInfo,
+  setMealPlanInfo
 }: props) => {
   const [mealPlanFieldsVal, setMealPlanFieldsVal] =
     useState<mealPlanInterface>(mealPlanFieldsInit);
@@ -86,8 +52,7 @@ const SetMealPlan = ({
   const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(false);
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
-  const [mealPlan, setMealPlan] = useState<mealPlanType>(mealPlanInitial);
-  const [selectedMeal, setSelectedMeal] = useState<string>("");
+  const [selectedMealType, setSelectedMealType] = useState<string>("");
   const [formAction, setFormAction] = useState<string>("Add");
   const [actionType, setActionType] = useState<string>("");
 
@@ -460,24 +425,24 @@ const SetMealPlan = ({
             )}
             <div className="flex gap-1 justify-between phone:flex-col mdtablet:flex-1 mdtablet:flex-row">
               <MealPlanCard
-                meal={mealPlan.breakFast}
+                meal={mealPlanInfo[selectedWeekDate].breakFast}
                 mealType="Breakfast"
                 setFormAction={setFormAction}
-                setSelectedMeal={setSelectedMeal}
+                setSelectedMealType={setSelectedMealType}
                 setToggleAddMealForm={setToggleAddMealForm}
               />
               <MealPlanCard
-                meal={mealPlan.lunch}
+                meal={mealPlanInfo[selectedWeekDate].lunch}
                 mealType="Lunch"
                 setFormAction={setFormAction}
-                setSelectedMeal={setSelectedMeal}
+                setSelectedMealType={setSelectedMealType}
                 setToggleAddMealForm={setToggleAddMealForm}
               />
               <MealPlanCard
-                meal={mealPlan.dinner}
+                meal={mealPlanInfo[selectedWeekDate].dinner}
                 mealType="Dinner"
                 setFormAction={setFormAction}
-                setSelectedMeal={setSelectedMeal}
+                setSelectedMealType={setSelectedMealType}
                 setToggleAddMealForm={setToggleAddMealForm}
               />
             </div>
@@ -488,11 +453,12 @@ const SetMealPlan = ({
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddMealForm && (
           <AddMealForm
-            selectedMeal={selectedMeal}
-            setMealPlan={setMealPlan}
+            selectedMealType={selectedMealType}
+            setMealPlanInfo={setMealPlanInfo}
             setToggleAddMealForm={setToggleAddMealForm}
             formAction={formAction}
-            mealPlan={mealPlan}
+            dailyMealInfo={mealPlanInfo[selectedWeekDate]}
+            selectedWeekDate={selectedWeekDate}
           />
         )}
       </AnimatePresence>
