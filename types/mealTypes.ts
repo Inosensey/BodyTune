@@ -1,3 +1,36 @@
+export interface Meal {
+  mealName: string;
+  mealType: string;
+  ingredients: ingredient[];
+  veganAlternative: string;
+  cookingInstructions: string;
+}
+
+export interface ingredient {
+  id: string,
+  name: string;
+  nutrition: Nutrients;
+}
+
+export type Nutrients = {
+  calories: number;
+  carbs: number;
+  fat: number;
+  protein: number;
+};
+
+export interface mealPlanType {
+  [key: string]: dailyMealInfo;
+}
+
+export interface dailyMealInfo {
+  [key:string]: {
+      mealInfo: MealInfoTypes | undefined;
+      ingredients: IngredientTypes | undefined;
+      nutrition: Nutrients | undefined;
+  }
+}
+
 export interface MealInfoTypes {
   mealName: string;
   shortDescription: string;
@@ -40,4 +73,13 @@ export interface nutritionTypes {
   proteinsValue: number;
   carbsValue: number;
   fatValue: number;
+}
+
+export interface mealQueryHygraphType {
+  id: string,
+  mealType: string;
+  mealName: string;
+  ingredients: Array<ingredient>;
+  veganAlternative: string;
+  cookingInstructions: string;
 }
