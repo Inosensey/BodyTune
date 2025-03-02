@@ -6,32 +6,32 @@ import Image from "next/image";
 import {
   IngredientTypes,
   MealInfoTypes,
-  nutritionTypes,
+  Nutrients,
 } from "@/types/mealTypes";
 interface props {
   meal: {
     mealInfo: MealInfoTypes | undefined;
     ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
+    nutrition: Nutrients | undefined;
   };
   setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
   setFormAction: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedMeal: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMealType: React.Dispatch<React.SetStateAction<string>>;
   mealType: string,
 }
 
 const MealPlanCard = ({
   meal,
   setFormAction,
-  setSelectedMeal,
+  setSelectedMealType,
   setToggleAddMealForm,
   mealType
 }: props) => {
   return (
-    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[380px] mdtablet:w-[33%]">
+    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:max-h-[380px] mdtablet:w-[33%]">
       {meal.mealInfo ? (
         <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
-          <div className="flex justify-between w-[100%]">
+          <div className="flex justify-between items-center w-[100%]">
             <p className="font-dmSans font-bold text-lightSecondary text-lg m-0 p-0">
               {meal.mealInfo.mealName}
             </p>
@@ -39,7 +39,7 @@ const MealPlanCard = ({
               onClick={() => {
                 setToggleAddMealForm(true);
                 setFormAction("Edit");
-                setSelectedMeal(mealType);
+                setSelectedMealType(mealType);
               }}
               className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary"
             >
@@ -66,25 +66,25 @@ const MealPlanCard = ({
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Calories:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.caloriesValue}g
+                  {meal.nutrition?.calories}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Protein:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.proteinsValue}g
+                  {meal.nutrition?.protein}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Carbs:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.carbsValue}g
+                  {meal.nutrition?.carbs}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Fat:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.fatValue}g
+                  {meal.nutrition?.fat}g
                 </p>
               </div>
             </div>
@@ -110,7 +110,7 @@ const MealPlanCard = ({
             onClick={() => {
               setToggleAddMealForm(true);
               setFormAction("Add");
-              setSelectedMeal(mealType);
+              setSelectedMealType(mealType);
             }}
             className="font-dmSans font-semibold text-lightSecondary underline cursor-pointer"
           >
