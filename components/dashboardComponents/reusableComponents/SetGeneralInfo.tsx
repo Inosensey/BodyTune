@@ -33,7 +33,7 @@ interface props {
   personalInfo: TableRow<"personal_information">;
   selectedCreateOption: string;
   setExercisePlanInfo: React.Dispatch<
-    React.SetStateAction<exercisePlan | null>
+    React.SetStateAction<exercisePlan>
   >;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
 }
@@ -110,7 +110,7 @@ const SetGeneralInfo = ({
   const { data, refetch: generateBodyTune } = useQuery({
     queryKey: ["meals"],
     queryFn: () => {
-      return generateBodyTunePlan(bmiClassificationId);
+      return generateBodyTunePlan(bmiClassificationId, generalInfoFieldsVal.experience);
     },
     enabled: false,
   });
@@ -310,7 +310,7 @@ const SetGeneralInfo = ({
                   key={experience}
                   value={experience}
                 >
-                  {experience}
+                  {experience.charAt(0).toUpperCase() + experience.slice(1)}
                 </option>
               ))}
             </select>
