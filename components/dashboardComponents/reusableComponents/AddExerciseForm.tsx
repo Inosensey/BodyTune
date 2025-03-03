@@ -22,30 +22,26 @@ import {
   faXmarkCircle,
   //   faPlusSquare,
 } from "@fortawesome/free-regular-svg-icons";
+import TablerBarbell from "@/icons/TablerBarbellLight";
 
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
-import TablerBarbell from "@/icons/TablerBarbellLight";
-interface ExerciseFormInputTypes {
-  exerciseName: string;
-  shortDescription: string;
-  difficulty: string;
-  equipment: string;
-  measurementType: string;
-  measurement: string;
-  exerciseDemo: string;
-  youtubeLink: string;
+import { TableInsert } from "@/types/database.types";
+import { exercisePlan } from "@/types/planTypes";
+interface props {
+  setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
+  exercisePlanInfo: exercisePlan;
+  formAction: string;
+  selectedExercise: TableInsert<"exercise">;
+  selectedWeekDay: string;
 }
 interface ExerciseFormValidations {
   exerciseName: {
     valid: boolean | null;
     validationMessage: string;
   };
-  shortDescription: {
-    valid: boolean | null;
-    validationMessage: string;
-  };
-  difficulty: {
+  bodyPart: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -53,7 +49,11 @@ interface ExerciseFormValidations {
     valid: boolean | null;
     validationMessage: string;
   };
-  measurementType: {
+  exerciseDifficulty: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  exerciseMeasurementType: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -62,6 +62,14 @@ interface ExerciseFormValidations {
     validationMessage: string;
   };
   exerciseDemo: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  bmiClassification: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
+  instruction: {
     valid: boolean | null;
     validationMessage: string;
   };
@@ -77,14 +85,17 @@ interface radioButtonInfo {
 }
 
 // Initials
-const ExerciseFormInputValInitial: ExerciseFormInputTypes = {
+const ExerciseFormInputValInitial: TableInsert<"exercise"> = {
   exerciseName: "",
-  shortDescription: "",
-  difficulty: "",
+  bodyPart: "",
   equipment: "",
-  measurementType: "",
+  day: "",
+  exerciseDifficulty: 1,
+  exerciseMeasurementType: 1,
   measurement: "",
   exerciseDemo: "",
+  bmiClassification: 1,
+  instruction: "",
   youtubeLink: "",
 };
 const ExerciseFormValidationInitials: ExerciseFormValidations = {
@@ -92,11 +103,7 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     valid: null,
     validationMessage: "",
   },
-  shortDescription: {
-    valid: null,
-    validationMessage: "",
-  },
-  difficulty: {
+  bodyPart: {
     valid: null,
     validationMessage: "",
   },
@@ -104,15 +111,27 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     valid: null,
     validationMessage: "",
   },
-  measurementType: {
+  exerciseDifficulty: {
+    valid: null,
+    validationMessage: "",
+  },
+  exerciseMeasurementType: {
     valid: null,
     validationMessage: "",
   },
   measurement: {
-    valid: true,
+    valid: null,
     validationMessage: "",
   },
   exerciseDemo: {
+    valid: null,
+    validationMessage: "",
+  },
+  bmiClassification: {
+    valid: null,
+    validationMessage: "",
+  },
+  instruction: {
     valid: null,
     validationMessage: "",
   },
@@ -121,12 +140,6 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
     validationMessage: "",
   },
 };
-interface props {
-  setToggleAddExerciseForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setExercises: React.Dispatch<React.SetStateAction<ExerciseFormInputTypes[]>>;
-  formAction: string;
-  selectedExercise: ExerciseFormInputTypes
-}
 
 // Fixed values
 const difficultyRadioButtons: radioButtonInfo[] = [
@@ -159,12 +172,19 @@ const measurementTypeRadioButtons: radioButtonInfo[] = [
   },
 ];
 
-const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, selectedExercise }: props) => {
+const AddExerciseForm = ({
+  setToggleAddExerciseForm,
+  setExercisePlanInfo,
+  formAction,
+  selectedExercise,
+  selectedWeekDay,
+}: props) => {
   // States
   const [exerciseValidations, setExerciseStepValidations] =
     useState<ExerciseFormValidations>(ExerciseFormValidationInitials);
-  const [exerciseFormInputVal, setExerciseFormInputVal] =
-    useState<ExerciseFormInputTypes>(ExerciseFormInputValInitial);
+  const [exerciseFormInputVal, setExerciseFormInputVal] = useState<
+    TableInsert<"exercise">
+  >(ExerciseFormInputValInitial);
   const [demoSrc, setDemoSrc] = useState<string | null>(null);
 
   // Events
@@ -228,14 +248,16 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
       const reader = new FileReader();
       reader.onload = (e) => {
         console.log("File content as base64:", e.target?.result);
-        setExerciseFormInputVal((prev) => ({ ...prev, exerciseDemo: e.target?.result as string }));
+        setExerciseFormInputVal((prev) => ({
+          ...prev,
+          exerciseDemo: e.target?.result as string,
+        }));
         setDemoSrc(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
   const radioOnChange = (value: string, name: string) => {
-
     const validationParams = {
       stateName: name,
       value: value,
@@ -280,25 +302,41 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
   const validationRules = {
     exerciseName: (value: string) =>
       FormValidation({ stateName: "exerciseName", value }),
-    difficulty: (value: string) =>
-      FormValidation({ stateName: "difficulty", value }),
-    measurementType: (value: string) =>
-      FormValidation({ stateName: "measurementType", value }),
+    bodyPart: (value: string) =>
+      FormValidation({ stateName: "bodyPart", value }),
+    equipment: (value: string) =>
+      FormValidation({ stateName: "equipment", value }),
+    exerciseDifficulty: (value: string) =>
+      FormValidation({ stateName: "exerciseDifficulty", value }),
+    exerciseMeasurementType: (value: string) =>
+      FormValidation({ stateName: "exerciseMeasurementType", value }),
     measurement: (value: string) =>
       FormValidation({ stateName: "measurement", value }),
+    exerciseDemo: (value: string) =>
+      FormValidation({ stateName: "exerciseDemo", value }),
+    bmiClassification: (value: string) =>
+      FormValidation({ stateName: "bmiClassification", value }),
+    instruction: (value: string) =>
+      FormValidation({ stateName: "instruction", value }),
   };
   const checkAllInputValidations = () => {
     const exerciseInputsValues = {
-      exerciseName: exerciseFormInputVal.exerciseName,
-      difficulty: exerciseFormInputVal.difficulty,
-      measurementType: exerciseFormInputVal.measurementType,
-      measurement: exerciseFormInputVal.measurement,
+      exerciseName: exerciseFormInputVal.exerciseName!,
+      bodyPart: exerciseFormInputVal.bodyPart!,
+      equipment: exerciseFormInputVal.equipment!,
+      exerciseDifficulty: exerciseFormInputVal.exerciseDifficulty!.toString(),
+      exerciseMeasurementType:
+        exerciseFormInputVal.exerciseMeasurementType!.toString(),
+      measurement: exerciseFormInputVal.measurement!,
+      exerciseDemo: exerciseFormInputVal.exerciseDemo!,
+      bmiClassification: exerciseFormInputVal.bmiClassification!.toString(),
+      instruction: exerciseFormInputVal.instruction!,
     };
     const exerciseValidationResults = validateFormInputs(
       exerciseInputsValues,
       validationRules
     );
-    const valid = checkValidations(exerciseValidationResults)
+    const valid = checkValidations(exerciseValidationResults);
     return valid;
   };
 
@@ -308,13 +346,13 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
     } else {
       setExerciseFormInputVal(ExerciseFormInputValInitial);
     }
-  }
+  };
 
   // useEffect
   useEffect(() => {
     setInitials();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
@@ -338,7 +376,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               <Input
                 name="exerciseName"
                 placeholder="Enter the Name of the Exercise"
-                state={exerciseFormInputVal.exerciseName}
+                state={exerciseFormInputVal.exerciseName!}
                 type="text"
                 label="Exercise Name"
                 onChange={onChange}
@@ -351,17 +389,18 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               />
             </motion.div>
             <motion.div className="phone:w-12/12">
-              <TextareaInput
-                name="shortDescription"
-                state={exerciseFormInputVal.shortDescription}
-                label="Short Description (Optional)"
-                cols={30}
-                rows={3}
-                onChange={handleTextareaChange}
-                onBlur={handleTextareaChange}
-                valid={exerciseValidations.shortDescription.valid}
+              <Input
+                name="bodyPart"
+                placeholder="Enter the Name of the Exercise"
+                state={exerciseFormInputVal.bodyPart!}
+                type="text"
+                label="Body Part"
+                onChange={onChange}
+                onBlur={onChange}
+                autoComplete="off"
+                valid={exerciseValidations.bodyPart.valid}
                 validationMessage={
-                  exerciseValidations.shortDescription.validationMessage
+                  exerciseValidations.bodyPart.validationMessage
                 }
               />
             </motion.div>
@@ -369,7 +408,7 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               <Input
                 name="equipment"
                 placeholder="Enter the Equipment of the Exercise"
-                state={exerciseFormInputVal.equipment}
+                state={exerciseFormInputVal.equipment!}
                 type="text"
                 label="Equipment (Optional)"
                 onChange={onChange}
@@ -385,10 +424,10 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               radioOnChangeFn={radioOnChange}
               radioButtonGroupLabel="Difficulty"
               radioButtons={difficultyRadioButtons}
-              selectedRadio={exerciseFormInputVal.difficulty}
-              valid={exerciseValidations.difficulty.valid}
+              selectedRadio={exerciseFormInputVal.exerciseDifficulty!.toString()}
+              valid={exerciseValidations.exerciseDifficulty.valid}
               validationMessage={
-                exerciseValidations.difficulty.validationMessage
+                exerciseValidations.exerciseDifficulty.validationMessage
               }
             />
 
@@ -396,44 +435,48 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               radioOnChangeFn={radioOnChange}
               radioButtonGroupLabel="Measurement Type"
               radioButtons={measurementTypeRadioButtons}
-              selectedRadio={exerciseFormInputVal.measurementType}
-              valid={exerciseValidations.measurementType.valid}
+              selectedRadio={exerciseFormInputVal.exerciseMeasurementType!.toString()}
+              valid={exerciseValidations.exerciseMeasurementType.valid}
               validationMessage={
-                exerciseValidations.measurementType.validationMessage
+                exerciseValidations.exerciseMeasurementType.validationMessage
               }
             />
-            {exerciseFormInputVal.measurementType === "Reps" && (
+            {exerciseFormInputVal.exerciseMeasurementType!.toString() ===
+              "Reps" && (
               <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Reps per set"
-                  state={exerciseFormInputVal.measurement}
+                  state={exerciseFormInputVal.exerciseMeasurementType!.toString()}
                   type="text"
                   label="Repitition"
                   onChange={onChange}
                   onBlur={onChange}
                   autoComplete="off"
-                  valid={exerciseValidations.measurement.valid}
+                  valid={exerciseValidations.exerciseMeasurementType.valid}
                   validationMessage={
-                    exerciseValidations.measurement.validationMessage
+                    exerciseValidations.exerciseMeasurementType
+                      .validationMessage
                   }
                 />
               </motion.div>
             )}
-            {exerciseFormInputVal.measurementType === "Time" && (
+            {exerciseFormInputVal.exerciseMeasurementType!.toString() ===
+              "Time" && (
               <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Duration per set"
-                  state={exerciseFormInputVal.measurement}
+                  state={exerciseFormInputVal.exerciseMeasurementType!.toString()}
                   type="text"
                   label="Time"
                   onChange={onChange}
                   onBlur={onChange}
                   autoComplete="off"
-                  valid={exerciseValidations.measurement.valid}
+                  valid={exerciseValidations.exerciseMeasurementType.valid}
                   validationMessage={
-                    exerciseValidations.measurement.validationMessage
+                    exerciseValidations.exerciseMeasurementType
+                      .validationMessage
                   }
                 />
               </motion.div>
@@ -461,10 +504,25 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
               )}
             </motion.div>
             <motion.div className="phone:w-12/12">
+              <TextareaInput
+                name="instruction"
+                state={exerciseFormInputVal.instruction!}
+                label="Instruction"
+                cols={30}
+                rows={3}
+                onChange={handleTextareaChange}
+                onBlur={handleTextareaChange}
+                valid={exerciseValidations.instruction.valid}
+                validationMessage={
+                  exerciseValidations.instruction.validationMessage
+                }
+              />
+            </motion.div>
+            <motion.div className="phone:w-12/12">
               <Input
                 name="youtubeLink"
                 placeholder="Youtube link to the Exercise"
-                state={exerciseFormInputVal.youtubeLink}
+                state={exerciseFormInputVal.youtubeLink!}
                 type="text"
                 label="Youtube Link (Optional)"
                 onChange={onChange}
@@ -480,9 +538,14 @@ const AddExerciseForm = ({ setToggleAddExerciseForm, setExercises, formAction, s
           <div className="w-max mx-auto mt-4">
             <motion.button
               onClick={() => {
-                const isValid = checkAllInputValidations()
-                if(isValid) {
-                  setExercises((prev) => [...prev, exerciseFormInputVal]);
+                const isValid = checkAllInputValidations();
+                if (isValid) {
+                  setExercisePlanInfo((prev) => {
+                    return {
+                      ...prev,
+                      [selectedWeekDay]: [...prev[selectedWeekDay], exerciseFormInputVal],
+                    };
+                  });
                   setToggleAddExerciseForm(false);
                 }
               }}
