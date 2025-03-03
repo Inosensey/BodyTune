@@ -17,7 +17,7 @@ export const bmiClassifications: Array<string> = [
 ]
 
 export const workoutDifficulties: Array<string> = [
-    "Beginner",
+    "beginner",
     "Amateur",
     "Expert",
 ]
