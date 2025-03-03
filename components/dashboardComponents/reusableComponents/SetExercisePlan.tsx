@@ -14,16 +14,6 @@ import TablerBarbell from "@/icons/TablerBarbellLight";
 import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Types
-interface ExerciseType {
-  exerciseName: string;
-  shortDescription: string;
-  difficulty: string;
-  equipment: string;
-  measurementType: string;
-  measurement: string;
-  exerciseDemo: string;
-  youtubeLink: string;
-}
 interface exercisePlanInterface {
   selectedExercisePlan: number;
   exercisePlanName: string;
@@ -36,33 +26,40 @@ interface props {
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
-  setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan | null>>
-  exercisePlanInfo: exercisePlan | null
+  setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
+  exercisePlanInfo: exercisePlan;
 }
 
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
+import { TableInsert } from "@/types/database.types";
 const exercisePlanInitials: exercisePlanInterface = {
   selectedExercisePlan: 0,
   exercisePlanName: "",
 };
-const ExerciseValInitial: ExerciseType = {
+const ExerciseValInitial: TableInsert<"exercise"> = {
   exerciseName: "",
-  shortDescription: "",
-  difficulty: "",
+  bodyPart: "",
   equipment: "",
-  measurementType: "",
+  day: "",
+  exerciseDifficulty: 1,
+  exerciseMeasurementType: 1,
   measurement: "",
   exerciseDemo: "",
+  bmiClassification: 1,
+  instruction: "",
   youtubeLink: "",
 };
+
 const SetExercisePlan = ({
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
+  exercisePlanInfo,
+  setExercisePlanInfo,
 }: props) => {
   // States
-  const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
+  const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
   const [selectedDifficulties, setSelectedDifficulties] = useState<
     Array<string>
   >([]);
@@ -72,9 +69,8 @@ const SetExercisePlan = ({
     useState<boolean>(false);
   const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
     useState<exercisePlanInterface>(exercisePlanInitials);
-  const [exercises, setExercises] = useState<ExerciseType[]>([]);
   const [selectedExercise, setSelectedExercise] =
-    useState<ExerciseType>(ExerciseValInitial);
+    useState<TableInsert<"exercise">>(ExerciseValInitial);
   const [formAction, setFormAction] = useState<string>("");
   const [actionType, setActionType] = useState<string>("");
 
@@ -98,9 +94,12 @@ const SetExercisePlan = ({
   };
 
   const removeAnExercise = (indexToBeRemove: number) => {
-    setExercises((prevItems) =>
-      prevItems.filter((_, index) => index !== indexToBeRemove)
-    );
+    setExercisePlanInfo((prevItems) => ({
+      ...prevItems,
+      [selectedWeekDay]: prevItems[selectedWeekDay].filter(
+        (_, index) => index !== indexToBeRemove
+      ),
+    }));
   };
   return (
     <>
@@ -374,20 +373,20 @@ const SetExercisePlan = ({
             <div className="flex flex-col gap-1">
               <label className="font-dmSans phone:text-sm">Select Day:</label>
               <div className="flex flex-wrap gap-1">
-                {weekDates.map((date: string, index: number) => (
+                {weekDates.map((day: string, index: number) => (
                   <div
                     className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
                     key={index}
-                    onClick={() => setSelectedWeekDate(date)}
+                    onClick={() => setSelectedWeekDay(day)}
                   >
                     <p
                       className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                        selectedWeekDate === date
+                        selectedWeekDay === day
                           ? "text-[#ffffff]"
                           : "text-[#b3b3b3] group-hover:text-[#ffffff]"
                       }`}
                     >
-                      {date}
+                      {day}
                     </p>
                   </div>
                 ))}
@@ -411,47 +410,53 @@ const SetExercisePlan = ({
                   </button>
                 </div>
               )}
-              {exercises.length !== 0 && (
+              {exercisePlanInfo[selectedWeekDay].length !== 0 && (
                 <div className="flex flex-wrap gap-1 w-full h-full overflow-auto">
                   <div className="flex flex-wrap gap-1 w-[100%] overflow-auto flex-row">
-                    {exercises.map((exercise: ExerciseType, index: number) => (
-                      <div
-                        key={index}
-                        className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            <TablerBarbell
-                              color="#D3F0D1"
-                              width="1.3em"
-                              height="1.3em"
-                            />
-                            <p className="truncate font-bold text-lightSecondary">
-                              {exercise.exerciseName}
-                            </p>
-                          </div>{" "}
-                          <button onClick={() => removeAnExercise(index)}>
-                            <FontAwesomeIcon
-                              icon={faXmarkCircle}
-                              className="text-fadedWarningColor text-lg"
-                            />
+                    {exercisePlanInfo[selectedWeekDay].map(
+                      (exercise: TableInsert<"exercise">, index: number) => (
+                        <div
+                          key={index}
+                          className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm"
+                        >
+                          <div className="flex flex-col justify-between">
+                            <div className="flex justify-between gap-1">
+                              <TablerBarbell
+                                color="#D3F0D1"
+                                width="1.3em"
+                                height="1.3em"
+                              />
+                              <button onClick={() => removeAnExercise(index)}>
+                                <FontAwesomeIcon
+                                  icon={faXmarkCircle}
+                                  className="text-fadedWarningColor text-lg"
+                                />
+                              </button>
+                            </div>
+                            <div className="w-full">
+                              <p className="truncate font-bold text-lightSecondary">
+                                {exercise.exerciseName}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="truncate">
+                            {exercise.exerciseDifficulty}
+                          </p>
+                          <p className="truncate">{exercise.measurement}</p>
+                          <p className="truncate">{exercise.equipment}</p>
+                          <button
+                            onClick={() => {
+                              setFormAction("Edit");
+                              setToggleAddExerciseForm(true);
+                              setSelectedExercise(exercise);
+                            }}
+                            className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary"
+                          >
+                            View
                           </button>
                         </div>
-                        <p className="truncate">{exercise.difficulty}</p>
-                        <p className="truncate">{exercise.measurement}</p>
-                        <p className="truncate">{exercise.equipment}</p>
-                        <button
-                          onClick={() => {
-                            setFormAction("Edit");
-                            setToggleAddExerciseForm(true);
-                            setSelectedExercise(exercise);
-                          }}
-                          className="w-max bg-[#5d897b] text-white font-quickSand font-semibold text-xs rounded-md py-1 px-8  transition duration-200 hover:bg-secondary"
-                        >
-                          View
-                        </button>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -463,10 +468,12 @@ const SetExercisePlan = ({
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleAddExerciseForm && (
           <AddExerciseForm
-            setExercises={setExercises}
+            setExercisePlanInfo={setExercisePlanInfo}
+            exercisePlanInfo={exercisePlanInfo}
             formAction={formAction}
             selectedExercise={selectedExercise}
             setToggleAddExerciseForm={setToggleAddExerciseForm}
+            selectedWeekDay={selectedWeekDay}
           />
         )}
       </AnimatePresence>
