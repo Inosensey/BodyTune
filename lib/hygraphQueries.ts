@@ -166,12 +166,12 @@ const getExerciseByBmi = async (bmiClassification: string) => {
   }
 };
 
-export const generateBodyTunePlan = async (bmiClassification: string) => {
+export const generateBodyTunePlan = async (bmiClassification: string, experience:string) => {
   const mealList = await getMealsByBmi(bmiClassification);
   const exerciseList = await getExerciseByBmi(bmiClassification);
   const mealPlan: mealPlanType = setMealPlan(mealList.data.meals);
   const exercisePlan: exercisePlan = setExercisePlan(
-    exerciseList.data.exercises
+    exerciseList.data.exercises, experience
   );
 
   return { mealPlan, exercisePlan };
@@ -260,27 +260,43 @@ const getIngredientsInfo = (ingredients: Array<ingredient>) => {
   return { ingredientList, nutritionInfo };
 };
 
-const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>) => {
-  const exercisePlan: exercisePlan = {};
+const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>, experience:string) => {
+  const exercisePlan: exercisePlan = {
+    ["Monday"]: [
+      {
+        exerciseName: "",
+        bodyPart: "",
+        equipment: "",
+        day: "",
+        exerciseDifficulty: 1,
+        exerciseMeasurementType: 1,
+        measurement: "",
+        exerciseDemo: "",
+        bmiClassification: 1,
+        instruction: "",
+        youtubeLink: "",
+      },
+    ],
+  };
 
   weekDates.forEach((day) => {
     const filteredExercises = exercises
       .filter((exercise) => exercise.day === day)
-      .map((exercise) => ({
+      .map((exercise:exerciseQueryHygraphType) => ({
         exerciseName: exercise.exerciseName,
         bodyPart: exercise.bodyPart,
         equipment: exercise.equipment,
+        day: exercise.day,
         exerciseDifficulty: 1,
         exerciseMeasurementType: 1,
-        measurement: exercise.measurement,
+        measurement: exercise.measurement[experience],
         exerciseDemo: exercise.exerciseDemo?.url,
         bmiClassification: 1,
         instruction: exercise.instruction,
         youtubeLink: exercise?.youtubeLink,
       }));
 
-    exercisePlan[day] =
-      filteredExercises.length > 0 ? filteredExercises : "Rest Day";
+    exercisePlan[day] = filteredExercises.length > 0 ? filteredExercises : [];
   });
 
   return exercisePlan;
