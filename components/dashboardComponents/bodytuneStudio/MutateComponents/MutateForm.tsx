@@ -67,6 +67,24 @@ const mealPlanInitial: mealPlanType = {
   },
 };
 
+const exercisePlanInitial: exercisePlan = {
+  ["Monday"]: [
+    {
+      exerciseName: "",
+      bodyPart: "",
+      equipment: "",
+      day: "",
+      exerciseDifficulty: 1,
+      exerciseMeasurementType: 1,
+      measurement: "",
+      exerciseDemo: "",
+      bmiClassification: 1,
+      instruction: "",
+      youtubeLink: "",
+    },
+  ],
+};
+
 const MutateForm = ({ personalInfo }: props) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [selectedBreadCrumb, setSelectedBreadCrumb] =
@@ -76,9 +94,10 @@ const MutateForm = ({ personalInfo }: props) => {
       shortDescription: "Set weight, height, and experience",
     });
   const [progress, setProgress] = useState<number>(1);
-  const [mealPlanInfo, setMealPlanInfo] = useState<mealPlanType>(mealPlanInitial);
-  const [exercisePlanInfo, SetExercisePlanInfo] = useState<exercisePlan | null>(null);
-    
+  const [mealPlanInfo, setMealPlanInfo] =
+    useState<mealPlanType>(mealPlanInitial);
+  const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>(exercisePlanInitial);
+
   return (
     <div className="flex flex-col gap-2 h-[99%] relative">
       <div className="phone:h-[17%] laptop:h-[12%]">
@@ -90,7 +109,10 @@ const MutateForm = ({ personalInfo }: props) => {
       </div>
       <div className="h-[83%] flex flex-col flex-1 gap-1 items-center">
         {selectedOption === "" ? (
-          <CreationOption label="How would you like to create your BodyTune" setSelectOption={setSelectedOption} />
+          <CreationOption
+            label="How would you like to create your BodyTune"
+            setSelectOption={setSelectedOption}
+          />
         ) : (
           <div className="flex flex-1 h-full flex-col items-center justify-center-center gap-1 w-full">
             <div className="h-max max-w-[800px] mb-1">
@@ -110,7 +132,7 @@ const MutateForm = ({ personalInfo }: props) => {
                   setProgress={setProgress}
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   selectedCreateOption={selectedOption}
-                  setExercisePlanInfo={SetExercisePlanInfo}
+                  setExercisePlanInfo={setExercisePlanInfo}
                   setMealPlanInfo={setMealPlanInfo}
                 />
               </div>
@@ -133,7 +155,7 @@ const MutateForm = ({ personalInfo }: props) => {
                   setSelectedBreadCrumb={setSelectedBreadCrumb}
                   setProgress={setProgress}
                   exercisePlanInfo={exercisePlanInfo}
-                  setExercisePlanInfo={SetExercisePlanInfo}
+                  setExercisePlanInfo={setExercisePlanInfo}
                 />
               </div>
             )}
