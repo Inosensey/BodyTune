@@ -9,7 +9,9 @@ export interface exerciseQueryHygraphType {
   bodyPart: string;
   equipment: string;
   youtubeLink: string;
-  measurement: string;
+  measurement: {
+    [key: string]: string
+  },
   instruction: string;
   exerciseDemo: {
     url: string;
@@ -26,7 +28,7 @@ export interface exerciseQueryHygraphType {
 }
 
 export interface exercisePlan {
-  [key: string]: Array<TableInsert<"exercise">> | "Rest Day";
+  [key: string]: Array<TableInsert<"exercise">>;
   // monday: TableInsert<"exercise"> | null,
   // tuesday: TableInsert<"exercise"> | null,
   // wednesday: TableInsert<"exercise"> | null,
