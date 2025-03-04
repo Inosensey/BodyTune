@@ -74,7 +74,7 @@ const SetExercisePlan = ({
   const [selectedExercise, setSelectedExercise] =
     useState<TableInsert<"exercise">>(ExerciseValInitial);
   const [formAction, setFormAction] = useState<string>("");
-  const [actionType, setActionType] = useState<string>("");
+  const [actionType, setActionType] = useState<string>(selectedCreateOption === "recommendation" ? "New" : "");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
