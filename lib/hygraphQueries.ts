@@ -282,19 +282,37 @@ const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>, experience:
   weekDates.forEach((day) => {
     const filteredExercises = exercises
       .filter((exercise) => exercise.day === day)
-      .map((exercise:exerciseQueryHygraphType) => ({
-        exerciseName: exercise.exerciseName,
-        bodyPart: exercise.bodyPart,
-        equipment: exercise.equipment,
-        day: exercise.day,
-        exerciseDifficulty: 1,
-        exerciseMeasurementType: 1,
-        measurement: exercise.measurement[experience],
-        exerciseDemo: exercise.exerciseDemo?.url,
-        bmiClassification: 1,
-        instruction: exercise.instruction,
-        youtubeLink: exercise?.youtubeLink,
-      }));
+      .map((exercise:exerciseQueryHygraphType) => {
+        let difficulty = 0;
+        let measurementType = 0;
+        if(experience === "beginner") {
+          difficulty = 1;
+        } else if(experience === "Amateur") {
+          difficulty = 2
+        } else {
+          difficulty = 3
+        }
+
+        if(exercise.exerciseMeasurementType.measurementName === "Reps") {
+          measurementType = 1
+        } else {
+          measurementType = 2
+        }
+
+        return {
+          exerciseName: exercise.exerciseName,
+          bodyPart: exercise.bodyPart,
+          equipment: exercise.equipment,
+          day: exercise.day,
+          exerciseDifficulty: measurementType,
+          exerciseMeasurementType: difficulty,
+          measurement: exercise.measurement[experience],
+          exerciseDemo: exercise.exerciseDemo?.url,
+          bmiClassification: 1,
+          instruction: exercise.instruction,
+          youtubeLink: exercise?.youtubeLink,
+        }
+    });
 
     exercisePlan[day] = filteredExercises.length > 0 ? filteredExercises : [];
   });
