@@ -146,29 +146,29 @@ const difficultyRadioButtons: radioButtonInfo[] = [
   {
     label: "Beginner",
     name: "difficulty",
-    value: "Beginner",
+    value: "1",
   },
   {
     label: "Amateur",
     name: "difficulty",
-    value: "Amateur",
+    value: "2",
   },
   {
     label: "Expert",
     name: "difficulty",
-    value: "Expert",
+    value: "3",
   },
 ];
 const measurementTypeRadioButtons: radioButtonInfo[] = [
   {
     label: "Reps (Repetition-Based)",
     name: "measurementType",
-    value: "Reps",
+    value: "1",
   },
   {
     label: "Time (Time-Based)",
     name: "measurementType",
-    value: "Time",
+    value: "2",
   },
 ];
 
@@ -179,6 +179,7 @@ const AddExerciseForm = ({
   selectedExercise,
   selectedWeekDay,
 }: props) => {
+
   // States
   const [exerciseValidations, setExerciseStepValidations] =
     useState<ExerciseFormValidations>(ExerciseFormValidationInitials);
@@ -442,40 +443,40 @@ const AddExerciseForm = ({
               }
             />
             {exerciseFormInputVal.exerciseMeasurementType!.toString() ===
-              "Reps" && (
+              "1" && (
               <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Reps per set"
-                  state={exerciseFormInputVal.exerciseMeasurementType!.toString()}
+                  state={exerciseFormInputVal.measurement!}
                   type="text"
                   label="Repitition"
                   onChange={onChange}
                   onBlur={onChange}
                   autoComplete="off"
-                  valid={exerciseValidations.exerciseMeasurementType.valid}
+                  valid={exerciseValidations.measurement.valid}
                   validationMessage={
-                    exerciseValidations.exerciseMeasurementType
+                    exerciseValidations.measurement
                       .validationMessage
                   }
                 />
               </motion.div>
             )}
             {exerciseFormInputVal.exerciseMeasurementType!.toString() ===
-              "Time" && (
+              "2" && (
               <motion.div className="phone:2/2 mdphone:w-6/12 tablet:w-1/2">
                 <Input
                   name="measurement"
                   placeholder="Duration per set"
-                  state={exerciseFormInputVal.exerciseMeasurementType!.toString()}
+                  state={exerciseFormInputVal.measurement!}
                   type="text"
                   label="Time"
                   onChange={onChange}
                   onBlur={onChange}
                   autoComplete="off"
-                  valid={exerciseValidations.exerciseMeasurementType.valid}
+                  valid={exerciseValidations.measurement.valid}
                   validationMessage={
-                    exerciseValidations.exerciseMeasurementType
+                    exerciseValidations.measurement
                       .validationMessage
                   }
                 />
