@@ -220,7 +220,7 @@ const SetGeneralInfo = ({
   }, [formIsValid]);
 
   useEffect(() => {
-    if (data) {
+    if (data && formIsValid) {
       setMealPlanInfo(data.mealPlan);
       setExercisePlanInfo(data.exercisePlan);
       setFormIsValid(false);
