@@ -344,6 +344,7 @@ const AddExerciseForm = ({
   const setInitials = () => {
     if (formAction === "Edit") {
       setExerciseFormInputVal(selectedExercise);
+      setDemoSrc(selectedExercise.exerciseDemo!)
     } else {
       setExerciseFormInputVal(ExerciseFormInputValInitial);
     }
