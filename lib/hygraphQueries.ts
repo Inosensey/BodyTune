@@ -170,7 +170,7 @@ export const generateBodyTunePlan = async (bmiClassification: string, experience
   const mealList = await getMealsByBmi(bmiClassification);
   const exerciseList = await getExerciseByBmi(bmiClassification);
   const mealPlan: mealPlanType = setMealPlan(mealList.data.meals);
-  const exercisePlan: exercisePlan = setExercisePlan(
+  const exercisePlan: exercisePlan = await setExercisePlan(
     exerciseList.data.exercises, experience
   );
 
@@ -260,7 +260,7 @@ const getIngredientsInfo = (ingredients: Array<ingredient>) => {
   return { ingredientList, nutritionInfo };
 };
 
-const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>, experience:string) => {
+const setExercisePlan = async (exercises: Array<exerciseQueryHygraphType>, experience:string) => {
   const exercisePlan: exercisePlan = {
     ["Monday"]: [
       {
@@ -278,6 +278,9 @@ const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>, experience:
       },
     ],
   };
+
+  const test = await urlToFile(exercises[0].exerciseDemo)
+  console.log(test)
 
   weekDates.forEach((day) => {
     const filteredExercises = exercises
@@ -318,4 +321,30 @@ const setExercisePlan = (exercises: Array<exerciseQueryHygraphType>, experience:
   });
 
   return exercisePlan;
+};
+
+const getFileTypeFromFileName = (fileName: string) => {
+  const extension = fileName.split(".").pop()?.toLowerCase();
+  const mimeTypes: Record<string, string> = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+    webp: "image/webp",
+  };
+
+  return mimeTypes[extension || ""] || "application/octet-stream";
+};
+
+const urlToFile = async (exerciseDemo: { url: string; fileName: string }) => {
+  try {
+    const response = await fetch(exerciseDemo.url);
+    const blob = await response.blob();
+    const fileType = getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
+
+    return new File([blob], exerciseDemo.fileName, { type: fileType });
+  } catch (error) {
+    console.error("Error converting URL to file:", error);
+    return null;
+  }
 };
