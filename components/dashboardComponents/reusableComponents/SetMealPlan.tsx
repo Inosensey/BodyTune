@@ -27,6 +27,7 @@ interface props {
   >;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
   mealPlanInfo: mealPlanType;
+  selectedCreateOption: string
 }
 interface mealPlanInterface {
   selectedMealPlan: string;
@@ -44,13 +45,14 @@ const SetMealPlan = ({
   setProgress,
   setSelectedBreadCrumb,
   mealPlanInfo,
-  setMealPlanInfo
+  setMealPlanInfo,
+  selectedCreateOption
 }: props) => {
   const [mealPlanFieldsVal, setMealPlanFieldsVal] =
     useState<mealPlanInterface>(mealPlanFieldsInit);
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
-  const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(false);
+  const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(selectedCreateOption === "recommendation" ? true : false);
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [selectedMealType, setSelectedMealType] = useState<string>("");
   const [formAction, setFormAction] = useState<string>("Add");
