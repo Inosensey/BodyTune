@@ -28,6 +28,7 @@ interface props {
   >;
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   exercisePlanInfo: exercisePlan;
+  selectedCreateOption: string
 }
 
 // Initials
@@ -57,6 +58,7 @@ const SetExercisePlan = ({
   setSelectedBreadCrumb,
   exercisePlanInfo,
   setExercisePlanInfo,
+  selectedCreateOption
 }: props) => {
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
@@ -64,7 +66,7 @@ const SetExercisePlan = ({
     Array<string>
   >([]);
   const [showExercisePlanHtml, setShowExercisePanHtml] =
-    useState<boolean>(false);
+    useState<boolean>(selectedCreateOption === "recommendation" ? true : false);
   const [toggleAddExerciseForm, setToggleAddExerciseForm] =
     useState<boolean>(false);
   const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
