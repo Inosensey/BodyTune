@@ -56,7 +56,7 @@ const SetMealPlan = ({
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [selectedMealType, setSelectedMealType] = useState<string>("");
   const [formAction, setFormAction] = useState<string>("Add");
-  const [actionType, setActionType] = useState<string>("");
+  const [actionType, setActionType] = useState<string>(selectedCreateOption === "recommendation" ? "New" : "");
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
