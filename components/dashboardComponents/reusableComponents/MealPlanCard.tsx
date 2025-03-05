@@ -3,11 +3,7 @@
 import Image from "next/image";
 
 // Types
-import {
-  IngredientTypes,
-  MealInfoTypes,
-  Nutrients,
-} from "@/types/mealTypes";
+import { IngredientTypes, MealInfoTypes, Nutrients } from "@/types/mealTypes";
 interface props {
   meal: {
     mealInfo: MealInfoTypes | undefined;
@@ -17,7 +13,7 @@ interface props {
   setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
   setFormAction: React.Dispatch<React.SetStateAction<string>>;
   setSelectedMealType: React.Dispatch<React.SetStateAction<string>>;
-  mealType: string,
+  mealType: string;
 }
 
 const MealPlanCard = ({
@@ -25,10 +21,10 @@ const MealPlanCard = ({
   setFormAction,
   setSelectedMealType,
   setToggleAddMealForm,
-  mealType
+  mealType,
 }: props) => {
   return (
-    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:max-h-[380px] mdtablet:w-[33%]">
+    <div className="overflow-auto border-[1.5px] border-lightSecondary phone:w-[100%] phone:h-[380px] mdtablet:w-[33%]">
       {meal.mealInfo ? (
         <div className="py-1 px-2 flex flex-col gap-[0.1rem]">
           <div className="flex justify-between items-center w-[100%]">
@@ -41,12 +37,13 @@ const MealPlanCard = ({
                 setFormAction("Edit");
                 setSelectedMealType(mealType);
               }}
+              type="button"
               className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-[0.2rem] px-4 w-max transition duration-200 hover:bg-secondary"
             >
               Edit
             </button>
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
               Ingredients:
             </label>
@@ -58,6 +55,19 @@ const MealPlanCard = ({
               </p>
             </div>
           </div>
+          {meal.mealInfo.veganAlternative !== null && (
+            <div className="flex flex-col gap-1">
+              <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
+                Vegan Alternative:
+              </label>
+              <div className="flex gap-1">
+                <p className="font-dmSans text-white text-sm">
+                  {meal.mealInfo.veganAlternative}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
               Nutrition:
@@ -66,26 +76,24 @@ const MealPlanCard = ({
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Calories:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.calories}g
+                  {meal.nutrition?.calories.toFixed(2)}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Protein:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.protein}g
+                  {meal.nutrition?.protein.toFixed(2)}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Carbs:</p>
                 <p className="font-quickSand text-sm">
-                  {meal.nutrition?.carbs}g
+                  {meal.nutrition?.carbs.toFixed(2)}g
                 </p>
               </div>
               <div className="flex items-center gap-1">
                 <p className="font-dmSans text-white text-sm">Fat:</p>
-                <p className="font-quickSand text-sm">
-                  {meal.nutrition?.fat}g
-                </p>
+                <p className="font-quickSand text-sm">{meal.nutrition?.fat.toFixed(2)}g</p>
               </div>
             </div>
           </div>
