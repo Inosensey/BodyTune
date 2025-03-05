@@ -358,7 +358,7 @@ const AddExerciseForm = ({
   return (
     <Overlay>
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] tablet:w-[60%] laptop:w-[25%]">
+        <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] tablet:w-[60%] laptop:w-[35%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
               Add Exercise
@@ -393,7 +393,7 @@ const AddExerciseForm = ({
             <motion.div className="phone:w-12/12">
               <Input
                 name="bodyPart"
-                placeholder="Enter the Name of the Exercise"
+                placeholder="Enter the Name of the Body Part"
                 state={exerciseFormInputVal.bodyPart!}
                 type="text"
                 label="Body Part"
@@ -412,7 +412,7 @@ const AddExerciseForm = ({
                 placeholder="Enter the Equipment of the Exercise"
                 state={exerciseFormInputVal.equipment!}
                 type="text"
-                label="Equipment (Optional)"
+                label="Equipment"
                 onChange={onChange}
                 onBlur={onChange}
                 autoComplete="off"
@@ -543,6 +543,12 @@ const AddExerciseForm = ({
                 const isValid = checkAllInputValidations();
                 if (isValid) {
                   setExercisePlanInfo((prev) => {
+                    if (!prev[selectedWeekDay]) {
+                      return {
+                        ...prev,
+                        [selectedWeekDay]: [exerciseFormInputVal],
+                      };
+                    }
                     return {
                       ...prev,
                       [selectedWeekDay]: [...prev[selectedWeekDay], exerciseFormInputVal],
