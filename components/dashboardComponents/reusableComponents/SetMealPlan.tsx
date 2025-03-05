@@ -18,7 +18,11 @@ import { weekDates, bmiClassifications } from "@/utils/initials";
 
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
-import {  mealPlanType } from "@/types/mealTypes";
+import { mealPlanType } from "@/types/mealTypes";
+interface mealPlanInterface {
+  selectedMealPlan: string;
+  mealPlanName: string;
+}
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -27,18 +31,10 @@ interface props {
   >;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
   mealPlanInfo: mealPlanType;
-  selectedCreateOption: string
+  selectedCreateOption: string;
+  mealPlanFieldsVal: mealPlanInterface;
+  setMealPlanFieldsVal: React.Dispatch<React.SetStateAction<mealPlanInterface>>;
 }
-interface mealPlanInterface {
-  selectedMealPlan: string;
-  mealPlanName: string;
-}
-
-// Initials
-const mealPlanFieldsInit: mealPlanInterface = {
-  selectedMealPlan: "0",
-  mealPlanName: "",
-};
 
 const SetMealPlan = ({
   setSelectedOption,
@@ -46,17 +42,21 @@ const SetMealPlan = ({
   setSelectedBreadCrumb,
   mealPlanInfo,
   setMealPlanInfo,
-  selectedCreateOption
+  selectedCreateOption,
+  mealPlanFieldsVal,
+  setMealPlanFieldsVal,
 }: props) => {
-  const [mealPlanFieldsVal, setMealPlanFieldsVal] =
-    useState<mealPlanInterface>(mealPlanFieldsInit);
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
-  const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(selectedCreateOption === "recommendation" ? true : false);
+  const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
+    selectedCreateOption === "recommendation" ? true : false
+  );
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [selectedMealType, setSelectedMealType] = useState<string>("");
   const [formAction, setFormAction] = useState<string>("Add");
-  const [actionType, setActionType] = useState<string>(selectedCreateOption === "recommendation" ? "New" : "");
+  const [actionType, setActionType] = useState<string>(
+    selectedCreateOption === "recommendation" ? "New" : ""
+  );
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +111,7 @@ const SetMealPlan = ({
             {actionType !== "" &&
               (actionType !== "New" ? (
                 <button
+                  type="button"
                   onClick={() => setActionType("New")}
                   className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
                 >
@@ -118,6 +119,7 @@ const SetMealPlan = ({
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={() => setActionType("Select")}
                   className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
                 >
@@ -135,6 +137,7 @@ const SetMealPlan = ({
                         setActionType("New");
                         setShowMealPanHtml(true);
                       }}
+                      type="button"
                       className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
                     >
                       Create a New Plan
@@ -213,91 +216,22 @@ const SetMealPlan = ({
         {showMealPlanHtml && (
           <div className="flex gap-4 bg-black rounded-b-lg pt-2 pb-4 px-2 flex-col laptop:w-full">
             {actionType === "New" ? (
-              <>
-                <div className="flex gap-2 phone:flex-col phone:h-[35%] tablet:h-[43%] laptop:h-[39%]">
-                  <motion.div className="phone:w-4/12 min-w-[260px]">
-                    <Input
-                      name="mealPlanName"
-                      placeholder="Enter the name of the Meal Plan"
-                      state={mealPlanFieldsVal.mealPlanName}
-                      type="text"
-                      label="Meal Plan Name"
-                      onChange={onChange}
-                      onBlur={onChange}
-                      autoComplete="off"
-                      valid={null}
-                      validationMessage={""}
-                    />
-                  </motion.div>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex flex-col gap-1">
-                      <label className="font-dmSans phone:text-sm">
-                        Select BMI classifications:
-                      </label>
-                      <div className="flex flex-wrap gap-1">
-                        {bmiClassifications.map(
-                          (bmi: string, index: number) => (
-                            <div
-                              className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
-                                selectedBmis.includes(bmi)
-                                  ? "bg-secondary"
-                                  : "bg-none"
-                              }`}
-                              key={index}
-                              onClick={() => {
-                                if (selectedBmis.includes(bmi)) {
-                                  setSelectedBmis(
-                                    selectedBmis.filter(
-                                      (bmiClassification: string) =>
-                                        bmiClassification !== bmi
-                                    )
-                                  );
-                                } else {
-                                  setSelectedBmis((prev) => [...prev, bmi]);
-                                }
-                              }}
-                            >
-                              <p
-                                className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
-                                  selectedBmis.includes(bmi)
-                                    ? "text-[#ffffff]"
-                                    : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                                }`}
-                              >
-                                {bmi}
-                              </p>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-dmSans phone:text-sm">
-                        Select Day:
-                      </label>
-                      <div className="flex flex-wrap gap-1">
-                        {weekDates.map((date: string, index: number) => (
-                          <div
-                            className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                            key={index}
-                            onClick={() => setSelectedWeekDate(date)}
-                          >
-                            <p
-                              className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                                selectedWeekDate === date
-                                  ? "text-[#ffffff]"
-                                  : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                              }`}
-                            >
-                              {date}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
+              <div className="flex gap-2 phone:flex-col">
+                <motion.div className="phone:w-4/12 min-w-[260px]">
+                  <Input
+                    name="mealPlanName"
+                    placeholder="Enter the name of the Meal Plan"
+                    state={mealPlanFieldsVal.mealPlanName}
+                    type="text"
+                    label="Meal Plan Name"
+                    onChange={onChange}
+                    onBlur={onChange}
+                    autoComplete="off"
+                    valid={null}
+                    validationMessage={""}
+                  />
+                </motion.div>
+              </div>
             ) : (
               <div className="flex flex-col gap-1">
                 <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
@@ -358,73 +292,69 @@ const SetMealPlan = ({
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-col gap-1">
-                    <label className="font-dmSans phone:text-sm">
-                      BMI classifications:
-                    </label>
-                    <div className="flex flex-wrap gap-1">
-                      {bmiClassifications.map((bmi: string, index: number) => (
-                        <div
-                          className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
-                            selectedBmis.includes(bmi)
-                              ? "bg-secondary"
-                              : "bg-none"
-                          }`}
-                          key={index}
-                          onClick={() => {
-                            if (selectedBmis.includes(bmi)) {
-                              setSelectedBmis(
-                                selectedBmis.filter(
-                                  (bmiClassification: string) =>
-                                    bmiClassification !== bmi
-                                )
-                              );
-                            } else {
-                              setSelectedBmis((prev) => [...prev, bmi]);
-                            }
-                          }}
-                        >
-                          <p
-                            className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
-                              selectedBmis.includes(bmi)
-                                ? "text-[#ffffff]"
-                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                            }`}
-                          >
-                            {bmi}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="font-dmSans phone:text-sm">
-                      Select Day:
-                    </label>
-                    <div className="flex flex-wrap gap-1">
-                      {weekDates.map((date: string, index: number) => (
-                        <div
-                          className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
-                          key={index}
-                          onClick={() => setSelectedWeekDate(date)}
-                        >
-                          <p
-                            className={`text-sm font-semibold font-quickSand transition duration-200 ${
-                              selectedWeekDate === date
-                                ? "text-[#ffffff]"
-                                : "text-[#b3b3b3] group-hover:text-[#ffffff]"
-                            }`}
-                          >
-                            {date}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
+            <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1">
+                <label className="font-dmSans phone:text-sm">
+                  Select BMI classification Tags:
+                </label>
+                <div className="flex flex-wrap gap-1">
+                  {bmiClassifications.map((bmi: string, index: number) => (
+                    <div
+                      className={`group border-[1.5px] border-secondary px-4 py-1 cursor-pointer ${
+                        selectedBmis.includes(bmi) ? "bg-secondary" : "bg-none"
+                      }`}
+                      key={index}
+                      onClick={() => {
+                        if (selectedBmis.includes(bmi)) {
+                          setSelectedBmis(
+                            selectedBmis.filter(
+                              (bmiClassification: string) =>
+                                bmiClassification !== bmi
+                            )
+                          );
+                        } else {
+                          setSelectedBmis((prev) => [...prev, bmi]);
+                        }
+                      }}
+                    >
+                      <p
+                        className={`text-sm font-semibold font-quickSand select-none transition duration-200 ${
+                          selectedBmis.includes(bmi)
+                            ? "text-[#ffffff]"
+                            : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                        }`}
+                      >
+                        {bmi}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-dmSans phone:text-sm">Select Day:</label>
+                <div className="flex flex-wrap gap-1">
+                  {weekDates.map((date: string, index: number) => (
+                    <div
+                      className="group border-[1.5px] border-secondary px-4 py-1 cursor-pointer"
+                      key={index}
+                      onClick={() => setSelectedWeekDate(date)}
+                    >
+                      <p
+                        className={`text-sm font-semibold font-quickSand transition duration-200 ${
+                          selectedWeekDate === date
+                            ? "text-[#ffffff]"
+                            : "text-[#b3b3b3] group-hover:text-[#ffffff]"
+                        }`}
+                      >
+                        {date}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
             <div className="flex gap-1 justify-between phone:flex-col mdtablet:flex-1 mdtablet:flex-row">
               <MealPlanCard
                 meal={mealPlanInfo[selectedWeekDate].breakFast}
