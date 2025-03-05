@@ -35,6 +35,7 @@ export interface MealInfoTypes {
   mealName: string;
   shortDescription: string;
   cookingInstruction: string;
+  veganAlternative: string;
 }
 
 export interface IngredientTypes {
