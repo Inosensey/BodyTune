@@ -44,6 +44,10 @@ interface MealFormValidations {
     valid: boolean | null;
     validationMessage: string;
   };
+  veganAlternative: {
+    valid: boolean | null;
+    validationMessage: string;
+  };
 }
 
 interface props {
@@ -52,7 +56,7 @@ interface props {
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
   dailyMealInfo: dailyMealInfo;
   formAction: string;
-  selectedWeekDate: string
+  selectedWeekDate: string;
 }
 
 // Initials
@@ -60,6 +64,7 @@ const MealFormInputValInitial: MealInfoTypes = {
   mealName: "",
   shortDescription: "",
   cookingInstruction: "",
+  veganAlternative: "",
 };
 const MealFormValidationInitials: MealFormValidations = {
   mealName: {
@@ -71,6 +76,10 @@ const MealFormValidationInitials: MealFormValidations = {
     validationMessage: "",
   },
   cookingInstruction: {
+    valid: null,
+    validationMessage: "",
+  },
+  veganAlternative: {
     valid: null,
     validationMessage: "",
   },
@@ -88,7 +97,7 @@ const AddMealForm = ({
   setMealPlanInfo,
   formAction,
   dailyMealInfo,
-  selectedWeekDate
+  selectedWeekDate,
 }: props) => {
   // Init Values
   const initUUID = crypto.randomUUID();
@@ -231,30 +240,32 @@ const AddMealForm = ({
       } else if (selectedMealType === "Dinner") {
         mealType = "dinner";
       }
-      setMealFormInputVal(dailyMealInfo[mealType as keyof dailyMealInfo].mealInfo!);
+      setMealFormInputVal(
+        dailyMealInfo[mealType as keyof dailyMealInfo].mealInfo!
+      );
       setIngredientInputVal(
         dailyMealInfo[mealType as keyof dailyMealInfo].ingredients!
       );
       setNutrition(dailyMealInfo[mealType as keyof dailyMealInfo].nutrition!);
-      Object.entries(dailyMealInfo[mealType as keyof dailyMealInfo].ingredients!).map(
-        ([, value]) => {
-          setIngredientValidations((prev) => ({
-            ...prev,
-            [`ingredient${value.id}`]: {
-              ingredientValid: null,
-              ingredientValidationMessage: "",
-              caloriesValid: null,
-              caloriesValidationMessage: "",
-              proteinsValid: null,
-              proteinsValidationMessage: "",
-              carbsValid: null,
-              carbsValidationMessage: "",
-              fatValid: null,
-              fatValidationMessage: "",
-            },
-          }));
-        }
-      );
+      Object.entries(
+        dailyMealInfo[mealType as keyof dailyMealInfo].ingredients!
+      ).map(([, value]) => {
+        setIngredientValidations((prev) => ({
+          ...prev,
+          [`ingredient${value.id}`]: {
+            ingredientValid: null,
+            ingredientValidationMessage: "",
+            caloriesValid: null,
+            caloriesValidationMessage: "",
+            proteinsValid: null,
+            proteinsValidationMessage: "",
+            carbsValid: null,
+            carbsValidationMessage: "",
+            fatValid: null,
+            fatValidationMessage: "",
+          },
+        }));
+      });
     }
   };
   const calculateNutrition = () => {
@@ -615,6 +626,7 @@ const AddMealForm = ({
                       }));
                     }}
                     className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                    type="button"
                   >
                     Add More Ingredient
                     <FontAwesomeIcon
@@ -662,6 +674,23 @@ const AddMealForm = ({
                 </div>
               </div>
             </div>
+
+            <motion.div className="w-full">
+              <Input
+                name="veganAlternative"
+                placeholder="Enter a vegan substitute"
+                state={mealFormInputVal.veganAlternative}
+                type="text"
+                label="Vegan Alternative"
+                onChange={onChange}
+                onBlur={onChange}
+                autoComplete="off"
+                valid={mealValidations.veganAlternative.valid}
+                validationMessage={
+                  mealValidations.veganAlternative.validationMessage
+                }
+              />
+            </motion.div>
             <div className="flex flex-col laptop:w-[100%]">
               <p className="font-dmSans font-semibold text-[#a3e09f] underline">
                 How to Prepare
@@ -703,13 +732,14 @@ const AddMealForm = ({
                     }
                     setMealPlanInfo((prev) => ({
                       ...prev,
-                      [selectedWeekDate]: {...prev[selectedMealType], 
+                      [selectedWeekDate]: {
+                        ...prev[selectedWeekDate],
                         [mealType as keyof dailyMealInfo]: {
                           mealInfo: mealFormInputVal,
                           ingredients: ingredientInputVal,
                           nutrition: nutrition,
-                        }
-                      }
+                        },
+                      },
                     }));
 
                     setToggleAddMealForm(false);
