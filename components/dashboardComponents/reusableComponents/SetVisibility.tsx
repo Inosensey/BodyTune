@@ -164,8 +164,11 @@ const SetVisibility = ({
             </div>
           </div>
           <div className="mt-4 mx-auto w-max flex items-center gap-1">
-            <button className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
-            <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
+            <button
+              className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+              type="button"
+            >
+              <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
               Preview Plan
             </button>
           </div>
