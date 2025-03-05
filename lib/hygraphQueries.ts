@@ -195,7 +195,8 @@ const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
             mealInfo: {
               mealName: breakfastMeal[index].mealName,
               shortDescription: "",
-              cookingInstruction: breakfastMeal[index].cookingInstructions
+              cookingInstruction: breakfastMeal[index].cookingInstructions,
+              veganAlternative: breakfastMeal[index].veganAlternative
             },
             ingredients: breakfastMealIngredientInfo.ingredientList,
             nutrition: breakfastMealIngredientInfo.nutritionInfo
@@ -204,7 +205,8 @@ const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
             mealInfo: {
               mealName: lunchMeal[index].mealName,
               shortDescription: "",
-              cookingInstruction: lunchMeal[index].cookingInstructions
+              cookingInstruction: lunchMeal[index].cookingInstructions,
+              veganAlternative: lunchMeal[index].veganAlternative
             },
             ingredients: lunchMealIngredientInfo.ingredientList,
             nutrition: lunchMealIngredientInfo.nutritionInfo
@@ -213,7 +215,8 @@ const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
             mealInfo: {
               mealName: dinnerMeal[index].mealName,
               shortDescription: "",
-              cookingInstruction: dinnerMeal[index].cookingInstructions
+              cookingInstruction: dinnerMeal[index].cookingInstructions,
+              veganAlternative: dinnerMeal[index].veganAlternative
             },
             ingredients: dinnerMealIngredientInfo.ingredientList,
             nutrition: dinnerMealIngredientInfo.nutritionInfo
