@@ -1,4 +1,5 @@
-import { useState } from "react";
+"use client"
+
 import { motion } from "framer-motion";
 
 // Icons
@@ -13,6 +14,9 @@ interface props {
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   Icon: React.ComponentType<{ color: string; width?: string; height?: string }>;
+  visibilityPreference: string,
+  setVisibilityPreference: React.Dispatch<React.SetStateAction<string>>,
+  setTogglePreviewBodyTune: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Variants
@@ -30,15 +34,14 @@ const SetVisibility = ({
   setSelectedBreadCrumb,
   setSelectedOption,
   Icon,
+  visibilityPreference,
+  setVisibilityPreference,
+  setTogglePreviewBodyTune
 }: props) => {
-  // States
-  const [visibilityPreference, SetVisibilityPreference] = useState<string>("");
-  console.log(visibilityPreference);
-
   // Events
   const radioOnChange = (value: string) => {
     // SetVisibilityPreference((prev) => ({ ...prev, [name]: value }));
-    SetVisibilityPreference(value);
+    setVisibilityPreference(value);
   };
   return (
     <>
@@ -72,7 +75,7 @@ const SetVisibility = ({
           </div>
         </div>
         <motion.div variants={childContainer} className="bg-black w-full p-2">
-          <label className="phone:text-sm font-quickSand font-semibold">
+          <label className="underline font-dmSans font-bold text-[#a3e09f] m-0 mb-2 p-0 phone:text-sm tablet:text-lg">
             Visibility Preferences
           </label>
           <div className="w-full flex flex-col flex-wrap gap-4 mt-2">
@@ -167,6 +170,7 @@ const SetVisibility = ({
             <button
               className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
               type="button"
+              onClick={() => setTogglePreviewBodyTune(true)}
             >
               <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
               Preview Plan
