@@ -501,7 +501,7 @@ const AddExerciseForm = ({
                   width={200}
                   height={200}
                   alt="Preview"
-                  className="w-full h-44 object-contain"
+                  className="w-full h-44"
                 />
               )}
             </motion.div>
