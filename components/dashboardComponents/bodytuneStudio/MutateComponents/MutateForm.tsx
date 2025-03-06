@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { AnimatePresence } from "framer-motion";
 
 // Actions
 import { createBodyTunePlan } from "@/actions/planActions";
@@ -15,6 +16,7 @@ import SetMealPlan from "@/components/dashboardComponents/reusableComponents/Set
 import SetExercisePlan from "@/components/dashboardComponents/reusableComponents/SetExercisePlan";
 import SetVisibility from "@/components/dashboardComponents/reusableComponents/SetVisibility";
 import CreationOption from "../../reusableComponents/CreationOption";
+import BodyTuneDetails from "../BodyTuneDetails";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -152,6 +154,10 @@ const MutateForm = ({ personalInfo }: props) => {
     useState<mealPlanType>(mealPlanInitial);
   const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>({});
   const [disabledBreadCrumbs, setDisabledBreadCrumbs] = useState<number[]>([]);
+  const [visibilityPreference, setVisibilityPreference] = useState<string>("");
+  const [togglePreviewBodyTune, setTogglePreviewBodyTune] =
+    useState<boolean>(false);
+  console.log(visibilityPreference);
 
   // Events
   const handleSubmit = () => {
@@ -256,12 +262,15 @@ const MutateForm = ({ personalInfo }: props) => {
                   </div>
                 )}
                 {progress === 4 && (
-                  <div className="flex flex-1 justify-center h-[75%] w-full">
+                  <div className="flex flex-1 justify-center w-full">
                     <SetVisibility
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
                       Icon={SolarStarsMinimalisticLineDuotone}
+                      visibilityPreference={visibilityPreference}
+                      setVisibilityPreference={setVisibilityPreference}
+                      setTogglePreviewBodyTune={setTogglePreviewBodyTune}
                     />
                   </div>
                 )}
@@ -271,6 +280,15 @@ const MutateForm = ({ personalInfo }: props) => {
         </div>
       </div>
 
+      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+        {togglePreviewBodyTune && (
+          <BodyTuneDetails
+            exercisePlan={exercisePlanInfo}
+            mealPlan={mealPlanInfo}
+            setToggleBodyTuneDetails={setTogglePreviewBodyTune}
+          />
+        )}
+      </AnimatePresence>
       <LoadingPopUp message={submitMessage} isLoading={isSubmitting} />
     </>
   );
