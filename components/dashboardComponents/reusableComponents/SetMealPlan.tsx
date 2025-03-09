@@ -34,6 +34,8 @@ interface props {
   selectedCreateOption: string;
   mealPlanFieldsVal: mealPlanInterface;
   setMealPlanFieldsVal: React.Dispatch<React.SetStateAction<mealPlanInterface>>;
+  selectedBmis: Array<string>,
+  setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>,
 }
 
 const SetMealPlan = ({
@@ -45,9 +47,10 @@ const SetMealPlan = ({
   selectedCreateOption,
   mealPlanFieldsVal,
   setMealPlanFieldsVal,
+  selectedBmis,
+  setSelectedBmis
 }: props) => {
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
-  const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" ? true : false
   );
