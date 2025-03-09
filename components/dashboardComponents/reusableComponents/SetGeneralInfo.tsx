@@ -43,6 +43,8 @@ interface props {
   generalInfoFieldsVal: generalInfoType; 
   setGeneralInfoFieldsVal: React.Dispatch<React.SetStateAction<generalInfoType>>;
   setDisabledBreadCrumbs: React.Dispatch<React.SetStateAction<Array<number>>>
+  bmiClassification: {id: string, bmiClassification:string},
+  setBmiClassification: React.Dispatch<React.SetStateAction<{id: string, bmiClassification:string}>>
 }
 
 interface generalInfoValidation {
@@ -95,10 +97,11 @@ const SetGeneralInfo = ({
   selectedCreateOption,
   setExercisePlanInfo,
   setMealPlanInfo,
-  setDisabledBreadCrumbs
+  setDisabledBreadCrumbs,
+  bmiClassification,
+  setBmiClassification
 }: props) => {
   // State
-  const [bmiClassificationId, setBmiClassificationId] = useState<string>("");
   const [formIsValid, setFormIsValid] = useState<boolean>(false);
   const [generalInfoValidation, setGeneralInfoValidation] =
     useState<generalInfoValidation>(generalInfoValidationInitials);
@@ -108,7 +111,7 @@ const SetGeneralInfo = ({
     queryKey: ["generatedBodyTune"],
     queryFn: () => {
       return generateBodyTunePlan(
-        bmiClassificationId,
+        bmiClassification.id,
         generalInfoFieldsVal.experience
       );
     },
@@ -208,7 +211,7 @@ const SetGeneralInfo = ({
     setFormIsValid(isValid);
     if (isValid) {
       const bmiClassification = getBmi(weight, height);
-      setBmiClassificationId(bmiClassification.id);
+      setBmiClassification(bmiClassification);
     }
   };
 
