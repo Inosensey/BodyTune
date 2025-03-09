@@ -1,9 +1,11 @@
 "use server";
 
 // Types
+import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import { mealPlanType } from "@/types/mealTypes";
 import { exercisePlan } from "@/types/planTypes";
+import { createSSR } from "@/utils/supabaseSSR";
 
 export const createBodyTunePlan = async (
   prevState: formReturnType<[]>,
@@ -22,18 +24,23 @@ export const createBodyTunePlan = async (
   const exercisePlan: exercisePlan = jsonData.exercisePlan;
 
   try {
-    await saveMealPlan(
-      mealPlanName,
-      selectedMealPlan,
-      mealPlan,
-      visibilityPreference
-    );
-    await saveExercisePlan(
-      exercisePlanName,
-      selectedExercisePlan,
-      exercisePlan,
-      visibilityPreference
-    );
+    console.log(visibilityPreference)
+    console.log(mealPlanName)
+    console.log(exercisePlanName)
+    console.log(selectedMealPlan)
+    console.log(selectedExercisePlan)
+    // await saveMealPlan(
+    //   mealPlanName,
+    //   selectedMealPlan,
+    //   mealPlan,
+    //   visibilityPreference
+    // );
+    // await saveExercisePlan(
+    //   exercisePlanName,
+    //   selectedExercisePlan,
+    //   exercisePlan,
+    //   visibilityPreference
+    // );
     return {
       success: true,
       error: false,
@@ -54,18 +61,58 @@ export const createBodyTunePlan = async (
   }
 };
 
-const saveMealPlan = async (
+// Meals functions
+const createMealPlan = async (
   mealPlanName: string,
-  selectedMealPlan: string,
   mealPlan: mealPlanType,
-  visibilityPreference: string
+  visibilityPreference: number
 ) => {
-  console.log(mealPlanName);
-  console.log(selectedMealPlan);
-  console.log(mealPlan);
-  console.log(visibilityPreference);
+  const supabase = await createSSR();
+  const user = await supabase.auth.getUser();
+  const userId = user.data.user!.id
+
+  try {
+    const {data, error} = await supabase.from("meal_plan").insert<TableInsert<"meal_plan">>({
+      planName: mealPlanName,
+      visibility: visibilityPreference,
+      created_by: userId
+    }).select();
+    if(error) {
+      const errorMessage: string =
+        error instanceof Error
+          ? `There is an error Creating the Meal Plan: ${error.message}`
+          : "An unknown error occurred";
+      return {
+        success: false,
+        error: true,
+        message: errorMessage,
+      };
+    }
+    const response = data as TableInsert<"meal_plan">[]
+    const mealPlanId = response[0].id;
+    return {
+      success: true,
+      error: false,
+      data: [mealPlanId],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Creating the Meal Plan: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
 };
 
+
+
+// Exercises functions
 const saveExercisePlan = async (
   exercisePlanName: string,
   selectedExercisePlan: string,
