@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 // Icons
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
+import TablerCirclePlus from "@/icons/TablerCirclePlus";
 
 //Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
@@ -81,7 +82,7 @@ const SetVisibility = ({
           <div className="w-full flex flex-col flex-wrap gap-4 mt-2">
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Private")}
+              onClick={() => radioOnChange("1")}
             >
               <div
                 style={{
@@ -94,22 +95,22 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">Private:</span>{" "}
+                <span className="font-bold text-[#a3e09f]">Private:</span>{" "}
                 Only you can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Private"
+                value="1"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Private" ? true : false}
+                checked={visibilityPreference === "1" ? true : false}
               />
             </div>
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Followers")}
+              onClick={() => radioOnChange("2")}
             >
               <div
                 style={{
@@ -122,7 +123,7 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">
+                <span className="font-bold text-[#a3e09f]">
                   Followers:
                 </span>{" "}
                 Only your followers can see this{" "}
@@ -131,15 +132,15 @@ const SetVisibility = ({
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Followers"
+                value="2"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Followers" ? true : false}
+                checked={visibilityPreference === "2" ? true : false}
               />
             </div>
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Public")}
+              onClick={() => radioOnChange("3")}
             >
               <div
                 style={{
@@ -152,28 +153,35 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">Public:</span>{" "}
+                <span className="font-bold text-[#a3e09f]">Public:</span>{" "}
                 Everyone can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Public"
+                value="3"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Public" ? true : false}
+                checked={visibilityPreference === "3" ? true : false}
               />
             </div>
           </div>
-          <div className="mt-4 mx-auto w-max flex items-center gap-1">
+          <div className="mt-4 mx-auto w-full flex justify-between items-center gap-1">
             <button
-              className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+              className=" bg-[#595959] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-[#404040]"
               type="button"
               onClick={() => setTogglePreviewBodyTune(true)}
             >
               <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
               Preview Plan
+            </button>
+            <button
+              className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+              type="submit"
+            >
+              <TablerCirclePlus color="#D3F0D1" width="1.2em" height="1.2em" />
+              Save Plan
             </button>
           </div>
         </motion.div>
