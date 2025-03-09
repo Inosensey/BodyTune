@@ -18,6 +18,9 @@ import SetVisibility from "@/components/dashboardComponents/reusableComponents/S
 import CreationOption from "../../reusableComponents/CreationOption";
 import BodyTuneDetails from "../BodyTuneDetails";
 
+// Utils
+import { generateMealPlanName, generateExercisePlanName } from "@/utils/dashboardUtils";
+
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
@@ -41,7 +44,7 @@ interface mealPlanInterface {
   mealPlanName: string;
 }
 interface exercisePlanInterface {
-  selectedExercisePlan: number;
+  selectedExercisePlan: string;
   exercisePlanName: string;
 }
 
@@ -57,7 +60,7 @@ const mealPlanFieldsInit: mealPlanInterface = {
   mealPlanName: "",
 };
 const exercisePlanInitials: exercisePlanInterface = {
-  selectedExercisePlan: 0,
+  selectedExercisePlan: "0",
   exercisePlanName: "",
 };
 const BreadCrumbsInitials: InterfaceBreadCrumbs[] = [
@@ -122,6 +125,9 @@ const mealPlanInitial: mealPlanType = {
 // };
 
 const MutateForm = ({ personalInfo }: props) => {
+  // initials
+  const formData = new FormData();
+
   // UseFormState
   const [formState, formAction] = useFormState(
     createBodyTunePlan,
@@ -138,10 +144,13 @@ const MutateForm = ({ personalInfo }: props) => {
       experience: "",
       bmi: "",
     });
-  const [mealPlanFieldsVal, setMealPlanFieldsVal] =
-    useState<mealPlanInterface>(mealPlanFieldsInit);
-  const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
-    useState<exercisePlanInterface>(exercisePlanInitials);
+  const [bmiClassification, setBmiClassification] = useState<{
+    id: string;
+    bmiClassification: string;
+  }>({
+    id: "",
+    bmiClassification: "",
+  });
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [selectedBreadCrumb, setSelectedBreadCrumb] =
     useState<InterfaceBreadCrumbs>({
@@ -150,17 +159,41 @@ const MutateForm = ({ personalInfo }: props) => {
       shortDescription: "Set weight, height, and experience",
     });
   const [progress, setProgress] = useState<number>(1);
-  const [mealPlanInfo, setMealPlanInfo] =
-    useState<mealPlanType>(mealPlanInitial);
-  const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>({});
-  const [disabledBreadCrumbs, setDisabledBreadCrumbs] = useState<number[]>([]);
-  const [visibilityPreference, setVisibilityPreference] = useState<string>("");
   const [togglePreviewBodyTune, setTogglePreviewBodyTune] =
     useState<boolean>(false);
-  console.log(visibilityPreference);
+  const [disabledBreadCrumbs, setDisabledBreadCrumbs] = useState<number[]>([]);
+
+  const [mealPlanFieldsVal, setMealPlanFieldsVal] =
+    useState<mealPlanInterface>(mealPlanFieldsInit);
+  const [mealPlanInfo, setMealPlanInfo] =
+    useState<mealPlanType>(mealPlanInitial);
+  const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
+
+  const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
+    useState<exercisePlanInterface>(exercisePlanInitials);
+  const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>({});
+  const [selectedDifficulties, setSelectedDifficulties] = useState<
+    Array<string>
+  >([]);
+
+  const [visibilityPreference, setVisibilityPreference] = useState<string>("");
 
   // Events
   const handleSubmit = () => {
+    const jsonData = {
+      mealPlan: mealPlanInfo,
+      exercisePlan: exercisePlanInfo,
+    };
+    formData.append("jsonData", JSON.stringify(jsonData));
+    formData.append("mealPlanName", mealPlanFieldsVal.mealPlanName);
+    formData.append("exercisePlanName", exercisePlanFieldsVal.exercisePlanName);
+    formData.append("visibilityPreference", visibilityPreference);
+    formData.append("selectedMealPlan", mealPlanFieldsVal.selectedMealPlan);
+    formData.append(
+      "selectedExercisePlan",
+      exercisePlanFieldsVal.selectedExercisePlan
+    );
+
     setSubmitMessage("test");
     setIsSubmitting(true);
   };
@@ -174,6 +207,14 @@ const MutateForm = ({ personalInfo }: props) => {
       setDisabledBreadCrumbs([]);
     }
   }, [selectedOption]);
+  useEffect(() => {
+    setSelectedBmis((prev) => [...prev, bmiClassification.bmiClassification])
+    setMealPlanFieldsVal((prev) => ({...prev, mealPlanName: generateMealPlanName(bmiClassification.bmiClassification)}))
+  },[bmiClassification])
+  useEffect(() => {
+    setSelectedDifficulties((prev) => [...prev, generalInfoFieldsVal.experience])
+    setExercisePlanFieldsVal((prev) => ({...prev, exercisePlanName: generateExercisePlanName(generalInfoFieldsVal.experience)}))
+  },[generalInfoFieldsVal])
   useEffect(() => {
     if (formState.success !== null || formState.error !== null) {
       if (formState.success) {
@@ -216,7 +257,7 @@ const MutateForm = ({ personalInfo }: props) => {
                 />
               </div>
 
-              <form action={formAction} onSubmit={handleSubmit}>
+              <form action={() => formAction(formData)} onSubmit={handleSubmit}>
                 {progress === 1 && (
                   <div className="flex justify-center max-h w-full">
                     <SetGeneralInfo
@@ -230,6 +271,8 @@ const MutateForm = ({ personalInfo }: props) => {
                       setGeneralInfoFieldsVal={setGeneralInfoFieldsVal}
                       setExercisePlanInfo={setExercisePlanInfo}
                       setMealPlanInfo={setMealPlanInfo}
+                      bmiClassification={bmiClassification}
+                      setBmiClassification={setBmiClassification}
                     />
                   </div>
                 )}
@@ -244,6 +287,8 @@ const MutateForm = ({ personalInfo }: props) => {
                       mealPlanInfo={mealPlanInfo}
                       setMealPlanInfo={setMealPlanInfo}
                       selectedCreateOption={selectedOption}
+                      selectedBmis={selectedBmis}
+                      setSelectedBmis={setSelectedBmis}
                     />
                   </div>
                 )}
@@ -258,6 +303,8 @@ const MutateForm = ({ personalInfo }: props) => {
                       exercisePlanInfo={exercisePlanInfo}
                       setExercisePlanInfo={setExercisePlanInfo}
                       selectedCreateOption={selectedOption}
+                      selectedDifficulties={selectedDifficulties}
+                      setSelectedDifficulties={setSelectedDifficulties}
                     />
                   </div>
                 )}
