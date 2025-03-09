@@ -69,8 +69,8 @@ const BodyTuneDetails = ({
 
   return (
     <Overlay>
-      <div className="w-full phone:h-full laptop:h-[95%] flex flex-col justify-center tablet:items-center">
-        <div className="flex items-center justify-center gap-4 w-[100%] h-[8%]">
+      <div className="w-full phone:h-full laptop:h-[98%] flex flex-col justify-center tablet:items-center">
+        <div className="flex items-center justify-center gap-4 w-[100%] py-1">
           <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
             BodyTune Details
           </p>
@@ -86,15 +86,9 @@ const BodyTuneDetails = ({
             />
           </div>
         </div>
-        <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-4 tablet:w-[95%]">
-          <div className="flex gap-1 h-[95%] flex-col">
-            <div className="flex flex-col gap-2 bg-primary p-4 rounded-md font-quickSand font-bold phone:w-12/12 laptop:overflow-auto laptop:w-max laptop:h-[20%] ">
-              <p className="font-dmSans">
-                Plan Name:{" "}
-                <span className="font-normal text-lightSecondary">
-                  A Beginner-Friendly Plan
-                </span>
-              </p>
+        <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-2 tablet:w-[98%]">
+          <div className="flex gap-1 h-[100%] flex-col">
+            <div className="flex flex-col gap-2 bg-primary p-4 rounded-md font-quickSand font-bold phone:w-12/12 laptop:w-max ">
               <p className="font-dmSans">
                 Recommended BMI Categories:{" "}
                 <span className="font-normal text-lightSecondary">
@@ -108,7 +102,7 @@ const BodyTuneDetails = ({
                 </span>
               </p>
             </div>
-            <div className="w-full flex gap-2 laptop:h-[80%] phone:flex-col laptop:flex-row">
+            <div className="w-full flex gap-2 phone:flex-col laptop:flex-1 laptop:h-[80%] laptop:flex-row">
               <div className="p-4 flex flex-col bg-primary gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]">
                 <div className="flex flex-col gap-1 laptop:h-[25%] laptop:overflow-auto">
                   <p className="font-quickSand font-bold">
@@ -257,7 +251,7 @@ const BodyTuneDetails = ({
                                 {
                                   mealPlan[selectedMealPlanDate][
                                     selectedMealTab
-                                  ].nutrition?.calories
+                                  ].nutrition?.calories.toFixed(2)
                                 }
                               </p>
                             </div>
@@ -269,7 +263,7 @@ const BodyTuneDetails = ({
                                 {
                                   mealPlan[selectedMealPlanDate][
                                     selectedMealTab
-                                  ].nutrition?.protein
+                                  ].nutrition?.protein.toFixed(2)
                                 }
                                 g
                               </p>
@@ -282,7 +276,7 @@ const BodyTuneDetails = ({
                                 {
                                   mealPlan[selectedMealPlanDate][
                                     selectedMealTab
-                                  ].nutrition?.carbs
+                                  ].nutrition?.carbs.toFixed(2)
                                 }
                                 g
                               </p>
@@ -295,14 +289,14 @@ const BodyTuneDetails = ({
                                 {
                                   mealPlan[selectedMealPlanDate][
                                     selectedMealTab
-                                  ].nutrition?.fat
+                                  ].nutrition?.fat.toFixed(2)
                                 }
                                 g
                               </p>
                             </div>
                           </div>
                         </div>
-                        <div className="phone:h-[250px]">
+                        <div className="phone:max-h-[250px]">
                           <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                             Cooking Instructions:
                           </label>
@@ -421,7 +415,7 @@ const BodyTuneDetails = ({
                                       : "/assets/svg/healthy-1.svg"
                                   }
                                   alt="Preview"
-                                  className="w-full h-full"
+                                  className="w-full h-full object-contain"
                                 />
                               </div>
                             </motion.div>
