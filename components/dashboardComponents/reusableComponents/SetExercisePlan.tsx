@@ -15,7 +15,7 @@ import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Types
 interface exercisePlanInterface {
-  selectedExercisePlan: number;
+  selectedExercisePlan: string;
   exercisePlanName: string;
 }
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
@@ -33,24 +33,13 @@ interface props {
   setExercisePlanFieldsVal: React.Dispatch<
     React.SetStateAction<exercisePlanInterface>
   >;
+  selectedDifficulties: Array<string>,
+  setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>,
 }
 
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
 import { TableInsert } from "@/types/database.types";
-// const ExerciseValInitial: TableInsert<"exercise"> = {
-//   exerciseName: "",
-//   bodyPart: "",
-//   equipment: "",
-//   day: "",
-//   exerciseDifficulty: 1,
-//   exerciseMeasurementType: 1,
-//   measurement: "",
-//   exerciseDemo: "",
-//   bmiClassification: 1,
-//   instruction: "",
-//   youtubeLink: "",
-// };
 
 const SetExercisePlan = ({
   setSelectedOption,
@@ -61,12 +50,11 @@ const SetExercisePlan = ({
   selectedCreateOption,
   exercisePlanFieldsVal,
   setExercisePlanFieldsVal,
+  selectedDifficulties,
+  setSelectedDifficulties
 }: props) => {
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
-  const [selectedDifficulties, setSelectedDifficulties] = useState<
-    Array<string>
-  >([]);
   const [showExercisePlanHtml, setShowExercisePanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" ? true : false
   );
