@@ -186,6 +186,8 @@ const MutateForm = ({ personalInfo }: props) => {
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanFieldsVal.mealPlanName);
+    formData.append("bmiClassification", mealPlanFieldsVal.mealPlanName);
+    formData.append("exerciseDifficulty", exercisePlanFieldsVal.exercisePlanName);
     formData.append("exercisePlanName", exercisePlanFieldsVal.exercisePlanName);
     formData.append("visibilityPreference", visibilityPreference);
     formData.append("selectedMealPlan", mealPlanFieldsVal.selectedMealPlan);
