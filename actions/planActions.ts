@@ -3,7 +3,12 @@
 // Types
 import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
-import { mealPlanType } from "@/types/mealTypes";
+import {
+  IngredientInfo,
+  MealInfoTypes,
+  mealPlanType,
+  Nutrients,
+} from "@/types/mealTypes";
 import { exercisePlan } from "@/types/planTypes";
 import { getMealTagIds } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
@@ -26,9 +31,11 @@ export const createBodyTunePlan = async (
 
   try {
     console.log(mealPlan);
-    Object.entries(mealPlan).map( ([key, value]) => {
-      console.log(`${key}: ${value}`);
-    })
+    Object.entries(mealPlan).map(([day]) => {
+      Object.entries(mealPlan[day]).map(([mealType]) => {
+        console.log(mealPlan[day][mealType]);
+      });
+    });
     // await saveMealPlan(
     //   mealPlanName,
     //   selectedMealPlan,
@@ -92,11 +99,10 @@ const createMealPlan = async (
       };
     }
     const response = data as TableInsert<"meal_plan">[];
-    const mealPlanId = response[0].id;
     return {
       success: true,
       error: false,
-      data: [mealPlanId],
+      data: response,
       message: "",
     };
   } catch (error) {
@@ -113,7 +119,7 @@ const createMealPlan = async (
   }
 };
 
-const mapMealPlanWithMealtag = async (
+const mapMealPlanWithMealTag = async (
   mealPlanId: number,
   mealTags: Array<string>
 ) => {
@@ -165,6 +171,175 @@ const mapMealPlanWithMealtag = async (
       message: errorMessage,
     };
   }
+};
+
+const createTheDailyMeal = async (
+  mealIds: { breakFast: number; lunch: number; dinner: number },
+  planId: number,
+  day: string,
+  userId: string
+) => {
+  const supabase = await createSSR();
+
+  try {
+    const { error } = await supabase
+      .from("daily_meal")
+      .insert<TableInsert<"daily_meals">>({
+        plan_id: planId,
+        breakFast: mealIds.breakFast,
+        lunch: mealIds.lunch,
+        dinner: mealIds.dinner,
+        day: day,
+        created_by: userId,
+      });
+    if (error) {
+      const errorMessage: string =
+        error instanceof Error
+          ? `There is an error Creating your Daily Meal: ${error.message}`
+          : "An unknown error occurred";
+      return {
+        success: false,
+        error: true,
+        message: errorMessage,
+      };
+    }
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Creating your Daily Meal: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+const createAMeal = async (
+  meal: MealInfoTypes,
+  ingredients: Array<IngredientInfo>,
+  mealType: number,
+  userId: string
+) => {
+  const supabase = await createSSR();
+
+  try {
+    const { data, error } = await supabase
+      .from("meal")
+      .insert<TableInsert<"meal">>({
+        mealType: mealType,
+        mealName: meal.mealName,
+        instructions: meal.cookingInstruction,
+        veganAlternative: meal.veganAlternative,
+        created_by: userId,
+      })
+      .select();
+
+    if (error) {
+      const errorMessage: string =
+        error instanceof Error
+          ? `There is an error Creating your Meal: ${error.message}`
+          : "An unknown error occurred";
+      return {
+        success: false,
+        error: true,
+        message: errorMessage,
+      };
+    }
+
+    const mealMutationResult = data as TableInsert<"meal">[];
+    const mealId = mealMutationResult[0].id!;
+    const arrangedIngredients = arrangeIngredients(ingredients, userId, mealId);
+
+    const ingredientMutationResult = await insertMealIngredients(
+      arrangedIngredients
+    );
+
+    if (ingredientMutationResult?.error) {
+      return ingredientMutationResult;
+    }
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Creating your Meal: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+const insertMealIngredients = async (
+  ingredients: Array<
+    Nutrients & { ingredientName: string; userId: string; mealId: number }
+  >
+) => {
+  const supabase = await createSSR();
+
+  try {
+    const { error } = await supabase
+      .from("meal_ingredients")
+      .insert<TableInsert<"meal_ingredients">>(ingredients);
+    if (error) {
+      const errorMessage: string =
+        error instanceof Error
+          ? `There is an error Inserting an ingredient:: ${error.message}`
+          : "An unknown error occurred";
+      return {
+        success: false,
+        error: true,
+        message: errorMessage,
+      };
+    }
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Inserting an ingredient: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+const arrangeIngredients = (
+  ingredients: Array<IngredientInfo>,
+  userId: string,
+  mealId: number
+): Array<
+  Nutrients & { ingredientName: string; userId: string; mealId: number }
+> => {
+  const ingredientInfos: Array<
+    Nutrients & { ingredientName: string; userId: string; mealId: number }
+  > = [];
+
+  ingredients.map((ingredient: IngredientInfo) => {
+    ingredientInfos.push({
+      ingredientName: ingredient.ingredientValue,
+      protein: parseFloat(parseFloat(ingredient.proteinsValue).toFixed(2)),
+      calories: parseFloat(parseFloat(ingredient.caloriesValue).toFixed(2)),
+      carbs: parseFloat(parseFloat(ingredient.carbsValue).toFixed(2)),
+      fat: parseFloat(parseFloat(ingredient.fatValue).toFixed(2)),
+      userId: userId,
+      mealId: mealId,
+    });
+  });
+
+  return ingredientInfos;
 };
 
 // Exercises functions
