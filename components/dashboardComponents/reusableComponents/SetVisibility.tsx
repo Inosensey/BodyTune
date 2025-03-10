@@ -87,7 +87,7 @@ const SetVisibility = ({
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Private"
+                    visibilityPreference === "1"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
@@ -115,7 +115,7 @@ const SetVisibility = ({
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Followers"
+                    visibilityPreference === "2"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
@@ -145,7 +145,7 @@ const SetVisibility = ({
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Public"
+                    visibilityPreference === "3"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
