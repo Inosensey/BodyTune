@@ -39,19 +39,19 @@ export interface MealInfoTypes {
 }
 
 export interface IngredientTypes {
-  [key: string]: {
-    id: string;
-    ingredientName: string;
-    ingredientValue: string;
-    caloriesName: string;
-    caloriesValue: string;
-    proteinsName: string;
-    proteinsValue: string;
-    carbsName: string;
-    carbsValue: string;
-    fatName: string;
-    fatValue: string;
-  };
+  [key: string]: IngredientInfo;
+}
+export type IngredientInfo = {
+  ingredientName: string;
+  ingredientValue: string;
+  caloriesName: string;
+  caloriesValue: string;
+  proteinsName: string;
+  proteinsValue: string;
+  carbsName: string;
+  carbsValue: string;
+  fatName: string;
+  fatValue: string;
 }
 
 export interface IngredientInputValidation {
