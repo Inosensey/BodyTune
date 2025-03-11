@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useAnimation } from "framer-motion";
+import { ProgressBar } from "react-loader-spinner";
 
 // Components
 import LoadingPopUp from "../reusableComponent/loadingAnimation/LoadingPopUp";
@@ -335,9 +336,9 @@ const Sidebar = () => {
               }}
               className="flex flex-col py-2 px-[0.6rem] cursor-pointer"
               onClick={() => {
-                setMessage("Logging you out... 🔄 See you next time! 👋")
+                setMessage("Logging you out... 🔄 See you next time! 👋");
                 setIsLoggingOut(true);
-                signOut()
+                signOut();
               }}
             >
               <div className="flex gap-1">
@@ -377,10 +378,21 @@ const Sidebar = () => {
         ></span>
       </div>
 
-      
       <LoadingPopUp
         isLoading={isLoggingOut}
         message={message}
+        LoadingAnimationIcon={
+          <ProgressBar
+            visible={true}
+            height="60"
+            width="60"
+            ariaLabel="progress-bar-loading"
+            wrapperStyle={{}}
+            barColor="#D3F0D1"
+            borderColor="#4B6F64"
+            wrapperClass=""
+          />
+        }
       />
     </>
   );
