@@ -5,6 +5,7 @@ import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import {
   IngredientInfo,
+  IngredientTypes,
   MealInfoTypes,
   mealPlanType,
   Nutrients,
@@ -40,18 +41,15 @@ export const createBodyTunePlan = async (
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
 
-  const mealIds: { breakFast: number; lunch: number; dinner: number } = {
-    breakFast: 0,
-    lunch: 0,
-    dinner: 0,
+  const mealIds: {[key: string]:{ breakFast: number; lunch: number; dinner: number; day: string} } = {
   };
 
-  saveExercisePlan(
-    exercisePlanName,
-    selectedExercisePlan,
-    exercisePlan,
-    visibilityPreference
-  );
+  // saveExercisePlan(
+  //   exercisePlanName,
+  //   selectedExercisePlan,
+  //   exercisePlan,
+  //   visibilityPreference
+  // );
 
   try {
     const createMealPlanResult = await createMealPlan(
@@ -75,7 +73,7 @@ export const createBodyTunePlan = async (
         const mealTypeNumber = getMealType(mealType);
         const createAMealResult = await createAMeal(
           mealPlan[day][mealType].mealInfo!,
-          mealPlan[day][mealType].ingredients! as unknown as IngredientInfo[],
+          mealPlan[day][mealType].ingredients!,
           mealTypeNumber,
           userId
         );
@@ -88,43 +86,50 @@ export const createBodyTunePlan = async (
           };
         }
         const mealId = createAMealResult.data![0].id!;
+
+        console.log(mealType)
         switch (mealType) {
           case "breakFast":
-            mealIds.breakFast = mealId;
+            mealIds[day].breakFast = mealId;
+            mealIds[day].day = day;
             break;
 
           case "lunch":
-            mealIds.lunch = mealId;
+            mealIds[day].lunch = mealId;
+            mealIds[day].day = day;
 
             break;
 
           case "dinner":
-            mealIds.dinner = mealId;
+            mealIds[day].dinner = mealId;
+            mealIds[day].day = day;
 
             break;
 
           default:
-            mealIds.lunch = mealId;
+            mealIds[day].lunch = mealId;
+            mealIds[day].day = day;
             break;
         }
       });
-
-      const createTheDailyMealResult = await createTheDailyMeal(
-        mealIds,
-        createMealPlanResult.data![0].id!,
-        day,
-        userId
-      );
-
-      if (createTheDailyMealResult.error) {
-        return {
-          success: createTheDailyMealResult.success,
-          error: createTheDailyMealResult.error,
-          data: [],
-          message: createTheDailyMealResult.message,
-        };
-      }
     });
+    
+    console.log("mealIds",mealIds)
+    // const createTheDailyMealResult = await createTheDailyMeal(
+    //   mealIds,
+    //   createMealPlanResult.data![0].id!,
+    //   day,
+    //   userId
+    // );
+
+    // if (createTheDailyMealResult.error) {
+    //   return {
+    //     success: createTheDailyMealResult.success,
+    //     error: createTheDailyMealResult.error,
+    //     data: [],
+    //     message: createTheDailyMealResult.message,
+    //   };
+    // }
     return {
       success: true,
       error: false,
@@ -179,6 +184,10 @@ const createMealPlan = async (
       mealPlanTags,
       userId
     );
+
+  
+    console.log(response)
+    console.log(mapMealPlanWithMealTagResult)
 
     if (mapMealPlanWithMealTagResult.error) {
       return {
@@ -283,6 +292,8 @@ const createTheDailyMeal = async (
         created_by: userId,
       });
     if (error) {
+      console.log(mealIds);
+      console.log(error);
       const errorMessage: string = `There is an error Creating your Daily Meal: ${error.message}`
       return {
         success: false,
@@ -313,7 +324,7 @@ const createTheDailyMeal = async (
 
 const createAMeal = async (
   meal: MealInfoTypes,
-  ingredients: Array<IngredientInfo>,
+  ingredients: IngredientTypes,
   mealType: number,
   userId: string
 ) => {
@@ -379,7 +390,7 @@ const createAMeal = async (
 
 const insertMealIngredients = async (
   ingredients: Array<
-    Nutrients & { ingredientName: string; userId: string; mealId: number }
+    Nutrients & { ingredientName: string; created_by: string; mealId: number }
   >
 ) => {
   const supabase = await createSSR();
@@ -389,7 +400,7 @@ const insertMealIngredients = async (
       .from("meal_ingredients")
       .insert<TableInsert<"meal_ingredients">>(ingredients);
     if (error) {
-      const errorMessage: string = `There is an error Inserting an ingredient:: ${error.message}`
+      const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`
       return {
         success: false,
         error: true,
@@ -418,27 +429,39 @@ const insertMealIngredients = async (
 };
 
 const arrangeIngredients = (
-  ingredients: Array<IngredientInfo>,
+  ingredients: IngredientTypes,
   userId: string,
   mealId: number
 ): Array<
-  Nutrients & { ingredientName: string; userId: string; mealId: number }
+  Nutrients & { ingredientName: string; created_by: string; mealId: number }
 > => {
   const ingredientInfos: Array<
-    Nutrients & { ingredientName: string; userId: string; mealId: number }
+    Nutrients & { ingredientName: string; created_by: string; mealId: number }
   > = [];
 
-  ingredients.map((ingredient: IngredientInfo) => {
+  Object.entries(ingredients).forEach(([key]) => {
     ingredientInfos.push({
-      ingredientName: ingredient.ingredientValue,
-      protein: parseFloat(parseFloat(ingredient.proteinsValue).toFixed(2)),
-      calories: parseFloat(parseFloat(ingredient.caloriesValue).toFixed(2)),
-      carbs: parseFloat(parseFloat(ingredient.carbsValue).toFixed(2)),
-      fat: parseFloat(parseFloat(ingredient.fatValue).toFixed(2)),
-      userId: userId,
+      ingredientName: ingredients[key].ingredientValue,
+      protein: parseFloat(parseFloat(ingredients[key].proteinsValue).toFixed(2)),
+      calories: parseFloat(parseFloat(ingredients[key].caloriesValue).toFixed(2)),
+      carbs: parseFloat(parseFloat(ingredients[key].carbsValue).toFixed(2)),
+      fat: parseFloat(parseFloat(ingredients[key].fatValue).toFixed(2)),
+      created_by: userId,
       mealId: mealId,
     });
-  });
+  })
+
+  // ingredients.map((ingredient: IngredientInfo) => {
+  //   ingredientInfos.push({
+  //     ingredientName: ingredient.ingredientValue,
+  //     protein: parseFloat(parseFloat(ingredient.proteinsValue).toFixed(2)),
+  //     calories: parseFloat(parseFloat(ingredient.caloriesValue).toFixed(2)),
+  //     carbs: parseFloat(parseFloat(ingredient.carbsValue).toFixed(2)),
+  //     fat: parseFloat(parseFloat(ingredient.fatValue).toFixed(2)),
+  //     userId: userId,
+  //     mealId: mealId,
+  //   });
+  // });
 
   return ingredientInfos;
 };
