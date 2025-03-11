@@ -10,44 +10,121 @@ import {
   Nutrients,
 } from "@/types/mealTypes";
 import { exercisePlan } from "@/types/planTypes";
-import { getMealTagIds } from "@/utils/dashboardUtils";
+import { getMealTagIds, getMealType } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
 
 export const createBodyTunePlan = async (
   prevState: formReturnType<[]>,
   formData: FormData
 ): Promise<formReturnType<[]>> => {
+  const supabase = await createSSR();
+
   const jsonData: {
     mealPlan: mealPlanType;
     exercisePlan: exercisePlan;
+    mealPlanTags: Array<string>;
+    exercisePlanTags: Array<string>;
   } = JSON.parse(formData.get("jsonData") as string);
   const mealPlanName = formData.get("mealPlanName") as string;
   const exercisePlanName = formData.get("exercisePlanName") as string;
-  const visibilityPreference = formData.get("visibilityPreference") as string;
-  const selectedMealPlan = formData.get("selectedMealPlan") as string;
+  const visibilityPreference = parseInt(
+    formData.get("visibilityPreference") as string
+  );
+  // const selectedMealPlan = formData.get("selectedMealPlan") as string;
   const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
   const mealPlan: mealPlanType = jsonData.mealPlan;
   const exercisePlan: exercisePlan = jsonData.exercisePlan;
+  const mealPlanTags: Array<string> = jsonData.mealPlanTags;
+  // const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
+
+  const user = await supabase.auth.getUser();
+  const userId = user.data.user!.id;
+
+  const mealIds: { breakFast: number; lunch: number; dinner: number } = {
+    breakFast: 0,
+    lunch: 0,
+    dinner: 0,
+  };
+
+  saveExercisePlan(
+    exercisePlanName,
+    selectedExercisePlan,
+    exercisePlan,
+    visibilityPreference
+  );
 
   try {
-    console.log(mealPlan);
-    Object.entries(mealPlan).map(([day]) => {
-      Object.entries(mealPlan[day]).map(([mealType]) => {
-        console.log(mealPlan[day][mealType]);
+    const createMealPlanResult = await createMealPlan(
+      mealPlanName,
+      visibilityPreference, 
+      mealPlanTags,
+      userId
+    );
+
+    if (createMealPlanResult.error) {
+      return {
+        success: createMealPlanResult.success,
+        error: createMealPlanResult.error,
+        data: [],
+        message: createMealPlanResult.message,
+      };
+    }
+
+    Object.entries(mealPlan).map(async ([day]) => {
+      Object.entries(mealPlan[day]).map(async ([mealType]) => {
+        const mealTypeNumber = getMealType(mealType);
+        const createAMealResult = await createAMeal(
+          mealPlan[day][mealType].mealInfo!,
+          mealPlan[day][mealType].ingredients! as unknown as IngredientInfo[],
+          mealTypeNumber,
+          userId
+        );
+        if (createAMealResult.error) {
+          return {
+            success: createAMealResult.success,
+            error: createAMealResult.error,
+            data: [],
+            message: createAMealResult.message,
+          };
+        }
+        const mealId = createAMealResult.data![0].id!;
+        switch (mealType) {
+          case "breakFast":
+            mealIds.breakFast = mealId;
+            break;
+
+          case "lunch":
+            mealIds.lunch = mealId;
+
+            break;
+
+          case "dinner":
+            mealIds.dinner = mealId;
+
+            break;
+
+          default:
+            mealIds.lunch = mealId;
+            break;
+        }
       });
+
+      const createTheDailyMealResult = await createTheDailyMeal(
+        mealIds,
+        createMealPlanResult.data![0].id!,
+        day,
+        userId
+      );
+
+      if (createTheDailyMealResult.error) {
+        return {
+          success: createTheDailyMealResult.success,
+          error: createTheDailyMealResult.error,
+          data: [],
+          message: createTheDailyMealResult.message,
+        };
+      }
     });
-    // await saveMealPlan(
-    //   mealPlanName,
-    //   selectedMealPlan,
-    //   mealPlan,
-    //   visibilityPreference
-    // );
-    // await saveExercisePlan(
-    //   exercisePlanName,
-    //   selectedExercisePlan,
-    //   exercisePlan,
-    //   visibilityPreference
-    // );
     return {
       success: true,
       error: false,
@@ -71,12 +148,11 @@ export const createBodyTunePlan = async (
 // Meals functions
 const createMealPlan = async (
   mealPlanName: string,
-  mealPlan: mealPlanType,
-  visibilityPreference: number
+  visibilityPreference: number,
+  mealPlanTags: Array<string>,
+  userId: string
 ) => {
   const supabase = await createSSR();
-  const user = await supabase.auth.getUser();
-  const userId = user.data.user!.id;
 
   try {
     const { data, error } = await supabase
@@ -88,17 +164,31 @@ const createMealPlan = async (
       })
       .select();
     if (error) {
-      const errorMessage: string =
-        error instanceof Error
-          ? `There is an error Creating the Meal Plan: ${error.message}`
-          : "An unknown error occurred";
+      const errorMessage: string = `There is an error Creating the Meal Plan: ${error.message}`
       return {
         success: false,
         error: true,
+        data: [],
         message: errorMessage,
       };
     }
     const response = data as TableInsert<"meal_plan">[];
+
+    const mapMealPlanWithMealTagResult = await mapMealPlanWithMealTag(
+      response[0].id!,
+      mealPlanTags,
+      userId
+    );
+
+    if (mapMealPlanWithMealTagResult.error) {
+      return {
+        success: mapMealPlanWithMealTagResult.success,
+        error: mapMealPlanWithMealTagResult.error,
+        data: [],
+        message: mapMealPlanWithMealTagResult.message,
+      };
+    }
+
     return {
       success: true,
       error: false,
@@ -121,7 +211,8 @@ const createMealPlan = async (
 
 const mapMealPlanWithMealTag = async (
   mealPlanId: number,
-  mealTags: Array<string>
+  mealTags: Array<string>,
+  userId: string
 ) => {
   const supabase = await createSSR();
   const mealTagIds: Array<number> = getMealTagIds(mealTags);
@@ -134,6 +225,7 @@ const mapMealPlanWithMealTag = async (
     return {
       mealPlanId: mealPlanId,
       tagId: id,
+      created_by: userId
     };
   });
 
@@ -143,13 +235,11 @@ const mapMealPlanWithMealTag = async (
       .insert<TableInsert<"meal_plan_tags">>(mealTagData);
 
     if (error) {
-      const errorMessage: string =
-        error instanceof Error
-          ? `There is an error Mapping the Meal Tags: ${error.message}`
-          : "An unknown error occurred";
+      const errorMessage: string = `There is an error Mapping the Meal Tags: ${error.message}`
       return {
         success: false,
         error: true,
+        data: [],
         message: errorMessage,
       };
     }
@@ -193,13 +283,11 @@ const createTheDailyMeal = async (
         created_by: userId,
       });
     if (error) {
-      const errorMessage: string =
-        error instanceof Error
-          ? `There is an error Creating your Daily Meal: ${error.message}`
-          : "An unknown error occurred";
+      const errorMessage: string = `There is an error Creating your Daily Meal: ${error.message}`
       return {
         success: false,
         error: true,
+        data: [],
         message: errorMessage,
       };
     }
@@ -244,13 +332,11 @@ const createAMeal = async (
       .select();
 
     if (error) {
-      const errorMessage: string =
-        error instanceof Error
-          ? `There is an error Creating your Meal: ${error.message}`
-          : "An unknown error occurred";
+      const errorMessage: string = `There is an error Creating your Meal: ${error.message}`
       return {
         success: false,
         error: true,
+        data: [],
         message: errorMessage,
       };
     }
@@ -263,9 +349,20 @@ const createAMeal = async (
       arrangedIngredients
     );
 
-    if (ingredientMutationResult?.error) {
-      return ingredientMutationResult;
+    if (ingredientMutationResult.error) {
+      return {
+        success: ingredientMutationResult.success,
+        error: ingredientMutationResult.error,
+        data: [],
+        message: ingredientMutationResult.message,
+      };
     }
+    return {
+      success: true,
+      error: false,
+      data: mealMutationResult,
+      message: "",
+    };
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
@@ -292,16 +389,20 @@ const insertMealIngredients = async (
       .from("meal_ingredients")
       .insert<TableInsert<"meal_ingredients">>(ingredients);
     if (error) {
-      const errorMessage: string =
-        error instanceof Error
-          ? `There is an error Inserting an ingredient:: ${error.message}`
-          : "An unknown error occurred";
+      const errorMessage: string = `There is an error Inserting an ingredient:: ${error.message}`
       return {
         success: false,
         error: true,
         message: errorMessage,
       };
     }
+
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
@@ -347,7 +448,7 @@ const saveExercisePlan = async (
   exercisePlanName: string,
   selectedExercisePlan: string,
   exercisePlan: exercisePlan,
-  visibilityPreference: string
+  visibilityPreference: number
 ) => {
   console.log(exercisePlanName);
   console.log(selectedExercisePlan);
