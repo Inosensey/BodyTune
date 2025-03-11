@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { Oval } from "react-loader-spinner";
 
 // Components
 import { Input } from "@/components/reusableComponent/formInputs/input";
@@ -40,11 +41,15 @@ interface props {
   selectedCreateOption: string;
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
-  generalInfoFieldsVal: generalInfoType; 
-  setGeneralInfoFieldsVal: React.Dispatch<React.SetStateAction<generalInfoType>>;
-  setDisabledBreadCrumbs: React.Dispatch<React.SetStateAction<Array<number>>>
-  bmiClassification: {id: string, bmiClassification:string},
-  setBmiClassification: React.Dispatch<React.SetStateAction<{id: string, bmiClassification:string}>>
+  generalInfoFieldsVal: generalInfoType;
+  setGeneralInfoFieldsVal: React.Dispatch<
+    React.SetStateAction<generalInfoType>
+  >;
+  setDisabledBreadCrumbs: React.Dispatch<React.SetStateAction<Array<number>>>;
+  bmiClassification: { id: string; bmiClassification: string };
+  setBmiClassification: React.Dispatch<
+    React.SetStateAction<{ id: string; bmiClassification: string }>
+  >;
 }
 
 interface generalInfoValidation {
@@ -99,7 +104,7 @@ const SetGeneralInfo = ({
   setMealPlanInfo,
   setDisabledBreadCrumbs,
   bmiClassification,
-  setBmiClassification
+  setBmiClassification,
 }: props) => {
   // State
   const [formIsValid, setFormIsValid] = useState<boolean>(false);
@@ -107,7 +112,11 @@ const SetGeneralInfo = ({
     useState<generalInfoValidation>(generalInfoValidationInitials);
 
   // Query
-  const { data, refetch: generateBodyTune, isFetching } = useQuery({
+  const {
+    data,
+    refetch: generateBodyTune,
+    isFetching,
+  } = useQuery({
     queryKey: ["generatedBodyTune"],
     queryFn: () => {
       return generateBodyTunePlan(
@@ -383,7 +392,22 @@ const SetGeneralInfo = ({
           )}
         </div>
       </div>
-      <LoadingPopUp message="⏳ Hang Tight! Crafting Your Ultimate BodyTune Plan..." isLoading={isFetching} />
+      <LoadingPopUp
+        message="⏳ Hang Tight! Crafting Your Ultimate BodyTune Plan..."
+        isLoading={isFetching}
+        LoadingAnimationIcon={
+          <Oval
+          visible={true}
+          height="60"
+          width="60"
+          color="#4fa94d"
+          secondaryColor="#4B6F64"
+          ariaLabel="oval-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          />
+        }
+      />
     </>
   );
 };
