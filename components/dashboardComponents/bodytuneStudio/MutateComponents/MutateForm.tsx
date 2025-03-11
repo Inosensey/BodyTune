@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { AnimatePresence } from "framer-motion";
+import { Oval } from "react-loader-spinner";
 
 // Actions
 import { createBodyTunePlan } from "@/actions/planActions";
@@ -19,7 +20,10 @@ import CreationOption from "../../reusableComponents/CreationOption";
 import BodyTuneDetails from "../BodyTuneDetails";
 
 // Utils
-import { generateMealPlanName, generateExercisePlanName } from "@/utils/dashboardUtils";
+import {
+  generateMealPlanName,
+  generateExercisePlanName,
+} from "@/utils/dashboardUtils";
 
 // Icons
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
@@ -183,11 +187,16 @@ const MutateForm = ({ personalInfo }: props) => {
     const jsonData = {
       mealPlan: mealPlanInfo,
       exercisePlan: exercisePlanInfo,
+      mealPlanTags: selectedBmis,
+      exercisePlanTags: selectedDifficulties
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanFieldsVal.mealPlanName);
     formData.append("bmiClassification", mealPlanFieldsVal.mealPlanName);
-    formData.append("exerciseDifficulty", exercisePlanFieldsVal.exercisePlanName);
+    formData.append(
+      "exerciseDifficulty",
+      exercisePlanFieldsVal.exercisePlanName
+    );
     formData.append("exercisePlanName", exercisePlanFieldsVal.exercisePlanName);
     formData.append("visibilityPreference", visibilityPreference);
     formData.append("selectedMealPlan", mealPlanFieldsVal.selectedMealPlan);
@@ -210,17 +219,29 @@ const MutateForm = ({ personalInfo }: props) => {
     }
   }, [selectedOption]);
   useEffect(() => {
-    setSelectedBmis((prev) => [...prev, bmiClassification.bmiClassification])
-    setMealPlanFieldsVal((prev) => ({...prev, mealPlanName: generateMealPlanName(bmiClassification.bmiClassification)}))
-  },[bmiClassification])
+    if(bmiClassification.id === "") return
+    setSelectedBmis((prev) => [...prev, bmiClassification.bmiClassification]);
+    setMealPlanFieldsVal((prev) => ({
+      ...prev,
+      mealPlanName: generateMealPlanName(bmiClassification.bmiClassification),
+    }));
+  }, [bmiClassification]);
   useEffect(() => {
-    setSelectedDifficulties((prev) => [...prev, generalInfoFieldsVal.experience])
-    setExercisePlanFieldsVal((prev) => ({...prev, exercisePlanName: generateExercisePlanName(generalInfoFieldsVal.experience)}))
-  },[generalInfoFieldsVal])
+    setSelectedDifficulties((prev) => [
+      ...prev,
+      generalInfoFieldsVal.experience,
+    ]);
+    setExercisePlanFieldsVal((prev) => ({
+      ...prev,
+      exercisePlanName: generateExercisePlanName(
+        generalInfoFieldsVal.experience
+      ),
+    }));
+  }, [generalInfoFieldsVal]);
   useEffect(() => {
+    console.log("wew",formState);
     if (formState.success !== null || formState.error !== null) {
       if (formState.success) {
-        console.log(formState);
         // setSubmitMessage("You're in! 🎯 Taking you to your dashboard—let’s crush some goals today! 💪");
         setIsSubmitting(false);
       } else {
@@ -338,7 +359,22 @@ const MutateForm = ({ personalInfo }: props) => {
           />
         )}
       </AnimatePresence>
-      <LoadingPopUp message={submitMessage} isLoading={isSubmitting} />
+      <LoadingPopUp
+        message={submitMessage}
+        isLoading={isSubmitting}
+        LoadingAnimationIcon={
+          <Oval
+          visible={true}
+          height="60"
+          width="60"
+          color="#4fa94d"
+          secondaryColor="#4B6F64"
+          ariaLabel="oval-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          />
+        }
+      />
     </>
   );
 };
