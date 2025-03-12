@@ -4,9 +4,7 @@
 import { TableInsert } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import {
-  IngredientInfo,
   IngredientTypes,
-  MealInfoTypes,
   mealPlanType,
   Nutrients,
 } from "@/types/mealTypes";
@@ -41,9 +39,6 @@ export const createBodyTunePlan = async (
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
 
-  const mealIds: {[key: string]:{ breakFast: number; lunch: number; dinner: number; day: string} } = {
-  };
-
   // saveExercisePlan(
   //   exercisePlanName,
   //   selectedExercisePlan,
@@ -53,8 +48,9 @@ export const createBodyTunePlan = async (
 
   try {
     const createMealPlanResult = await createMealPlan(
+      mealPlan,
       mealPlanName,
-      visibilityPreference, 
+      visibilityPreference,
       mealPlanTags,
       userId
     );
@@ -68,59 +64,7 @@ export const createBodyTunePlan = async (
       };
     }
 
-    Object.entries(mealPlan).map(async ([day]) => {
-      Object.entries(mealPlan[day]).map(async ([mealType]) => {
-        const mealTypeNumber = getMealType(mealType);
-        const createAMealResult = await createAMeal(
-          mealPlan[day][mealType].mealInfo!,
-          mealPlan[day][mealType].ingredients!,
-          mealTypeNumber,
-          userId
-        );
-        if (createAMealResult.error) {
-          return {
-            success: createAMealResult.success,
-            error: createAMealResult.error,
-            data: [],
-            message: createAMealResult.message,
-          };
-        }
-        const mealId = createAMealResult.data![0].id!;
-
-        console.log(mealType)
-        switch (mealType) {
-          case "breakFast":
-            mealIds[day].breakFast = mealId;
-            mealIds[day].day = day;
-            break;
-
-          case "lunch":
-            mealIds[day].lunch = mealId;
-            mealIds[day].day = day;
-
-            break;
-
-          case "dinner":
-            mealIds[day].dinner = mealId;
-            mealIds[day].day = day;
-
-            break;
-
-          default:
-            mealIds[day].lunch = mealId;
-            mealIds[day].day = day;
-            break;
-        }
-      });
-    });
-    
-    console.log("mealIds",mealIds)
-    // const createTheDailyMealResult = await createTheDailyMeal(
-    //   mealIds,
-    //   createMealPlanResult.data![0].id!,
-    //   day,
-    //   userId
-    // );
+    // console.log(createTheDailyMealResult)
 
     // if (createTheDailyMealResult.error) {
     //   return {
@@ -152,6 +96,7 @@ export const createBodyTunePlan = async (
 
 // Meals functions
 const createMealPlan = async (
+  mealPlan: mealPlanType,
   mealPlanName: string,
   visibilityPreference: number,
   mealPlanTags: Array<string>,
@@ -169,7 +114,7 @@ const createMealPlan = async (
       })
       .select();
     if (error) {
-      const errorMessage: string = `There is an error Creating the Meal Plan: ${error.message}`
+      const errorMessage: string = `There is an error Creating the Meal Plan: ${error.message}`;
       return {
         success: false,
         error: true,
@@ -178,16 +123,13 @@ const createMealPlan = async (
       };
     }
     const response = data as TableInsert<"meal_plan">[];
+    const mealPlanId = response[0].id!;
 
     const mapMealPlanWithMealTagResult = await mapMealPlanWithMealTag(
-      response[0].id!,
+      mealPlanId,
       mealPlanTags,
       userId
     );
-
-  
-    console.log(response)
-    console.log(mapMealPlanWithMealTagResult)
 
     if (mapMealPlanWithMealTagResult.error) {
       return {
@@ -195,6 +137,33 @@ const createMealPlan = async (
         error: mapMealPlanWithMealTagResult.error,
         data: [],
         message: mapMealPlanWithMealTagResult.message,
+      };
+    }
+
+    const createAMealResult = await createMeals(mealPlan, userId)
+
+    if(createAMealResult.error) {      
+      return {
+        success: createAMealResult.success,
+        error: createAMealResult.error,
+        data: [],
+        message: createAMealResult.message,
+      };
+    }
+    const mealIds = createAMealResult.data[0]! as {[key: string]: {
+      breakFast: number;
+      lunch: number;
+      dinner: number;
+      day: string;
+    } }
+    const createTheDailyMealResult = await createTheDailyMeal(mealIds, mealPlanId, userId)
+
+    if(createTheDailyMealResult.error) {      
+      return {
+        success: createTheDailyMealResult.success,
+        error: createTheDailyMealResult.error,
+        data: [],
+        message: createTheDailyMealResult.message,
       };
     }
 
@@ -234,7 +203,7 @@ const mapMealPlanWithMealTag = async (
     return {
       mealPlanId: mealPlanId,
       tagId: id,
-      created_by: userId
+      created_by: userId,
     };
   });
 
@@ -244,7 +213,7 @@ const mapMealPlanWithMealTag = async (
       .insert<TableInsert<"meal_plan_tags">>(mealTagData);
 
     if (error) {
-      const errorMessage: string = `There is an error Mapping the Meal Tags: ${error.message}`
+      const errorMessage: string = `There is an error Mapping the Meal Tags: ${error.message}`;
       return {
         success: false,
         error: true,
@@ -273,28 +242,23 @@ const mapMealPlanWithMealTag = async (
 };
 
 const createTheDailyMeal = async (
-  mealIds: { breakFast: number; lunch: number; dinner: number },
+  mealIds: {[key: string]: {
+    breakFast: number;
+    lunch: number;
+    dinner: number;
+    day: string;
+  } },
   planId: number,
-  day: string,
   userId: string
 ) => {
   const supabase = await createSSR();
-
+  const dailyMealInfo = arrangeDailyMeal(mealIds, planId, userId)
   try {
     const { error } = await supabase
-      .from("daily_meal")
-      .insert<TableInsert<"daily_meals">>({
-        plan_id: planId,
-        breakFast: mealIds.breakFast,
-        lunch: mealIds.lunch,
-        dinner: mealIds.dinner,
-        day: day,
-        created_by: userId,
-      });
+      .from("daily_meals")
+      .insert<TableInsert<"daily_meals">>(dailyMealInfo);
     if (error) {
-      console.log(mealIds);
-      console.log(error);
-      const errorMessage: string = `There is an error Creating your Daily Meal: ${error.message}`
+      const errorMessage: string = `There is an error Creating your Daily Meal: ${error.message}`;
       return {
         success: false,
         error: true,
@@ -322,56 +286,96 @@ const createTheDailyMeal = async (
   }
 };
 
-const createAMeal = async (
-  meal: MealInfoTypes,
-  ingredients: IngredientTypes,
-  mealType: number,
+const createMeals = async (
+  mealPlan: mealPlanType,
   userId: string
 ) => {
   const supabase = await createSSR();
 
+  const mealIds: {
+    [key: string]: {
+      breakFast: number;
+      lunch: number;
+      dinner: number;
+      day: string;
+    };
+  } = {};
   try {
-    const { data, error } = await supabase
-      .from("meal")
-      .insert<TableInsert<"meal">>({
-        mealType: mealType,
-        mealName: meal.mealName,
-        instructions: meal.cookingInstruction,
-        veganAlternative: meal.veganAlternative,
-        created_by: userId,
+    await Promise.all(
+      Object.entries(mealPlan).map(async ([day]) => {
+        let breakFastId = 0;
+        let lunchId = 0;
+        let dinnerId = 0;
+        await Promise.all(
+          Object.entries(mealPlan[day]).map(async ([mealType]) => {
+            const mealTypeId = getMealType(mealType);
+    
+            const { data, error } = await supabase
+              .from("meal")
+              .insert<TableInsert<"meal">>({
+                mealType: mealTypeId,
+                mealName: mealPlan[day][mealType].mealInfo!.mealName,
+                instructions: mealPlan[day][mealType].mealInfo!.cookingInstruction,
+                veganAlternative: mealPlan[day][mealType].mealInfo!.veganAlternative,
+                created_by: userId,
+              })
+              .select();
+    
+            if (error) {
+              throw new Error(`Error creating meal: ${error.message}`);
+            }
+    
+            const mealMutationResult = data as TableInsert<"meal">[];
+            const mealId = mealMutationResult[0].id!;
+    
+            switch (mealType) {
+              case "breakFast":
+                breakFastId = mealId;
+                break;
+              case "lunch":
+                lunchId = mealId;
+                break;
+              case "dinner":
+                dinnerId = mealId;
+                break;
+              default:
+                lunchId = mealId;
+                break;
+            }
+    
+            mealIds[day] = {
+              breakFast: breakFastId,
+              lunch: lunchId,
+              dinner: dinnerId,
+              day: day,
+            };
+    
+            const arrangedIngredients = arrangeIngredients(
+              mealPlan[day][mealType].ingredients!,
+              userId,
+              mealId
+            );
+    
+            const ingredientMutationResult = await insertMealIngredients(
+              arrangedIngredients
+            );
+    
+            if (ingredientMutationResult.error) {
+              return {
+                success: ingredientMutationResult.success,
+                error: ingredientMutationResult.error,
+                data: [],
+                message: ingredientMutationResult.message,
+              };
+            }
+          })
+        );
       })
-      .select();
-
-    if (error) {
-      const errorMessage: string = `There is an error Creating your Meal: ${error.message}`
-      return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
-      };
-    }
-
-    const mealMutationResult = data as TableInsert<"meal">[];
-    const mealId = mealMutationResult[0].id!;
-    const arrangedIngredients = arrangeIngredients(ingredients, userId, mealId);
-
-    const ingredientMutationResult = await insertMealIngredients(
-      arrangedIngredients
     );
-
-    if (ingredientMutationResult.error) {
-      return {
-        success: ingredientMutationResult.success,
-        error: ingredientMutationResult.error,
-        data: [],
-        message: ingredientMutationResult.message,
-      };
-    }
     return {
       success: true,
       error: false,
-      data: mealMutationResult,
+      data: [mealIds],
       message: "",
     };
   } catch (error) {
@@ -400,7 +404,7 @@ const insertMealIngredients = async (
       .from("meal_ingredients")
       .insert<TableInsert<"meal_ingredients">>(ingredients);
     if (error) {
-      const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`
+      const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`;
       return {
         success: false,
         error: true,
@@ -442,29 +446,45 @@ const arrangeIngredients = (
   Object.entries(ingredients).forEach(([key]) => {
     ingredientInfos.push({
       ingredientName: ingredients[key].ingredientValue,
-      protein: parseFloat(parseFloat(ingredients[key].proteinsValue).toFixed(2)),
-      calories: parseFloat(parseFloat(ingredients[key].caloriesValue).toFixed(2)),
+      protein: parseFloat(
+        parseFloat(ingredients[key].proteinsValue).toFixed(2)
+      ),
+      calories: parseFloat(
+        parseFloat(ingredients[key].caloriesValue).toFixed(2)
+      ),
       carbs: parseFloat(parseFloat(ingredients[key].carbsValue).toFixed(2)),
       fat: parseFloat(parseFloat(ingredients[key].fatValue).toFixed(2)),
       created_by: userId,
       mealId: mealId,
     });
-  })
-
-  // ingredients.map((ingredient: IngredientInfo) => {
-  //   ingredientInfos.push({
-  //     ingredientName: ingredient.ingredientValue,
-  //     protein: parseFloat(parseFloat(ingredient.proteinsValue).toFixed(2)),
-  //     calories: parseFloat(parseFloat(ingredient.caloriesValue).toFixed(2)),
-  //     carbs: parseFloat(parseFloat(ingredient.carbsValue).toFixed(2)),
-  //     fat: parseFloat(parseFloat(ingredient.fatValue).toFixed(2)),
-  //     userId: userId,
-  //     mealId: mealId,
-  //   });
-  // });
+  });
 
   return ingredientInfos;
 };
+
+const arrangeDailyMeal = (mealIds:{
+  [key: string]: {
+    breakFast: number;
+    lunch: number;
+    dinner: number;
+    day: string;
+  };
+}, mealPlanId: number, userId: string):Array<{plan_id:number, created_by:string, breakFast:number, lunch:number, dinner:number, day:string }> => {
+  const dailyMealInfo:Array<{plan_id:number, created_by:string, breakFast:number, lunch:number, dinner:number, day:string }> = [];
+
+  Object.entries(mealIds).map(([day]) => {
+    dailyMealInfo.push({
+      day: day,
+      breakFast: mealIds[day].breakFast,
+      lunch: mealIds[day].lunch,
+      dinner: mealIds[day].dinner,
+      plan_id: mealPlanId,
+      created_by: userId
+    })
+  })
+
+  return dailyMealInfo;
+}
 
 // Exercises functions
 const saveExercisePlan = async (
