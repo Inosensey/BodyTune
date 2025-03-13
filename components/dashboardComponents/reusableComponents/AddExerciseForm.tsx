@@ -33,7 +33,14 @@ interface props {
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   exercisePlanInfo: exercisePlan;
   formAction: string;
-  selectedExercise: TableInsert<"exercise">;
+  selectedExercise: TableInsert<"exercise"> & {
+    exerciseDemoInfo: {
+      url: string;
+      width: number;
+      height: number;
+      fileName: string;
+    };
+  };
   selectedWeekDay: string;
 }
 interface ExerciseFormValidations {
@@ -85,18 +92,31 @@ interface radioButtonInfo {
 }
 
 // Initials
-const ExerciseFormInputValInitial: TableInsert<"exercise"> = {
+const ExerciseFormInputValInitial: TableInsert<"exercise"> & {
+  exerciseDemoInfo: {
+    url: string;
+    width: number;
+    height: number;
+    fileName: string;
+  };
+} = {
   exerciseName: "",
   bodyPart: "",
   equipment: "",
   day: "",
-  exerciseDifficulty: 1,
+  // exerciseDifficulty: 1,
   exerciseMeasurementType: 1,
   measurement: "",
   exerciseDemo: "",
   bmiClassification: 1,
   instruction: "",
   youtubeLink: "",
+  exerciseDemoInfo: {
+    fileName: "",
+    url: "",
+    height: 0,
+    width: 0,
+  },
 };
 const ExerciseFormValidationInitials: ExerciseFormValidations = {
   exerciseName: {
@@ -142,23 +162,23 @@ const ExerciseFormValidationInitials: ExerciseFormValidations = {
 };
 
 // Fixed values
-const difficultyRadioButtons: radioButtonInfo[] = [
-  {
-    label: "Beginner",
-    name: "difficulty",
-    value: "1",
-  },
-  {
-    label: "Amateur",
-    name: "difficulty",
-    value: "2",
-  },
-  {
-    label: "Expert",
-    name: "difficulty",
-    value: "3",
-  },
-];
+// const difficultyRadioButtons: radioButtonInfo[] = [
+//   {
+//     label: "Beginner",
+//     name: "difficulty",
+//     value: "1",
+//   },
+//   {
+//     label: "Amateur",
+//     name: "difficulty",
+//     value: "2",
+//   },
+//   {
+//     label: "Expert",
+//     name: "difficulty",
+//     value: "3",
+//   },
+// ];
 const measurementTypeRadioButtons: radioButtonInfo[] = [
   {
     label: "Reps (Repetition-Based)",
@@ -179,12 +199,18 @@ const AddExerciseForm = ({
   selectedExercise,
   selectedWeekDay,
 }: props) => {
-
   // States
   const [exerciseValidations, setExerciseStepValidations] =
     useState<ExerciseFormValidations>(ExerciseFormValidationInitials);
   const [exerciseFormInputVal, setExerciseFormInputVal] = useState<
-    TableInsert<"exercise">
+    TableInsert<"exercise"> & {
+      exerciseDemoInfo: {
+        url: string;
+        width: number;
+        height: number;
+        fileName: string;
+      };
+    }
   >(ExerciseFormInputValInitial);
   const [demoSrc, setDemoSrc] = useState<string | null>(null);
 
@@ -252,6 +278,12 @@ const AddExerciseForm = ({
         setExerciseFormInputVal((prev) => ({
           ...prev,
           exerciseDemo: e.target?.result as string,
+          exerciseDemoInfo: {
+            fileName: file.name,
+            url: e.target?.result as string,
+            height: file.size,
+            width: file.size,
+          },
         }));
         setDemoSrc(e.target?.result as string);
       };
@@ -325,7 +357,7 @@ const AddExerciseForm = ({
       exerciseName: exerciseFormInputVal.exerciseName!,
       bodyPart: exerciseFormInputVal.bodyPart!,
       equipment: exerciseFormInputVal.equipment!,
-      exerciseDifficulty: exerciseFormInputVal.exerciseDifficulty!.toString(),
+      // exerciseDifficulty: exerciseFormInputVal.exerciseDifficulty!.toString(),
       exerciseMeasurementType:
         exerciseFormInputVal.exerciseMeasurementType!.toString(),
       measurement: exerciseFormInputVal.measurement!,
@@ -344,7 +376,7 @@ const AddExerciseForm = ({
   const setInitials = () => {
     if (formAction === "Edit") {
       setExerciseFormInputVal(selectedExercise);
-      setDemoSrc(selectedExercise.exerciseDemo!)
+      setDemoSrc(selectedExercise.exerciseDemo!);
     } else {
       setExerciseFormInputVal(ExerciseFormInputValInitial);
     }
@@ -422,7 +454,7 @@ const AddExerciseForm = ({
                 }
               />
             </motion.div>
-            <RadioButtonGroup
+            {/* <RadioButtonGroup
               radioOnChangeFn={radioOnChange}
               radioButtonGroupLabel="Difficulty"
               radioButtons={difficultyRadioButtons}
@@ -431,7 +463,7 @@ const AddExerciseForm = ({
               validationMessage={
                 exerciseValidations.exerciseDifficulty.validationMessage
               }
-            />
+            /> */}
 
             <RadioButtonGroup
               radioOnChangeFn={radioOnChange}
@@ -457,8 +489,7 @@ const AddExerciseForm = ({
                   autoComplete="off"
                   valid={exerciseValidations.measurement.valid}
                   validationMessage={
-                    exerciseValidations.measurement
-                      .validationMessage
+                    exerciseValidations.measurement.validationMessage
                   }
                 />
               </motion.div>
@@ -477,8 +508,7 @@ const AddExerciseForm = ({
                   autoComplete="off"
                   valid={exerciseValidations.measurement.valid}
                   validationMessage={
-                    exerciseValidations.measurement
-                      .validationMessage
+                    exerciseValidations.measurement.validationMessage
                   }
                 />
               </motion.div>
@@ -501,7 +531,7 @@ const AddExerciseForm = ({
                   width={200}
                   height={200}
                   alt="Preview"
-                  className="w-full h-44"
+                  className="w-full h-44 object-contain"
                 />
               )}
             </motion.div>
@@ -551,7 +581,10 @@ const AddExerciseForm = ({
                     }
                     return {
                       ...prev,
-                      [selectedWeekDay]: [...prev[selectedWeekDay], exerciseFormInputVal],
+                      [selectedWeekDay]: [
+                        ...prev[selectedWeekDay],
+                        exerciseFormInputVal,
+                      ],
                     };
                   });
                   setToggleAddExerciseForm(false);
