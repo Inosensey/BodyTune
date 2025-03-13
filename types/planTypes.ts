@@ -1,8 +1,6 @@
 import { TableInsert } from "@/types/database.types";
 import { mealPlanType } from "./mealTypes";
 
-
-
 export interface exerciseQueryHygraphType {
   day: string;
   exerciseName: string;
@@ -10,8 +8,8 @@ export interface exerciseQueryHygraphType {
   equipment: string;
   youtubeLink: string;
   measurement: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
   instruction: string;
   exerciseDemo: {
     url: string;
@@ -28,14 +26,16 @@ export interface exerciseQueryHygraphType {
 }
 
 export interface exercisePlan {
-  [key: string]: Array<TableInsert<"exercise">>;
-  // monday: TableInsert<"exercise"> | null,
-  // tuesday: TableInsert<"exercise"> | null,
-  // wednesday: TableInsert<"exercise"> | null,
-  // thursday: TableInsert<"exercise"> | null,
-  // friday: TableInsert<"exercise"> | null,
-  // saturday: TableInsert<"exercise"> | null,
-  // sunday: TableInsert<"exercise"> | null,
+  [key: string]: Array<
+    TableInsert<"exercise"> & {
+      exerciseDemoInfo: {
+        url: string;
+        width: number;
+        height: number;
+        fileName: string;
+      };
+    }
+  >;
 }
 
 export interface bodyTunePlan {
