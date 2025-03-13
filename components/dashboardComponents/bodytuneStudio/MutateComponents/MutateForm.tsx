@@ -227,6 +227,7 @@ const MutateForm = ({ personalInfo }: props) => {
     }));
   }, [bmiClassification]);
   useEffect(() => {
+    if(generalInfoFieldsVal.experience === "") return
     setSelectedDifficulties((prev) => [
       ...prev,
       generalInfoFieldsVal.experience,
