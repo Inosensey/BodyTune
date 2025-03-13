@@ -1,5 +1,6 @@
 "use server";
 
+import { TableInsert } from "@/types/database.types";
 import {
   ingredient,
   IngredientTypes,
@@ -7,10 +8,7 @@ import {
   mealQueryHygraphType,
   Nutrients,
 } from "@/types/mealTypes";
-import {
-  exercisePlan,
-  exerciseQueryHygraphType,
-} from "@/types/planTypes";
+import { exercisePlan, exerciseQueryHygraphType } from "@/types/planTypes";
 
 import { weekDates } from "@/utils/initials";
 
@@ -166,12 +164,16 @@ const getExerciseByBmi = async (bmiClassification: string) => {
   }
 };
 
-export const generateBodyTunePlan = async (bmiClassification: string, experience:string) => {
+export const generateBodyTunePlan = async (
+  bmiClassification: string,
+  experience: string
+) => {
   const mealList = await getMealsByBmi(bmiClassification);
   const exerciseList = await getExerciseByBmi(bmiClassification);
   const mealPlan: mealPlanType = setMealPlan(mealList.data.meals);
   const exercisePlan: exercisePlan = await setExercisePlan(
-    exerciseList.data.exercises, experience
+    exerciseList.data.exercises,
+    experience
   );
 
   return { mealPlan, exercisePlan };
@@ -179,50 +181,58 @@ export const generateBodyTunePlan = async (bmiClassification: string, experience
 
 const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
   const shuffledMeals = [...meals].sort(() => Math.random() - 0.5);
-  const breakfastMeal = shuffledMeals.filter(meal => meal.mealType === "Breakfast");
-  const lunchMeal = shuffledMeals.filter(meal => meal.mealType === "Lunch");
-  const dinnerMeal = shuffledMeals.filter(meal => meal.mealType === "Dinner");
-  
+  const breakfastMeal = shuffledMeals.filter(
+    (meal) => meal.mealType === "Breakfast"
+  );
+  const lunchMeal = shuffledMeals.filter((meal) => meal.mealType === "Lunch");
+  const dinnerMeal = shuffledMeals.filter((meal) => meal.mealType === "Dinner");
+
   const mealPlan: mealPlanType = {};
 
   for (let index = 0; index < weekDates.length; index++) {
-      const breakfastMealIngredientInfo = getIngredientsInfo(breakfastMeal[index].ingredients)
-      const lunchMealIngredientInfo = getIngredientsInfo(lunchMeal[index].ingredients)
-      const dinnerMealIngredientInfo = getIngredientsInfo(dinnerMeal[index].ingredients)
+    const breakfastMealIngredientInfo = getIngredientsInfo(
+      breakfastMeal[index].ingredients
+    );
+    const lunchMealIngredientInfo = getIngredientsInfo(
+      lunchMeal[index].ingredients
+    );
+    const dinnerMealIngredientInfo = getIngredientsInfo(
+      dinnerMeal[index].ingredients
+    );
 
-      mealPlan[weekDates[index]] = {
-          breakFast: {
-            mealInfo: {
-              mealName: breakfastMeal[index].mealName,
-              shortDescription: "",
-              cookingInstruction: breakfastMeal[index].cookingInstructions,
-              veganAlternative: breakfastMeal[index].veganAlternative
-            },
-            ingredients: breakfastMealIngredientInfo.ingredientList,
-            nutrition: breakfastMealIngredientInfo.nutritionInfo
-          },
-          lunch: {
-            mealInfo: {
-              mealName: lunchMeal[index].mealName,
-              shortDescription: "",
-              cookingInstruction: lunchMeal[index].cookingInstructions,
-              veganAlternative: lunchMeal[index].veganAlternative
-            },
-            ingredients: lunchMealIngredientInfo.ingredientList,
-            nutrition: lunchMealIngredientInfo.nutritionInfo
-          },
-          dinner: {
-            mealInfo: {
-              mealName: dinnerMeal[index].mealName,
-              shortDescription: "",
-              cookingInstruction: dinnerMeal[index].cookingInstructions,
-              veganAlternative: dinnerMeal[index].veganAlternative
-            },
-            ingredients: dinnerMealIngredientInfo.ingredientList,
-            nutrition: dinnerMealIngredientInfo.nutritionInfo
-          },
-      };
-    }
+    mealPlan[weekDates[index]] = {
+      breakFast: {
+        mealInfo: {
+          mealName: breakfastMeal[index].mealName,
+          shortDescription: "",
+          cookingInstruction: breakfastMeal[index].cookingInstructions,
+          veganAlternative: breakfastMeal[index].veganAlternative,
+        },
+        ingredients: breakfastMealIngredientInfo.ingredientList,
+        nutrition: breakfastMealIngredientInfo.nutritionInfo,
+      },
+      lunch: {
+        mealInfo: {
+          mealName: lunchMeal[index].mealName,
+          shortDescription: "",
+          cookingInstruction: lunchMeal[index].cookingInstructions,
+          veganAlternative: lunchMeal[index].veganAlternative,
+        },
+        ingredients: lunchMealIngredientInfo.ingredientList,
+        nutrition: lunchMealIngredientInfo.nutritionInfo,
+      },
+      dinner: {
+        mealInfo: {
+          mealName: dinnerMeal[index].mealName,
+          shortDescription: "",
+          cookingInstruction: dinnerMeal[index].cookingInstructions,
+          veganAlternative: dinnerMeal[index].veganAlternative,
+        },
+        ingredients: dinnerMealIngredientInfo.ingredientList,
+        nutrition: dinnerMealIngredientInfo.nutritionInfo,
+      },
+    };
+  }
 
   return mealPlan;
 };
@@ -235,12 +245,12 @@ const getIngredientsInfo = (ingredients: Array<ingredient>) => {
     carbs: 0,
     fat: 0,
   };
-  
+
   ingredients.forEach((ingredient: ingredient) => {
     const UUID = crypto.randomUUID();
-    ingredientList = { 
-        ...ingredientList, 
-        [`ingredient${UUID}`]: {
+    ingredientList = {
+      ...ingredientList,
+      [`ingredient${UUID}`]: {
         id: UUID,
         ingredientName: `Ingredients ${UUID}`,
         ingredientValue: ingredient.name,
@@ -252,7 +262,7 @@ const getIngredientsInfo = (ingredients: Array<ingredient>) => {
         carbsValue: ingredient.nutrition.carbs.toString(),
         fatName: `Fat`,
         fatValue: ingredient.nutrition.fat.toString(),
-      }
+      },
     };
     nutritionInfo.calories += ingredient.nutrition.calories;
     nutritionInfo.protein += ingredient.nutrition.protein;
@@ -263,7 +273,10 @@ const getIngredientsInfo = (ingredients: Array<ingredient>) => {
   return { ingredientList, nutritionInfo };
 };
 
-const setExercisePlan = async (exercises: Array<exerciseQueryHygraphType>, experience:string) => {
+const setExercisePlan = async (
+  exercises: Array<exerciseQueryHygraphType>,
+  experience: string
+) => {
   const exercisePlan: exercisePlan = {
     ["Monday"]: [
       {
@@ -271,40 +284,53 @@ const setExercisePlan = async (exercises: Array<exerciseQueryHygraphType>, exper
         bodyPart: "",
         equipment: "",
         day: "",
-        exerciseDifficulty: 1,
         exerciseMeasurementType: 1,
         measurement: "",
         exerciseDemo: "",
         bmiClassification: 1,
         instruction: "",
         youtubeLink: "",
+        exerciseDemoInfo: {
+          fileName: "",
+          url: "",
+          height: 0,
+          width: 0,
+        },
       },
     ],
   };
 
-  const test = await urlToFile(exercises[0].exerciseDemo)
-  console.log(test)
+  const test = await urlToFile(exercises[0].exerciseDemo);
+  console.log(test);
 
   weekDates.forEach((day) => {
-    const filteredExercises = exercises
+    const filteredExercises: Array<
+      TableInsert<"exercise"> & {
+        exerciseDemoInfo: {
+          url: string;
+          width: number;
+          height: number;
+          fileName: string;
+        };
+      }
+    > = exercises
       .filter((exercise) => exercise.day === day)
-      .map((exercise:exerciseQueryHygraphType) => {
+      .map((exercise: exerciseQueryHygraphType) => {
         let difficulty = 0;
         let measurementType = 0;
-        if(experience === "beginner") {
+        if (experience === "beginner") {
           difficulty = 1;
-        } else if(experience === "Amateur") {
-          difficulty = 2
+        } else if (experience === "Amateur") {
+          difficulty = 2;
         } else {
-          difficulty = 3
+          difficulty = 3;
         }
 
-        if(exercise.exerciseMeasurementType.measurementName === "Reps") {
-          measurementType = 1
+        if (exercise.exerciseMeasurementType.measurementName === "Reps") {
+          measurementType = 1;
         } else {
-          measurementType = 2
+          measurementType = 2;
         }
-
         return {
           exerciseName: exercise.exerciseName,
           bodyPart: exercise.bodyPart,
@@ -317,8 +343,14 @@ const setExercisePlan = async (exercises: Array<exerciseQueryHygraphType>, exper
           bmiClassification: 1,
           instruction: exercise.instruction,
           youtubeLink: exercise?.youtubeLink,
-        }
-    });
+          exerciseDemoInfo: {
+            fileName: exercise.exerciseDemo?.fileName,
+            url: exercise.exerciseDemo?.url,
+            height: exercise.exerciseDemo ? exercise.exerciseDemo.height : 0,
+            width: exercise.exerciseDemo ? exercise.exerciseDemo.width : 0,
+          },
+        };
+      });
 
     exercisePlan[day] = filteredExercises.length > 0 ? filteredExercises : [];
   });
@@ -343,7 +375,8 @@ const urlToFile = async (exerciseDemo: { url: string; fileName: string }) => {
   try {
     const response = await fetch(exerciseDemo.url);
     const blob = await response.blob();
-    const fileType = getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
+    const fileType =
+      getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
 
     return new File([blob], exerciseDemo.fileName, { type: fileType });
   } catch (error) {
