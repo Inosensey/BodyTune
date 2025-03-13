@@ -122,3 +122,29 @@ export const getMealType = (type:string):number => {
 
   return mealType
 } 
+
+export const getExerciseTagIds = (exerciseTags: Array<string>): Array<number> => {
+  const exerciseTagIds: Array<number> = [];
+
+  exerciseTags.map((tag) => {
+    switch (tag) {
+      case "beginner":
+        exerciseTagIds.push(1)
+        break;
+    
+      case "Amateur":
+        exerciseTagIds.push(2)
+        break;
+    
+      case "Expert":
+        exerciseTagIds.push(3)
+        break;
+    
+      default:
+        exerciseTagIds.push(1)
+        break;
+    }
+  })
+
+  return exerciseTagIds;
+}
