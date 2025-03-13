@@ -42,6 +42,7 @@ export interface IngredientTypes {
   [key: string]: IngredientInfo;
 }
 export type IngredientInfo = {
+  id?: string,
   ingredientName: string;
   ingredientValue: string;
   caloriesName: string;
