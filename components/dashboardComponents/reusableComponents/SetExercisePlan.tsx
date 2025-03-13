@@ -33,13 +33,38 @@ interface props {
   setExercisePlanFieldsVal: React.Dispatch<
     React.SetStateAction<exercisePlanInterface>
   >;
-  selectedDifficulties: Array<string>,
-  setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>,
+  selectedDifficulties: Array<string>;
+  setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>;
 }
 
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
 import { TableInsert } from "@/types/database.types";
+const selectExerciseInitial: TableInsert<"exercise"> & {
+  exerciseDemoInfo: {
+    url: string;
+    width: number;
+    height: number;
+    fileName: string;
+  };
+} = {
+  exerciseName: "",
+  bodyPart: "",
+  equipment: "",
+  day: "",
+  exerciseMeasurementType: 1,
+  measurement: "",
+  exerciseDemo: "",
+  bmiClassification: 1,
+  instruction: "",
+  youtubeLink: "",
+  exerciseDemoInfo: {
+    fileName: "",
+    url: "",
+    height: 0,
+    width: 0,
+  },
+};
 
 const SetExercisePlan = ({
   setSelectedOption,
@@ -51,7 +76,7 @@ const SetExercisePlan = ({
   exercisePlanFieldsVal,
   setExercisePlanFieldsVal,
   selectedDifficulties,
-  setSelectedDifficulties
+  setSelectedDifficulties,
 }: props) => {
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
@@ -61,8 +86,15 @@ const SetExercisePlan = ({
   const [toggleAddExerciseForm, setToggleAddExerciseForm] =
     useState<boolean>(false);
   const [selectedExercise, setSelectedExercise] = useState<
-    TableInsert<"exercise">
-  >({});
+    TableInsert<"exercise"> & {
+      exerciseDemoInfo: {
+        url: string;
+        width: number;
+        height: number;
+        fileName: string;
+      };
+    }
+  >(selectExerciseInitial);
   const [formAction, setFormAction] = useState<string>("");
   const [actionType, setActionType] = useState<string>(
     selectedCreateOption === "recommendation" ? "New" : ""
@@ -414,7 +446,17 @@ const SetExercisePlan = ({
                   <div className="flex flex-wrap gap-1 w-full h-full mt-1 overflow-auto">
                     <div className="flex flex-wrap gap-1 w-[100%] overflow-auto flex-row">
                       {exercisePlanInfo[selectedWeekDay].map(
-                        (exercise: TableInsert<"exercise">, index: number) => (
+                        (
+                          exercise: TableInsert<"exercise"> & {
+                            exerciseDemoInfo: {
+                              url: string;
+                              width: number;
+                              height: number;
+                              fileName: string;
+                            };
+                          },
+                          index: number
+                        ) => (
                           <div
                             key={index}
                             className="rounded-md flex flex-col font-quickSand bg-lightPrimary p-2 h-max phone:w-[160px] phone:text-xs tablet:w-[180px] tablet:text-sm"
@@ -442,11 +484,11 @@ const SetExercisePlan = ({
                                 </p>
                               </div>
                             </div>
-                            <p className="truncate font-semibold">
+                            {/* <p className="truncate font-semibold">
                               {exercise.exerciseDifficulty === 1 && "Beginner"}
                               {exercise.exerciseDifficulty === 2 && "Amateur"}
                               {exercise.exerciseDifficulty === 3 && "Expert"}
-                            </p>
+                            </p> */}
                             <p className="truncate font-semibold">
                               {exercise.bmiClassification === 1 &&
                                 "Under Weight"}
