@@ -9,7 +9,7 @@ import {
   Nutrients,
 } from "@/types/mealTypes";
 import { exercisePlan } from "@/types/planTypes";
-import { getMealTagIds, getMealType } from "@/utils/dashboardUtils";
+import { getExerciseTagIds, getMealTagIds, getMealType } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
 
 export const createBodyTunePlan = async (
@@ -34,17 +34,13 @@ export const createBodyTunePlan = async (
   const mealPlan: mealPlanType = jsonData.mealPlan;
   const exercisePlan: exercisePlan = jsonData.exercisePlan;
   const mealPlanTags: Array<string> = jsonData.mealPlanTags;
-  // const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
+  const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
 
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
 
-  // saveExercisePlan(
-  //   exercisePlanName,
-  //   selectedExercisePlan,
-  //   exercisePlan,
-  //   visibilityPreference
-  // );
+  const arrangedExercises = arrangeExercises(exercisePlan, 1, userId)
+  console.log(arrangedExercises)
 
   try {
     const createMealPlanResult = await createMealPlan(
@@ -64,16 +60,23 @@ export const createBodyTunePlan = async (
       };
     }
 
-    // console.log(createTheDailyMealResult)
+    const createExercisePlanResult = await createExercisePlan(
+      exercisePlanName,
+      selectedExercisePlan,
+      exercisePlan,
+      visibilityPreference,
+      exercisePlanTags,
+      userId
+    );
 
-    // if (createTheDailyMealResult.error) {
-    //   return {
-    //     success: createTheDailyMealResult.success,
-    //     error: createTheDailyMealResult.error,
-    //     data: [],
-    //     message: createTheDailyMealResult.message,
-    //   };
-    // }
+    if (createExercisePlanResult.error) {
+      return {
+        success: createExercisePlanResult.success,
+        error: createExercisePlanResult.error,
+        data: [],
+        message: createExercisePlanResult.message,
+      };
+    }
     return {
       success: true,
       error: false,
@@ -487,14 +490,288 @@ const arrangeDailyMeal = (mealIds:{
 }
 
 // Exercises functions
-const saveExercisePlan = async (
+const createExercisePlan = async (
   exercisePlanName: string,
   selectedExercisePlan: string,
   exercisePlan: exercisePlan,
-  visibilityPreference: number
+  visibilityPreference: number,
+  exercisePlanTags: Array<string>,
+  userId: string
 ) => {
-  console.log(exercisePlanName);
-  console.log(selectedExercisePlan);
-  console.log(exercisePlan);
-  console.log(visibilityPreference);
+  const supabase = await createSSR();
+  
+  try {
+    const { data, error } = await supabase.from("exercise_plan").insert<TableInsert<"exercise_plan">>({
+      planName: exercisePlanName,
+      visibility: visibilityPreference,
+      created_by: userId
+    }).select()
+
+    if (error) {
+      const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
+    const response = data as TableInsert<"exercise_plan">[];
+    const exercisePlanId = response[0].id!;
+
+    const mapExercisePlanWithExerciseTagResult = await mapExercisePlanWithExerciseTag(exercisePlanId, exercisePlanTags, userId)
+
+    if(mapExercisePlanWithExerciseTagResult.error) {
+      if(mapExercisePlanWithExerciseTagResult.error) {      
+        return {
+          success: mapExercisePlanWithExerciseTagResult.success,
+          error: mapExercisePlanWithExerciseTagResult.error,
+          data: [],
+          message: mapExercisePlanWithExerciseTagResult.message,
+        };
+      }
+    }
+
+    const uploadExerciseDemosResult = await uploadExerciseDemos(exercisePlan, exercisePlanId, userId)
+
+    if(uploadExerciseDemosResult.error) {
+      if(uploadExerciseDemosResult.error) {      
+        return {
+          success: uploadExerciseDemosResult.success,
+          error: uploadExerciseDemosResult.error,
+          data: [],
+          message: uploadExerciseDemosResult.message,
+        };
+      }
+    }
+
+    const insertExercisesResult = await insertExercises(exercisePlan, exercisePlanId, userId);
+
+    if(insertExercisesResult.error) {
+      if(insertExercisesResult.error) {      
+        return {
+          success: insertExercisesResult.success,
+          error: insertExercisesResult.error,
+          data: [],
+          message: insertExercisesResult.message,
+        };
+      }
+    }
+
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Inserting an ingredient: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+};
+
+const insertExercises = async(exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
+  const supabase = await createSSR();
+
+  const arrangedExercises = arrangeExercises(exercisePlan, exercisePlanId, userId)
+  try {
+    const { error } = await supabase.from("exercise").insert<TableInsert<"exercise">>(arrangedExercises)
+    
+    if (error) {
+      const errorMessage: string = `There is an error Inserting your Exercise: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Inserting the Exercise: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
+const uploadExerciseDemos = async (exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
+  const supabase = await createSSR();
+
+  const demoPaths: Array<string> = [];
+
+  try {
+    await Promise.all(
+    Object.entries(exercisePlan).map(([day]) => {
+        exercisePlan[day].forEach(async (exercise: TableInsert<"exercise"> & {exerciseDemoInfo: {
+          url: string;
+          width: number;
+          height: number;
+          fileName: string;
+        }}) => {
+          if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo === undefined) {
+            const demoFile = await urlToFile(exercise.exerciseDemoInfo);
+            const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
+              cacheControl: '3600',
+              upsert: false
+            })
+            
+            if (error) {
+              const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+              return {
+                success: false,
+                error: true,
+                data: [],
+                message: errorMessage,
+              };
+            }
+            demoPaths.push(data.fullPath);
+          }
+        })
+      })
+    )
+    
+    return {
+      success: true,
+      error: false,
+      data: demoPaths,
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Uploading the Exercise Demo File: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
+const mapExercisePlanWithExerciseTag = async (exercisePlanId:number, exercisePlanTags:Array<string>, userId: string) => {
+  const supabase = await createSSR();
+  const exerciseTagIds: Array<number> = getExerciseTagIds(exercisePlanTags);
+  const exerciseTagData: Array<{
+    id?: number;
+    exercisePlanId: number;
+    tagId: number;
+    createdAt?: string;
+  }> = exerciseTagIds.map((id: number) => {
+    return {
+      exercisePlanId: exercisePlanId,
+      tagId: id,
+      created_by: userId,
+    };
+  });
+
+  try {
+    const { error } = await supabase.from("exercise_plan_tag").insert<TableInsert<"exercise_plan_tag">>(exerciseTagData)
+    if (error) {
+      const errorMessage: string = `There is an error Mapping your Exercise Plan: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Mapping your Exercise Plan: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
+const arrangeExercises = (exercisePlan:exercisePlan, exercisePlanId: number, userId: string): Array<TableInsert<"exercise">> => {
+  const exercises:Array<TableInsert<"exercise">> = [];
+  Object.entries(exercisePlan).forEach(([day]) => {
+    exercisePlan[day].forEach((exercise: TableInsert<"exercise">& {
+      exerciseDemoInfo: {
+        url: string;
+        width: number;
+        height: number;
+        fileName: string;
+      }}) => {
+      exercises.push({
+        exerciseName: exercise.exerciseName,
+        bodyPart: exercise.bodyPart,
+        equipment: exercise.equipment,
+        day: day,
+        exerciseDemo: exercise.exerciseDemoInfo === null ? "" :  `Exercise Demo/exercise-demo/${userId}/${exercisePlanId}/${exercise.exerciseDemoInfo.fileName}`,
+        exerciseMeasurementType: exercise.exerciseMeasurementType,
+        measurement: exercise.measurement,
+        instruction: exercise.instruction,
+        youtubeLink: exercise.youtubeLink,
+        bmiClassification: exercise.bmiClassification,
+        exercisePlanId: exercisePlanId,
+        created_by: userId
+      })
+    })
+  })
+
+  return exercises
+}
+
+const getFileTypeFromFileName = (fileName: string) => {
+  const extension = fileName.split(".").pop()?.toLowerCase();
+  const mimeTypes: Record<string, string> = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+    webp: "image/webp",
+  };
+
+  return mimeTypes[extension || ""] || "application/octet-stream";
+};
+
+const urlToFile = async (exerciseDemo: { url: string; fileName: string }) => {
+  try {
+    const response = await fetch(exerciseDemo.url);
+    const blob = await response.blob();
+    const fileType =
+      getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
+
+    return new File([blob], exerciseDemo.fileName, { type: fileType });
+  } catch (error) {
+    console.error("Error converting URL to file:", error);
+    return null;
+  }
 };
