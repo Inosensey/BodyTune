@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 // lib
-import {getMeals, getWorkouts} from "@/lib/hygraphQueries"
+import { getBodyTunes } from "@/lib/supabaseQueries";
 
 // Components
 import DashboardHeader from "../DashboardHeader";
@@ -12,23 +12,22 @@ import DashboardHeader from "../DashboardHeader";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 import BodyTuneStudioContents from "./BodyTuneStudioContents";
 
-const BodyTuneStudio = () => {
+// Types
+import { bodyTunePlan } from "@/types/planTypes";
+interface props {
+  bodyTunesProp: Array<bodyTunePlan> | undefined
+}
 
-    // Use query
-    const { data: meals } = useQuery({
-      queryKey: ["meals"],
-      queryFn: () => {
-        return getMeals();
-      }
-    });
-    const { data: exercises } = useQuery({
-      queryKey: ["exercises"],
-      queryFn: () => {
-        return getWorkouts();
-      }
-    });
-    console.log(meals);
-    console.log(exercises);
+const BodyTuneStudio = ({bodyTunesProp}:props) => {
+
+  // Use query
+  useQuery({
+    queryKey: ["bodyTunes"],
+    initialData: bodyTunesProp,
+    queryFn: () => {
+      return getBodyTunes();
+    }
+  });
   return (
     <div className="flex flex-col gap-3 h-[99%]">
       <DashboardHeader
