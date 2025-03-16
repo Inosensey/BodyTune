@@ -1,5 +1,5 @@
 import { TableInsert } from "@/types/database.types";
-import { mealPlanType } from "./mealTypes";
+// import { mealPlanType } from "./mealTypes";
 
 export interface exerciseQueryHygraphType {
   day: string;
@@ -39,6 +39,127 @@ export interface exercisePlan {
 }
 
 export interface bodyTunePlan {
-  mealPlan: mealPlanType;
-  exercisePlan: exercisePlan;
+  mealPlanId: number;
+  exercisePlanId: number;
+  created_by: string,
+  personal_information: {
+      name: string
+  },
+  meal_plan: {
+    id: number;
+    planName: string;
+    created_by: string;
+    visibility: number;
+    meal_plan_tags: [
+      meal_tags: {
+        id: number;
+        mealTagName: string;
+      }
+    ];
+    plan_visibility: {
+      visibility: string;
+    };
+    personal_information: {
+        name: string
+    },
+    daily_meals: [
+      plan_id: number,
+      day: string,
+      breakFast: {
+        id: number;
+        mealName: string;
+        mealType: {
+          mealType: string;
+        };
+        instruction: string;
+        meal_ingredients: [
+          {
+            mealId: number;
+            ingredientName: string;
+            fat: number;
+            carbs: number;
+            protein: number;
+            calories: number;
+          }
+        ];
+        veganAlternative: string | null;
+      },
+      lunch: {
+        id: number;
+        mealName: string;
+        mealType: {
+          mealType: string;
+        };
+        instruction: string;
+        meal_ingredients: [
+          {
+            mealId: number;
+            ingredientName: string;
+            fat: number;
+            carbs: number;
+            protein: number;
+            calories: number;
+          }
+        ];
+        veganAlternative: string | null;
+      },
+      dinner: {
+        id: number;
+        mealName: string;
+        mealType: {
+          mealType: string;
+        };
+        instruction: string;
+        meal_ingredients: [
+          {
+            mealId: number;
+            ingredientName: string;
+            fat: number;
+            carbs: number;
+            protein: number;
+            calories: number;
+          }
+        ];
+        veganAlternative: string | null;
+      }
+    ];
+  };
+  exercise_plan: {
+    id: number;
+    planName: string;
+    created_by: string;
+    visibility: number;
+    meal_plan_tags: [
+      meal_tags: {
+        id: number;
+        mealTagName: string;
+      }
+    ];
+    plan_visibility: {
+      visibility: string;
+    };
+    personal_information: {
+        name: string
+    },
+    exercise: [
+      {
+        exerciseName: string;
+        bodyPart: string;
+        equipment: string;
+        day: string;
+        exerciseDemo: string;
+        measurement: string;
+        instruction: string;
+        bmiClassification: number;
+        exerciseMeasurementType: number;
+        exercise_measurement_type: {
+          id: number;
+          measurement: string;
+        };
+        bmi_classification: {
+          classification: string;
+        };
+      }
+    ];
+  };
 }
