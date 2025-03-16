@@ -8,11 +8,19 @@ export async function GET() {
         const {data, error} = await supabase.from("bodytune_plan").select(`
                 mealPlanId,
                 exercisePlanId,
+                created_by,
+                personal_information (
+                    name
+                ),
                 meal_plan (
                     id,
                     planName,
                     created_by,
                     visibility,
+                    created_by,
+                    personal_information (
+                        name
+                    ),
                     meal_plan_tags (
                         meal_tags (
                             id,
@@ -92,6 +100,16 @@ export async function GET() {
                     plan_visibility (
                         visibility
                     ),
+                    exercise_plan_tag (
+                        exercise_tags (
+                            id,
+                            exerciseTagName
+                        )
+                    ),
+                    created_by,
+                    personal_information (
+                        name
+                    ),
                     exercise (
                         exerciseName,
                         bodyPart,
@@ -111,7 +129,7 @@ export async function GET() {
                         )
                     )
                 )
-            `)
+            `);
         if (error) {
             console.log(error);
         }
