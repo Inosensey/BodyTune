@@ -1,9 +1,13 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
+
+// Lib
+import { getBodyTunes } from "@/lib/supabaseQueries";
 
 // Components
 import BodyTuneCard from "./BodyTuneCard";
@@ -12,6 +16,9 @@ import BodyTuneDetails from "./BodyTuneDetails";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+
+// Types
+import { bodyTunePlan } from "@/types/planTypes";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -23,8 +30,15 @@ const pageResultPreferences: Array<number | string> = [
   50,
   "All",
 ];
-
 const BodyTuneStudioContents = () => {
+  // UseQuery
+  const {data: bodyTunes} = useQuery({
+    queryKey: ["bodyTunes"],
+    queryFn: () => {
+      return getBodyTunes();
+    }
+  });
+
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
@@ -131,7 +145,22 @@ const BodyTuneStudioContents = () => {
               </div>
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
-              <BodyTuneCard
+              {bodyTunes && bodyTunes.length !== 0 ?
+                bodyTunes.map((bodyTune:bodyTunePlan, index: number) => (
+                  <div key={index}>
+                    <BodyTuneCard
+                      author={bodyTune.personal_information.name}
+                      bodyTunePlanName="Beginner Friendly Plan"
+                      exercisePlanName={bodyTune.exercise_plan.planName}
+                      mealPlanName={bodyTune.meal_plan.planName}
+                      likes="44521"
+                      views="4451"
+                      setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+                    />
+                  </div>
+                ))
+              : <p>No BodyTunes</p>}
+              {/* <BodyTuneCard
                 author="Philip Mathew Dingcong"
                 bodyTunePlanName="Beginner Friendly Plan"
                 exercisePlanName="Exercise Plan Name"
@@ -175,7 +204,7 @@ const BodyTuneStudioContents = () => {
                 likes="44521"
                 views="4451"
                 setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              />
+              /> */}
             </div>
           </div>
         </div>
