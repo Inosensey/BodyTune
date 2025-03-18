@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 
+// Libs
+import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
+
+
 // Icons
 import SolarEyeOutline from "@/icons/SolarEyeOutline";
 import SolarHeartAngleOutline from "@/icons/SolarHeartAngleOutline";
@@ -10,32 +14,51 @@ import TablerEdit from "@/icons/TablerEdit";
 import TablerTrashX from "@/icons/TablerTrashX";
 
 // Types
+import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 interface props {
   author: string;
-  bodyTunePlanName: string;
   mealPlanName: string;
+  bodyTunePlan: bodyTunePlan
   exercisePlanName: string;
+  exercise_plan_tag: Array<{
+    exercise_tags: {
+      id: number;
+      exerciseTagName: string;
+    };
+  }>;
+  meal_plan_tags: Array<{
+    meal_tags: {
+      id: number;
+      mealTagName: string;
+    };
+  }>;
   views: string;
   likes: string;
   setToggleBodyTuneDetails: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedBodyTunePlan: React.Dispatch<React.SetStateAction<{
+        exercisePlan?: exercisePlan;
+        mealPlan?: mealPlanType;
+    }>>
 }
 
 const BodyTuneCard = ({
   author,
-  bodyTunePlanName,
   exercisePlanName,
-  likes,
+  bodyTunePlan,
   mealPlanName,
+  exercise_plan_tag,
+  meal_plan_tags,
+  likes,
   views,
   setToggleBodyTuneDetails,
+  setSelectedBodyTunePlan
 }: props) => {
+
   return (
     <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <p className="text-base font-bold text-lightSecondary underline">
-            {bodyTunePlanName}
-          </p>
           <p className="font-semibold text-sm">{author}</p>
         </div>
         <div className="flex items-center justify-center gap-1">
@@ -56,21 +79,18 @@ const BodyTuneCard = ({
             <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
           </div>
           <div className="flex flex-wrap gap-1 font-dmSans font-semibold text-xs">
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Beginner
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Underweight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Healthy weight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Overweight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Obesity
-            </p>
+            {exercise_plan_tag.map(
+              (tag: {
+                exercise_tags: { id: number; exerciseTagName: string };
+              }) => (
+                <p
+                  key={tag.exercise_tags.id}
+                  className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer"
+                >
+                  {tag.exercise_tags.exerciseTagName}
+                </p>
+              )
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -85,21 +105,16 @@ const BodyTuneCard = ({
             />
           </div>
           <div className="flex flex-wrap gap-1 font-dmSans font-semibold text-xs">
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Beginner
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Underweight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Healthy weight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Overweight
-            </p>
-            <p className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer">
-              Obesity
-            </p>
+            {meal_plan_tags.map(
+              (tag: { meal_tags: { id: number; mealTagName: string } }) => (
+                <p
+                  key={tag.meal_tags.id}
+                  className="w-max border-[1px] border-lightSecondary px-1 py-[0.3rem] cursor-pointer"
+                >
+                  {tag.meal_tags.mealTagName}
+                </p>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -119,7 +134,11 @@ const BodyTuneCard = ({
       </div>
 
       <motion.button
-        onClick={() => setToggleBodyTuneDetails(true)}
+        onClick={() => {
+          setToggleBodyTuneDetails(true)
+          const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTunePlan)
+          setSelectedBodyTunePlan((prev) => ({...prev, mealPlan: mealPlan, exercisePlan: exercisePlan}))
+        }}
         className="w-max flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
       >
         View Full Details
