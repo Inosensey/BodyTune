@@ -116,6 +116,7 @@ export async function GET() {
                         equipment,
                         day,
                         exerciseDemo,
+                        youtubeLink,
                         measurement,
                         instruction,
                         bmiClassification,
