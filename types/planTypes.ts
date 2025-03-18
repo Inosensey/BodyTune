@@ -41,56 +41,54 @@ export interface exercisePlan {
 export interface bodyTunePlan {
   mealPlanId: number;
   exercisePlanId: number;
-  created_by: string,
+  created_by: string;
   personal_information: {
-      name: string
-  },
+    name: string;
+  };
   meal_plan: {
     id: number;
     planName: string;
     created_by: string;
     visibility: number;
-    meal_plan_tags: [
+    meal_plan_tags: Array<{
       meal_tags: {
         id: number;
         mealTagName: string;
-      }
-    ];
+      };
+    }>;
     plan_visibility: {
       visibility: string;
     };
     personal_information: {
-        name: string
-    },
-    daily_meals: [
-      plan_id: number,
-      day: string,
+      name: string;
+    };
+    daily_meals: Array<{
+      plan_id: number;
+      day: string;
       breakFast: {
         id: number;
         mealName: string;
         mealType: {
           mealType: string;
         };
-        instruction: string;
-        meal_ingredients: [
-          {
-            mealId: number;
-            ingredientName: string;
-            fat: number;
-            carbs: number;
-            protein: number;
-            calories: number;
-          }
-        ];
+        instructions: string;
+        meal_ingredients: Array<{
+          mealId: number;
+          ingredientName: string;
+          fat: number;
+          carbs: number;
+          protein: number;
+          calories: number;
+        }>;
         veganAlternative: string | null;
-      },
+      };
       lunch: {
         id: number;
         mealName: string;
         mealType: {
           mealType: string;
         };
-        instruction: string;
+        instructions: string;
         meal_ingredients: [
           {
             mealId: number;
@@ -102,14 +100,14 @@ export interface bodyTunePlan {
           }
         ];
         veganAlternative: string | null;
-      },
+      };
       dinner: {
         id: number;
         mealName: string;
         mealType: {
           mealType: string;
         };
-        instruction: string;
+        instructions: string;
         meal_ingredients: [
           {
             mealId: number;
@@ -121,26 +119,26 @@ export interface bodyTunePlan {
           }
         ];
         veganAlternative: string | null;
-      }
-    ];
+      };
+    }>;
   };
   exercise_plan: {
     id: number;
     planName: string;
     created_by: string;
     visibility: number;
-    meal_plan_tags: [
-      meal_tags: {
+    exercise_plan_tag: Array<{
+      exercise_tags: {
         id: number;
-        mealTagName: string;
-      }
-    ];
+        exerciseTagName: string;
+      };
+    }>;
     plan_visibility: {
       visibility: string;
     };
     personal_information: {
-        name: string
-    },
+      name: string;
+    };
     exercise: [
       {
         exerciseName: string;
@@ -148,6 +146,7 @@ export interface bodyTunePlan {
         equipment: string;
         day: string;
         exerciseDemo: string;
+        youtubeLink: string | null;
         measurement: string;
         instruction: string;
         bmiClassification: number;
