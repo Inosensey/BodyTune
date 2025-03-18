@@ -15,7 +15,7 @@ import { createSSR } from "@/utils/supabaseSSR";
 export const createBodyTunePlan = async (
   prevState: formReturnType<[]>,
   formData: FormData
-): Promise<formReturnType<[]>> => {
+): Promise<formReturnType<[] | number>> => {
   const supabase = await createSSR();
 
   const jsonData: {
@@ -38,9 +38,6 @@ export const createBodyTunePlan = async (
 
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
-
-  const arrangedExercises = arrangeExercises(exercisePlan, 1, userId)
-  console.log(arrangedExercises)
 
   try {
     const createMealPlanResult = await createMealPlan(
@@ -77,10 +74,34 @@ export const createBodyTunePlan = async (
         message: createExercisePlanResult.message,
       };
     }
+
+    const mealPlanId = createMealPlanResult.data[0].id!;
+    const exercisePlanId = createExercisePlanResult.data[0].id!;
+
+    const {data, error} = await supabase.from("bodytune_plan").insert<TableInsert<"bodytune_plan">>({
+      mealPlanId: mealPlanId,
+      exercisePlanId: exercisePlanId,
+      visibility: visibilityPreference,
+      created_by: userId
+    }).select()
+
+    
+    if (error) {
+      const errorMessage: string = `There is an error Creating the BodyTune Plan: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
+    const response = data as TableInsert<"bodytune_plan">[];
+    const bodyTunePlanId = response[0].id!;
     return {
       success: true,
       error: false,
-      data: [],
+      data: bodyTunePlanId,
       message: ``,
     };
   } catch (error) {
@@ -562,7 +583,7 @@ const createExercisePlan = async (
     return {
       success: true,
       error: false,
-      data: [],
+      data: response,
       message: "",
     };
   } catch (error) {
