@@ -377,14 +377,14 @@ const BodyTuneDetails = ({
                                 <p className="font-bold text-[#a3e09f]">
                                   {exercise.exerciseName}
                                 </p>
-                                <p className="font-semibold laptop:text-sm">
+                                {/* <p className="font-semibold laptop:text-sm">
                                   {exercise.exerciseDifficulty === 1 &&
                                     "Beginner"}
                                   {exercise.exerciseDifficulty === 2 &&
                                     "Amateur"}
                                   {exercise.exerciseDifficulty === 3 &&
                                     "Expert"}
-                                </p>
+                                </p> */}
                                 <p className="font-semibold laptop:text-sm">
                                   {exercise.bmiClassification === 1 &&
                                     "Under Weight"}
@@ -406,7 +406,7 @@ const BodyTuneDetails = ({
                                 )}
                               </div>
                               <div className="w-[100%] h-36">
-                                <Image
+                                {/* <Image
                                   width={200}
                                   height={200}
                                   src={
@@ -416,7 +416,7 @@ const BodyTuneDetails = ({
                                   }
                                   alt="Preview"
                                   className="w-full h-full object-contain"
-                                />
+                                /> */}
                               </div>
                             </motion.div>
                           )
