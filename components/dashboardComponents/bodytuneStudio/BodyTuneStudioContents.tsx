@@ -18,7 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 // Types
-import { bodyTunePlan } from "@/types/planTypes";
+import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -43,6 +44,10 @@ const BodyTuneStudioContents = () => {
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
     useState<boolean>(false);
+  const [selectedBodyTunePlan, setSelectedBodyTunePlan] = useState<{
+      exercisePlan?: exercisePlan;
+      mealPlan?: mealPlanType;
+  }>({})
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -149,62 +154,20 @@ const BodyTuneStudioContents = () => {
                 bodyTunes.map((bodyTune:bodyTunePlan, index: number) => (
                   <div key={index}>
                     <BodyTuneCard
+                      bodyTunePlan={bodyTune}
                       author={bodyTune.personal_information.name}
-                      bodyTunePlanName="Beginner Friendly Plan"
                       exercisePlanName={bodyTune.exercise_plan.planName}
                       mealPlanName={bodyTune.meal_plan.planName}
+                      exercise_plan_tag={bodyTune.exercise_plan.exercise_plan_tag}
+                      meal_plan_tags={bodyTune.meal_plan.meal_plan_tags}
                       likes="44521"
                       views="4451"
                       setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+                      setSelectedBodyTunePlan={setSelectedBodyTunePlan}
                     />
                   </div>
                 ))
               : <p>No BodyTunes</p>}
-              {/* <BodyTuneCard
-                author="Philip Mathew Dingcong"
-                bodyTunePlanName="Beginner Friendly Plan"
-                exercisePlanName="Exercise Plan Name"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              />
-              <BodyTuneCard
-                author="Philip Mathew Dingcong"
-                bodyTunePlanName="Beginner Friendly Plan"
-                exercisePlanName="Exercise Plan Name"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              />
-              <BodyTuneCard
-                author="Philip Mathew Dingcong"
-                bodyTunePlanName="Beginner Friendly Plan"
-                exercisePlanName="Exercise Plan Name"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              />
-              <BodyTuneCard
-                author="Philip Mathew Dingcong"
-                bodyTunePlanName="Beginner Friendly Plan"
-                exercisePlanName="Exercise Plan Name"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              />
-              <BodyTuneCard
-                author="Philip Mathew Dingcong"
-                bodyTunePlanName="Beginner Friendly Plan"
-                exercisePlanName="Exercise Plan Name"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-              /> */}
             </div>
           </div>
         </div>
@@ -214,6 +177,8 @@ const BodyTuneStudioContents = () => {
         {toggleBodyTuneDetails && (
           <BodyTuneDetails
             setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+            mealPlan={selectedBodyTunePlan.mealPlan}
+            exercisePlan={selectedBodyTunePlan.exercisePlan}
           />
         )}
       </AnimatePresence>
