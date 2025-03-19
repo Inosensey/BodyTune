@@ -406,7 +406,7 @@ const BodyTuneDetails = ({
                                 )}
                               </div>
                               <div className="w-[100%] h-36">
-                                {/* <Image
+                                <Image
                                   width={200}
                                   height={200}
                                   src={
@@ -416,7 +416,7 @@ const BodyTuneDetails = ({
                                   }
                                   alt="Preview"
                                   className="w-full h-full object-contain"
-                                /> */}
+                                />
                               </div>
                             </motion.div>
                           )
