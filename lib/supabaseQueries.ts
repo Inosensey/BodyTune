@@ -23,9 +23,9 @@ export const getBodyTunes = async () => {
             }
         );
         const parsedData = await res.json();
-        const bodyTunes: Array<bodyTunePlan> | undefined = parsedData.data;
+        const bodyTunes: Array<bodyTunePlan> | undefined = parsedData.res;
         return bodyTunes
     } else {
-        return undefined;
+        return [];
     }
 }
