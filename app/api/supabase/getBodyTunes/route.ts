@@ -1,15 +1,15 @@
-
+import { bodyTunePlan } from "@/types/planTypes";
 import { createSSR } from "@/utils/supabaseSSR";
 
 export async function GET() {
-    const supabase = await createSSR();
+  const supabase = await createSSR();
 
-    try {
-        const {data, error} = await supabase.from("bodytune_plan").select(`
+  try {
+    const bodyTuneQuery = supabase.from("bodytune_plan").select(`
                 mealPlanId,
                 exercisePlanId,
                 created_by,
-                personal_information (
+                personal_information:personal_information (
                     name
                 ),
                 meal_plan (
@@ -129,14 +129,55 @@ export async function GET() {
                             classification
                         )
                     )
-                )
-            `);
-        if (error) {
-            console.log(error);
-        }
-
-        return Response.json({ data });
-    } catch (error) {
-        return Response.json({ message: error });
+                )`);
+    const {data, error} = await bodyTuneQuery;
+    if (error) {
+      return Response.json({ message: error });
     }
+    const bodyTuneQueryRes = data as unknown as bodyTunePlan[];
+
+    const res = await getSignedDemoUrls(bodyTuneQueryRes);
+
+    return Response.json({ res });
+  } catch (error) {
+    return Response.json({ message: error });
+  }
 }
+
+const getSignedDemoUrls = async (bodyTunes: bodyTunePlan[]) => {
+  const supabase = await createSSR();
+  try {
+    const updatedBodyTune = await Promise.all(
+      bodyTunes.map(async (bodyTune: bodyTunePlan) => {
+        bodyTune.exercise_plan.exercise = (await Promise.all(
+          bodyTune.exercise_plan.exercise.map(async (exercise) => {
+            if (exercise.exerciseDemo) {
+              const filePath = exercise.exerciseDemo
+                .replace("Exercise Demo/", "")
+                .trim();
+
+              const { data: signedUrlData, error } = await supabase.storage
+                .from("Exercise Demo")
+                .createSignedUrl(filePath, 60 * 60);
+
+              if (error) {
+                console.error("Error generating signed URL:", error);
+                return exercise;
+              }
+
+              return {
+                ...exercise,
+                exerciseDemo: signedUrlData?.signedUrl || "",
+              };
+            }
+            return exercise;
+          })
+        )) as typeof bodyTune.exercise_plan.exercise;
+        return bodyTune;
+      })
+    );
+    return updatedBodyTune;
+  } catch (error) {
+    return error;
+  }
+};
