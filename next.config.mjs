@@ -10,6 +10,8 @@ const nextConfig = {
   },
   images: {
     dangerouslyAllowSVG: true,
+    loader: 'custom',
+    loaderFile: './utils/supabaseImageLoader.ts',
     remotePatterns: [
       {
         protocol: 'https',
