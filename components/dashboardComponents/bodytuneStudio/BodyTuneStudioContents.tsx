@@ -20,6 +20,7 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 // Types
 import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
+import Overlay from "@/components/reusableComponent/Overlay";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -33,11 +34,11 @@ const pageResultPreferences: Array<number | string> = [
 ];
 const BodyTuneStudioContents = () => {
   // UseQuery
-  const {data: bodyTunes} = useQuery({
+  const { data: bodyTunes } = useQuery({
     queryKey: ["bodyTunes"],
     queryFn: () => {
       return getBodyTunes();
-    }
+    },
   });
 
   const [sortBy, setSortBy] = useState<string>("Relevance");
@@ -45,9 +46,9 @@ const BodyTuneStudioContents = () => {
   const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
     useState<boolean>(false);
   const [selectedBodyTunePlan, setSelectedBodyTunePlan] = useState<{
-      exercisePlan?: exercisePlan;
-      mealPlan?: mealPlanType;
-  }>({})
+    exercisePlan?: exercisePlan;
+    mealPlan?: mealPlanType;
+  }>({});
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -150,15 +151,17 @@ const BodyTuneStudioContents = () => {
               </div>
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
-              {bodyTunes && bodyTunes.length !== 0 ?
-                bodyTunes.map((bodyTune:bodyTunePlan, index: number) => (
-                  <div key={index}>
+              {bodyTunes && bodyTunes.length !== 0 ? (
+                bodyTunes.map((bodyTune: bodyTunePlan, index: number) => (
+                  <div className="w-full" key={index}>
                     <BodyTuneCard
                       bodyTunePlan={bodyTune}
                       author={bodyTune.personal_information.name}
                       exercisePlanName={bodyTune.exercise_plan.planName}
                       mealPlanName={bodyTune.meal_plan.planName}
-                      exercise_plan_tag={bodyTune.exercise_plan.exercise_plan_tag}
+                      exercise_plan_tag={
+                        bodyTune.exercise_plan.exercise_plan_tag
+                      }
                       meal_plan_tags={bodyTune.meal_plan.meal_plan_tags}
                       likes="44521"
                       views="4451"
@@ -167,7 +170,9 @@ const BodyTuneStudioContents = () => {
                     />
                   </div>
                 ))
-              : <p>No BodyTunes</p>}
+              ) : (
+                <p>No BodyTunes</p>
+              )}
             </div>
           </div>
         </div>
@@ -175,11 +180,13 @@ const BodyTuneStudioContents = () => {
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneDetails && (
-          <BodyTuneDetails
-            setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-            mealPlan={selectedBodyTunePlan.mealPlan}
-            exercisePlan={selectedBodyTunePlan.exercisePlan}
-          />
+          <Overlay>
+            <BodyTuneDetails
+              setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+              mealPlan={selectedBodyTunePlan.mealPlan}
+              exercisePlan={selectedBodyTunePlan.exercisePlan}
+            />
+          </Overlay>
         )}
       </AnimatePresence>
     </>
