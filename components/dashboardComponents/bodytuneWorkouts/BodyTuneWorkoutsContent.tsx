@@ -6,11 +6,12 @@ import Link from "next/link";
 
 // Components
 import BodyTuneWorkoutDetails from "./BodyTuneWorkoutDetails";
+import Overlay from "@/components/reusableComponent/Overlay";
+import BodyTuneWorkoutCard from "./BodyTuneWorkoutCard";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-import BodyTuneWorkoutCard from "./BodyTuneWorkoutCard";
 import { AnimatePresence } from "framer-motion";
 
 // Fixed values
@@ -187,9 +188,11 @@ const BodyTuneWorkoutsContent = () => {
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneWorkoutDetails && (
-          <BodyTuneWorkoutDetails
-            setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
-          />
+          <Overlay>
+            <BodyTuneWorkoutDetails
+              setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
+            />
+          </Overlay>
         )}
       </AnimatePresence>
     </>
