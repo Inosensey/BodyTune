@@ -1,23 +1,44 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+// Icons
+import MaterialSymbolsLightOverviewOutline from "@/icons/MaterialSymbolsLightOverviewOutline";
+
 // types
 import { exercisePlan } from "@/types/planTypes";
-import { MealInfoTypes, mealPlanType } from "@/types/mealTypes";
+import { mealPlanType } from "@/types/mealTypes";
 import { TableInsert } from "@/types/database.types";
 interface props {
-  exercisePlanInfo: ExercisePlanInfoTypes;
-  mealInfoPlan: MealInfoTypes;
+  exercisePlanInfo: {
+    planName: string;
+    shortDescription?: string;
+    tags: Array<{
+      exercise_tags: {
+        id: number;
+        exerciseTagName: string;
+      };
+    }>;
+  };
+  mealPlanInfo: {
+    planName: string;
+    shortDescription?: string;
+    tags: Array<{
+      meal_tags: {
+        id: number;
+        mealTagName: string;
+      };
+    }>;
+  };
   exercisePlan?: exercisePlan;
   mealPlan?: mealPlanType;
 }
 
 // Initials
 import { weekDates } from "@/utils/initials";
-import { ExercisePlanInfoTypes } from "@/types/exerciseTypes";
 
 // Fixed values
 const mealPlanTabs: Array<string> = ["Breakfast", "Lunch", "Dinner"];
@@ -52,7 +73,12 @@ const exerciseAnimationVariant = {
   },
 };
 
-const PlanDetails = ({ exercisePlan, mealPlan }: props) => {
+const PlanDetails = ({
+  exercisePlan,
+  mealPlan,
+  mealPlanInfo,
+  exercisePlanInfo,
+}: props) => {
   // States
   const [selectedMealTab, setSelectedMealTab] = useState<string>("breakFast");
   const [selectedMealPlanDate, setSelectedMealPlanDate] =
@@ -61,44 +87,75 @@ const PlanDetails = ({ exercisePlan, mealPlan }: props) => {
     useState<string>("Monday");
 
   return (
-    <div className="w-full phone:h-full laptop:h-[98%] flex flex-col justify-center tablet:items-center">
+    <div className="w-full flex flex-col justify-center phone:h-full laptop:h-[98%] tablet:items-center">
+      <div className="mt-5 mb-2 px-2 phone:w-full tablet:w-[98%]">
+        <Link href={"/dashboard"}>
+          <div className="w-max flex flex-col py-1 px-[0.6rem] cursor-pointer border-2 border-lightSecondary rounded-lg">
+            <div className="flex gap-1 text-base">
+              <p className="font-dmSans font-semibold text-lightSecondary">
+                Dashboard
+              </p>
+              <MaterialSymbolsLightOverviewOutline
+                color="#D3F0D1"
+                width="1.3em"
+                height="1.3em"
+              />
+            </div>
+          </div>
+        </Link>
+      </div>
       <div className="rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-2 tablet:w-[98%]">
         <div className="flex gap-1 h-[100%] flex-col">
-          <div className="flex flex-col gap-2  p-4 rounded-md font-quickSand font-bold phone:w-12/12 laptop:w-max ">
+          <div className="flex flex-col gap-2 p-4 rounded-md font-quickSand font-bold phone:w-12/12 laptop:w-max bg-lightPrimary">
             <p className="font-dmSans">
               Recommended BMI Categories:{" "}
               <span className="font-normal text-lightSecondary">
-                From Underweight to Obesity
+                {mealPlanInfo.tags.length === 1
+                  ? `${mealPlanInfo.tags[0].meal_tags.mealTagName}`
+                  : `From ${mealPlanInfo.tags[0].meal_tags.mealTagName}} to ${
+                      mealPlanInfo.tags[mealPlanInfo.tags.length - 1].meal_tags
+                        .mealTagName
+                    }
+                    }`}
               </span>
             </p>
             <p className="font-dmSans">
               Exercise Difficulty:{" "}
               <span className="font-normal text-lightSecondary">
-                Suitable for Beginners
+                Suitable for{" "}
+                {exercisePlanInfo.tags
+                  .map(
+                    (tagInfo: {
+                      exercise_tags: { id: number; exerciseTagName: string };
+                    }) => tagInfo.exercise_tags.exerciseTagName
+                  )
+                  .join(", ")}
               </span>
             </p>
           </div>
           <div className="w-full flex gap-2 phone:flex-col laptop:flex-1 laptop:h-[80%] laptop:flex-row">
-            <div className="p-4 flex flex-col  gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]">
+            <div className="p-4 flex flex-col  gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]  bg-lightPrimary">
               <div className="flex flex-col gap-1 laptop:h-[25%] laptop:overflow-auto">
                 <p className="font-quickSand font-bold">
                   Meal Plan Name:
                   <span className="font-normal text-lightSecondary">
                     {" "}
-                    A Beginner-Friendly meal plan
+                    {mealPlanInfo.planName}
                   </span>
                 </p>
-                <div className="font-dmSans">
-                  <label className="font-bold">Short Description:</label>
-                  <p className="font-normal text-lightSecondary text-sm text-justify">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Porro numquam corporis nisi facere, nihil sint accusantium
-                    ullam quod explicabo quis temporibus sequi ratione modi
-                    dolorum? Porro numquam corporis nisi facere, nihil sint
-                    accusantium ullam quod explicabo quis temporibus sequi
-                    ratione modi dolorum?
-                  </p>
-                </div>
+                {mealPlanInfo.shortDescription && (
+                  <div className="font-dmSans">
+                    <label className="font-bold">Short Description:</label>
+                    <p className="font-normal text-lightSecondary text-sm text-justify">
+                      Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                      Porro numquam corporis nisi facere, nihil sint accusantium
+                      ullam quod explicabo quis temporibus sequi ratione modi
+                      dolorum? Porro numquam corporis nisi facere, nihil sint
+                      accusantium ullam quod explicabo quis temporibus sequi
+                      ratione modi dolorum?
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="w-full flex flex-col gap-1 h-[72%]">
                 <div className="flex flex-col gap-1">
@@ -276,26 +333,28 @@ const PlanDetails = ({ exercisePlan, mealPlan }: props) => {
                   )}
               </div>
             </div>
-            <div className="p-4 flex flex-col  gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%]">
+            <div className="p-4 flex flex-col  gap-1 laptop:h-[100%] laptop:w-[50%] desktop:w-[100%] bg-lightPrimary">
               <div className="flex flex-col gap-1 laptop:h-[25%] laptop:overflow-auto">
                 <p className="font-quickSand font-bold">
                   Exercise Plan Name:
                   <span className="font-normal text-lightSecondary">
                     {" "}
-                    A Beginner-Friendly exercise plan
+                    {exercisePlanInfo.planName}
                   </span>
                 </p>
-                <div className="font-dmSans">
-                  <label className="font-bold">Short Description:</label>
-                  <p className="font-normal text-lightSecondary text-sm text-justify">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Porro numquam corporis nisi facere, nihil sint accusantium
-                    ullam quod explicabo quis temporibus sequi ratione modi
-                    dolorum? Porro numquam corporis nisi facere, nihil sint
-                    accusantium ullam quod explicabo quis temporibus sequi
-                    ratione modi dolorum?
-                  </p>
-                </div>
+                {exercisePlanInfo.shortDescription && (
+                  <div className="font-dmSans">
+                    <label className="font-bold">Short Description:</label>
+                    <p className="font-normal text-lightSecondary text-sm text-justify">
+                      Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                      Porro numquam corporis nisi facere, nihil sint accusantium
+                      ullam quod explicabo quis temporibus sequi ratione modi
+                      dolorum? Porro numquam corporis nisi facere, nihil sint
+                      accusantium ullam quod explicabo quis temporibus sequi
+                      ratione modi dolorum?
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="w-full flex flex-col gap-1 phone:h-[650px] laptop:h-[70%]">
                 <label className="font-dmSans font-bold">Select Date:</label>
