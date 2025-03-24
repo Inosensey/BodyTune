@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { AnimatePresence } from "framer-motion";
+import { useRouter } from "nextjs-toploader/app";
+import { useQueryClient } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
 
 // Actions
@@ -53,7 +55,7 @@ interface exercisePlanInterface {
 }
 
 // Initials
-const useFormStateInitials: formReturnType<[]> = {
+const useFormStateInitials: formReturnType<[] | number> = {
   success: null,
   error: null,
   message: "",
@@ -129,6 +131,9 @@ const mealPlanInitial: mealPlanType = {
 // };
 
 const MutateForm = ({ personalInfo }: props) => {
+  const router = useRouter();
+  const queryClient = useQueryClient()
+
   // initials
   const formData = new FormData();
 
@@ -188,7 +193,7 @@ const MutateForm = ({ personalInfo }: props) => {
       mealPlan: mealPlanInfo,
       exercisePlan: exercisePlanInfo,
       mealPlanTags: selectedBmis,
-      exercisePlanTags: selectedDifficulties
+      exercisePlanTags: selectedDifficulties,
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanFieldsVal.mealPlanName);
@@ -205,7 +210,7 @@ const MutateForm = ({ personalInfo }: props) => {
       exercisePlanFieldsVal.selectedExercisePlan
     );
 
-    setSubmitMessage("test");
+    setSubmitMessage("Creating your BodyTune... ⏳ Hang tight while we set up your plan!");
     setIsSubmitting(true);
   };
 
@@ -219,7 +224,7 @@ const MutateForm = ({ personalInfo }: props) => {
     }
   }, [selectedOption]);
   useEffect(() => {
-    if(bmiClassification.id === "") return
+    if (bmiClassification.id === "") return;
     setSelectedBmis((prev) => [...prev, bmiClassification.bmiClassification]);
     setMealPlanFieldsVal((prev) => ({
       ...prev,
@@ -227,7 +232,7 @@ const MutateForm = ({ personalInfo }: props) => {
     }));
   }, [bmiClassification]);
   useEffect(() => {
-    if(generalInfoFieldsVal.experience === "") return
+    if (generalInfoFieldsVal.experience === "") return;
     setSelectedDifficulties((prev) => [
       ...prev,
       generalInfoFieldsVal.experience,
@@ -240,11 +245,11 @@ const MutateForm = ({ personalInfo }: props) => {
     }));
   }, [generalInfoFieldsVal]);
   useEffect(() => {
-    console.log("wew",formState);
     if (formState.success !== null || formState.error !== null) {
       if (formState.success) {
-        // setSubmitMessage("You're in! 🎯 Taking you to your dashboard—let’s crush some goals today! 💪");
-        setIsSubmitting(false);
+        setSubmitMessage("Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪");
+        queryClient.invalidateQueries({ queryKey: ['bodyTunes'] })
+        router.push(`/plan/bodytune/${formState.data}`);
       } else {
         setIsSubmitting(false);
       }
@@ -365,14 +370,14 @@ const MutateForm = ({ personalInfo }: props) => {
         isLoading={isSubmitting}
         LoadingAnimationIcon={
           <Oval
-          visible={true}
-          height="60"
-          width="60"
-          color="#4fa94d"
-          secondaryColor="#4B6F64"
-          ariaLabel="oval-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
+            visible={true}
+            height="60"
+            width="60"
+            color="#4fa94d"
+            secondaryColor="#4B6F64"
+            ariaLabel="oval-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
           />
         }
       />
