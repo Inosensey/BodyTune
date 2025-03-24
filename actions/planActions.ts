@@ -11,9 +11,10 @@ import {
 import { exercisePlan } from "@/types/planTypes";
 import { getExerciseTagIds, getMealTagIds, getMealType } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
+import { revalidateTag } from "next/cache";
 
 export const createBodyTunePlan = async (
-  prevState: formReturnType<[]>,
+  prevState: formReturnType<[] | number>,
   formData: FormData
 ): Promise<formReturnType<[] | number>> => {
   const supabase = await createSSR();
@@ -98,6 +99,8 @@ export const createBodyTunePlan = async (
 
     const response = data as TableInsert<"bodytune_plan">[];
     const bodyTunePlanId = response[0].id!;
+
+    revalidateTag("bodyTunes");
     return {
       success: true,
       error: false,
