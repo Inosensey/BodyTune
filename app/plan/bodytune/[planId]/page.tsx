@@ -9,8 +9,6 @@ import PlanDetails from "@/components/planComponents/PlanDetails";
 // Types
 import { bodyTunePlan } from "@/types/planTypes";
 import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
-import { ExercisePlanInfoTypes } from "@/types/exerciseTypes";
-import { MealInfoTypes } from "@/types/mealTypes";
 interface props {
   params: { planId: string };
 }
@@ -20,14 +18,32 @@ const BodyTunePlanPage = async ({ params }: props) => {
     parseInt(params.planId)
   );
   const bodyTune: bodyTunePlan | [] = res[0];
-  const exercisePlanInfo:ExercisePlanInfoTypes = {
-    exercisePlanName: bodyTune.exercise_plan.planName
-  }
+  const exercisePlanInfo: {
+    planName: string;
+    shortDescription?: string;
+    tags: Array<{exercise_tags: {
+      id: number;
+      exerciseTagName: string;
+    }}>
+  } = { planName: bodyTune.meal_plan.planName, tags: bodyTune.exercise_plan.exercise_plan_tag };
+  const mealPlanInfo: {
+    planName: string;
+    shortDescription?: string;
+    tags: Array<{meal_tags: {
+      id: number;
+      mealTagName: string;
+    }}>
+  } = { planName: bodyTune.exercise_plan.planName, tags: bodyTune.meal_plan.meal_plan_tags };
   const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTune);
 
   return (
     <div className="w-full">
-      <PlanDetails exercisePlan={exercisePlan} mealPlan={mealPlan} />
+      <PlanDetails
+        exercisePlanInfo={exercisePlanInfo}
+        mealPlanInfo={mealPlanInfo}
+        exercisePlan={exercisePlan}
+        mealPlan={mealPlan}
+      />
     </div>
   );
 };
