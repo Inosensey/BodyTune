@@ -153,7 +153,7 @@ const BodyTuneStudioContents = () => {
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
               {bodyTunes && bodyTunes.length !== 0 ? (
                 bodyTunes.map((bodyTune: bodyTunePlan, index: number) => (
-                  <div className="w-full" key={index}>
+                  <div className="w-max" key={index}>
                     <BodyTuneCard
                       bodyTunePlan={bodyTune}
                       author={bodyTune.personal_information.name}
