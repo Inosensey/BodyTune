@@ -29,3 +29,27 @@ export const getBodyTunes = async () => {
         return [];
     }
 }
+
+export const getBodyTune = async (planId: number) => {
+    const headerInfo = headers();
+    
+    const host = headerInfo.get('X-Forwarded-Host');
+    const proto = headerInfo.get('X-Forwarded-Proto');
+    const origin = `${proto}://${host}`;
+
+    if (origin && allowedOrigins.includes(origin)) {
+        const res = await fetch(
+            `${origin}/api/supabase/getBodyTune?planId=${planId}`,
+            {
+                headers: { cookie: headerInfo.get("cookie")! },
+                next: { tags: [`bodyTunes${planId}`] },
+                cache: "force-cache",
+            }
+        );
+        const parsedData = await res.json();
+        const bodyTune: Array<bodyTunePlan> | [] = parsedData.res;
+        return bodyTune
+    } else {
+        return [];
+    }
+}
