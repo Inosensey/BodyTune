@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons/faXmarkCircle";
+import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
 // types
 import { exercisePlan } from "@/types/planTypes";
@@ -12,6 +14,7 @@ import { mealPlanType } from "@/types/mealTypes";
 import { TableInsert } from "@/types/database.types";
 interface props {
   setToggleBodyTuneDetails?: React.Dispatch<React.SetStateAction<boolean>>;
+  bodyTuneId: number;
   exercisePlan?: exercisePlan;
   mealPlan?: mealPlanType;
 }
@@ -54,6 +57,7 @@ const exerciseAnimationVariant = {
 
 const BodyTuneDetails = ({
   setToggleBodyTuneDetails,
+  bodyTuneId,
   exercisePlan,
   mealPlan,
 }: props) => {
@@ -83,6 +87,16 @@ const BodyTuneDetails = ({
             className="text-[#D3F0D1] text-2xl transition duration-200 group-hover:text-[#a3e09f]"
           />
         </div>
+        <Link href={`/plan/bodytune/${bodyTuneId}`} target="_blank">
+          <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-2 py-1 text-sm rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
+            Full Page View
+            <SolarStarsMinimalisticLineDuotone
+              color="#D3F0D1"
+              width="1.3em"
+              height="1.3em"
+            />
+          </button>
+        </Link>
       </div>
       <div className="bg-lightPrimary rounded-lg h-[100%] overflow-auto phone:w-full phone:px-2 phone:py-4 tablet:p-2 tablet:w-[98%]">
         <div className="flex gap-1 h-[100%] flex-col">
@@ -391,15 +405,22 @@ const BodyTuneDetails = ({
                             </div>
                             <div className="w-[100%] h-36">
                               <Image
+                                data-loaded="false"
+                                onLoad={(event) => {
+                                  event.currentTarget.setAttribute(
+                                    "data-loaded",
+                                    "true"
+                                  );
+                                }}
+                                className="w-full h-full object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                                 width={200}
                                 height={200}
                                 src={
                                   exercise.exerciseDemo
-                                    ? exercise.exerciseDemo
+                                    ? `${exercise.exerciseDemo}`
                                     : "/assets/svg/healthy-1.svg"
                                 }
                                 alt="Preview"
-                                className="w-full h-full object-contain"
                               />
                             </div>
                           </motion.div>
