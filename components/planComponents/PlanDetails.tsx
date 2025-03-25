@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 // Icons
-import MaterialSymbolsLightOverviewOutline from "@/icons/MaterialSymbolsLightOverviewOutline";
+import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
 // types
 import { exercisePlan } from "@/types/planTypes";
@@ -89,13 +89,13 @@ const PlanDetails = ({
   return (
     <div className="w-full flex flex-col justify-center phone:h-full laptop:h-[98%] tablet:items-center">
       <div className="mt-5 mb-2 px-2 phone:w-full tablet:w-[98%]">
-        <Link href={"/dashboard"}>
+        <Link href={"/dashboard/bodytune"}>
           <div className="w-max flex flex-col py-1 px-[0.6rem] cursor-pointer border-2 border-lightSecondary rounded-lg">
             <div className="flex gap-1 text-base">
               <p className="font-dmSans font-semibold text-lightSecondary">
-                Dashboard
+                BodyTune Studio
               </p>
-              <MaterialSymbolsLightOverviewOutline
+              <SolarStarsMinimalisticLineDuotone
                 color="#D3F0D1"
                 width="1.3em"
                 height="1.3em"
@@ -428,6 +428,14 @@ const PlanDetails = ({
                             </div>
                             <div className="w-[100%] h-36">
                               <Image
+                                data-loaded="false"
+                                onLoad={(event) => {
+                                  event.currentTarget.setAttribute(
+                                    "data-loaded",
+                                    "true"
+                                  );
+                                }}
+                                className="w-full h-full object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                                 width={200}
                                 height={200}
                                 src={
@@ -436,7 +444,6 @@ const PlanDetails = ({
                                     : "/assets/svg/healthy-1.svg"
                                 }
                                 alt="Preview"
-                                className="w-full h-full object-contain"
                               />
                             </div>
                           </motion.div>
