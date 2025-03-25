@@ -6,6 +6,7 @@ export async function GET() {
 
   try {
     const bodyTuneQuery = supabase.from("bodytune_plan").select(`
+                id,
                 mealPlanId,
                 exercisePlanId,
                 created_by,
