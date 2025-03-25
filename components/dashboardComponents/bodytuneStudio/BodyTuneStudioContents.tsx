@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Lib
 import { getBodyTunes } from "@/lib/supabaseQueries";
@@ -32,6 +32,29 @@ const pageResultPreferences: Array<number | string> = [
   50,
   "All",
 ];
+
+// Variants
+const fadeVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+  },
+};
+const bodyTuneContainerAnimationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+
 const BodyTuneStudioContents = () => {
   // UseQuery
   const { data: bodyTunes } = useQuery({
@@ -46,6 +69,7 @@ const BodyTuneStudioContents = () => {
   const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
     useState<boolean>(false);
   const [selectedBodyTunePlan, setSelectedBodyTunePlan] = useState<{
+    bodyTuneId?: number;
     exercisePlan?: exercisePlan;
     mealPlan?: mealPlanType;
   }>({});
@@ -92,10 +116,9 @@ const BodyTuneStudioContents = () => {
                 <Link href={"bodytune/create"}>
                   <button className="bg-[#5d897b] text-white font-quickSand font-semibold px-2 py-1 text-sm rounded-md flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
                     Add a BodyTune
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      className="text-white text-xl"
-                    />
+                    <span>
+                      <FontAwesomeIcon size="lg" icon={faPlusSquare} />
+                    </span>
                   </button>
                 </Link>
               </div>
@@ -150,10 +173,19 @@ const BodyTuneStudioContents = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start">
+            <motion.div
+              variants={bodyTuneContainerAnimationVariant}
+              initial="hidden"
+              animate="show"
+              className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start"
+            >
               {bodyTunes && bodyTunes.length !== 0 ? (
                 bodyTunes.map((bodyTune: bodyTunePlan, index: number) => (
-                  <div className="w-max" key={index}>
+                  <motion.div
+                    variants={fadeVariants}
+                    className="w-max"
+                    key={index}
+                  >
                     <BodyTuneCard
                       bodyTunePlan={bodyTune}
                       author={bodyTune.personal_information.name}
@@ -168,12 +200,12 @@ const BodyTuneStudioContents = () => {
                       setToggleBodyTuneDetails={setToggleBodyTuneDetails}
                       setSelectedBodyTunePlan={setSelectedBodyTunePlan}
                     />
-                  </div>
+                  </motion.div>
                 ))
               ) : (
                 <p>No BodyTunes</p>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -183,6 +215,7 @@ const BodyTuneStudioContents = () => {
           <Overlay>
             <BodyTuneDetails
               setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+              bodyTuneId={selectedBodyTunePlan.bodyTuneId!}
               mealPlan={selectedBodyTunePlan.mealPlan}
               exercisePlan={selectedBodyTunePlan.exercisePlan}
             />
