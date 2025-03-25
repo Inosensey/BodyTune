@@ -37,6 +37,7 @@ interface props {
   likes: string;
   setToggleBodyTuneDetails: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedBodyTunePlan: React.Dispatch<React.SetStateAction<{
+        bodyTuneId?: number,
         exercisePlan?: exercisePlan;
         mealPlan?: mealPlanType;
     }>>
@@ -137,7 +138,7 @@ const BodyTuneCard = ({
         onClick={() => {
           setToggleBodyTuneDetails(true)
           const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTunePlan)
-          setSelectedBodyTunePlan((prev) => ({...prev, mealPlan: mealPlan, exercisePlan: exercisePlan}))
+          setSelectedBodyTunePlan((prev) => ({...prev, bodyTuneId: bodyTunePlan.id,  mealPlan: mealPlan, exercisePlan: exercisePlan}))
         }}
         className="w-max flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
       >
