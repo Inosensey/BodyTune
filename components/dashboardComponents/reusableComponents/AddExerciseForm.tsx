@@ -527,11 +527,15 @@ const AddExerciseForm = ({
               />
               {demoSrc && (
                 <Image
+                  data-loaded="false"
+                  onLoad={(event) => {
+                    event.currentTarget.setAttribute("data-loaded", "true");
+                  }}
                   src={demoSrc}
                   width={200}
                   height={200}
                   alt="Preview"
-                  className="w-full h-44 object-contain"
+                  className="w-full h-full object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               )}
             </motion.div>
