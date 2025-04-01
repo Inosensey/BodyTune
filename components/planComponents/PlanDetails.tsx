@@ -9,30 +9,12 @@ import Image from "next/image";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
 // types
-import { exercisePlan } from "@/types/planTypes";
+import { exercisePlan, exercisePlanInfo, mealPlanInfo } from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
 import { TableInsert } from "@/types/database.types";
 interface props {
-  exercisePlanInfo: {
-    planName: string;
-    shortDescription?: string;
-    tags: Array<{
-      exercise_tags: {
-        id: number;
-        exerciseTagName: string;
-      };
-    }>;
-  };
-  mealPlanInfo: {
-    planName: string;
-    shortDescription?: string;
-    tags: Array<{
-      meal_tags: {
-        id: number;
-        mealTagName: string;
-      };
-    }>;
-  };
+  exercisePlanInfo: exercisePlanInfo;
+  mealPlanInfo: mealPlanInfo;
   exercisePlan?: exercisePlan;
   mealPlan?: mealPlanType;
 }
