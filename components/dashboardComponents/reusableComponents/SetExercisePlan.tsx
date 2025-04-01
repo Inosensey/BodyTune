@@ -81,7 +81,7 @@ const SetExercisePlan = ({
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
   const [showExercisePlanHtml, setShowExercisePanHtml] = useState<boolean>(
-    selectedCreateOption === "recommendation" ? true : false
+    selectedCreateOption === "recommendation" || exercisePlanInfo ? true : false
   );
   const [toggleAddExerciseForm, setToggleAddExerciseForm] =
     useState<boolean>(false);
