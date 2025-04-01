@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 // Libs
 import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
 
-
 // Icons
 import SolarEyeOutline from "@/icons/SolarEyeOutline";
 import SolarHeartAngleOutline from "@/icons/SolarHeartAngleOutline";
@@ -16,10 +15,11 @@ import TablerTrashX from "@/icons/TablerTrashX";
 // Types
 import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
+import Link from "next/link";
 interface props {
   author: string;
   mealPlanName: string;
-  bodyTunePlan: bodyTunePlan
+  bodyTunePlan: bodyTunePlan;
   exercisePlanName: string;
   exercise_plan_tag: Array<{
     exercise_tags: {
@@ -36,11 +36,13 @@ interface props {
   views: string;
   likes: string;
   setToggleBodyTuneDetails: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedBodyTunePlan: React.Dispatch<React.SetStateAction<{
-        bodyTuneId?: number,
-        exercisePlan?: exercisePlan;
-        mealPlan?: mealPlanType;
-    }>>
+  setSelectedBodyTunePlan: React.Dispatch<
+    React.SetStateAction<{
+      bodyTuneId?: number;
+      exercisePlan?: exercisePlan;
+      mealPlan?: mealPlanType;
+    }>
+  >;
 }
 
 const BodyTuneCard = ({
@@ -53,9 +55,8 @@ const BodyTuneCard = ({
   likes,
   views,
   setToggleBodyTuneDetails,
-  setSelectedBodyTunePlan
+  setSelectedBodyTunePlan,
 }: props) => {
-
   return (
     <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
       <div className="flex justify-between">
@@ -63,9 +64,11 @@ const BodyTuneCard = ({
           <p className="font-semibold text-sm">{author}</p>
         </div>
         <div className="flex items-center justify-center gap-1">
-          <span title="Edit" className="cursor-pointer">
-            <TablerEdit color="#B58E1C" width="1.5em" height="1.5em" />
-          </span>
+          <Link href={`bodytune/update/${bodyTunePlan.id}`}>
+            <span title="Edit" className="cursor-pointer">
+              <TablerEdit color="#B58E1C" width="1.5em" height="1.5em" />
+            </span>
+          </Link>
           <span title="Delete" className="cursor-pointer">
             <TablerTrashX color="#dc3545" width="1.5em" height="1.5em" />
           </span>
@@ -136,9 +139,14 @@ const BodyTuneCard = ({
 
       <motion.button
         onClick={() => {
-          setToggleBodyTuneDetails(true)
-          const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTunePlan)
-          setSelectedBodyTunePlan((prev) => ({...prev, bodyTuneId: bodyTunePlan.id,  mealPlan: mealPlan, exercisePlan: exercisePlan}))
+          setToggleBodyTuneDetails(true);
+          const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTunePlan);
+          setSelectedBodyTunePlan((prev) => ({
+            ...prev,
+            bodyTuneId: bodyTunePlan.id,
+            mealPlan: mealPlan,
+            exercisePlan: exercisePlan,
+          }));
         }}
         className="w-max flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
       >
