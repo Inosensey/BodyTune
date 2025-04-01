@@ -38,6 +38,20 @@ import { mealPlanType } from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
 interface props {
   personalInfo: TableRow<"personal_information">[];
+  exercisePlanInfoTags?: Array<{
+    exercise_tags: {
+      id: number;
+      exerciseTagName: string;
+    };
+  }>;
+  mealPlanInfoTags?: Array<{
+    meal_tags: {
+      id: number | string;
+      mealTagName: string;
+    };
+  }>;
+  fetchedMealPlanInfo?: mealPlanType;
+  fetchedExercisePlanInfo?: exercisePlan;
 }
 interface generalInfoType {
   weight: string;
@@ -112,30 +126,38 @@ const mealPlanInitial: mealPlanType = {
   },
 };
 
-// const exercisePlanInitial: exercisePlan = {
-//   ["Monday"]: [
-//     {
-//       exerciseName: "",
-//       bodyPart: "",
-//       equipment: "",
-//       day: "",
-//       exerciseDifficulty: 1,
-//       exerciseMeasurementType: 1,
-//       measurement: "",
-//       exerciseDemo: "",
-//       bmiClassification: 1,
-//       instruction: "",
-//       youtubeLink: "",
-//     },
-//   ],
-// };
-
-const MutateForm = ({ personalInfo }: props) => {
+const MutateForm = ({
+  personalInfo,
+  fetchedExercisePlanInfo,
+  fetchedMealPlanInfo,
+  exercisePlanInfoTags,
+  mealPlanInfoTags,
+}: props) => {
   const router = useRouter();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   // initials
   const formData = new FormData();
+  const selectedBmisInitials: Array<string> = mealPlanInfoTags
+    ? mealPlanInfoTags.map(
+        (info: {
+          meal_tags: {
+            id: number | string;
+            mealTagName: string;
+          };
+        }) => info.meal_tags.mealTagName
+      )
+    : [];
+  const selectedDifficultiesInitials: Array<string> = exercisePlanInfoTags
+    ? exercisePlanInfoTags.map(
+        (info: {
+          exercise_tags: {
+            id: number | string;
+            exerciseTagName: string;
+          };
+        }) => info.exercise_tags.exerciseTagName
+      )
+    : [];
 
   // UseFormState
   const [formState, formAction] = useFormState(
@@ -160,7 +182,9 @@ const MutateForm = ({ personalInfo }: props) => {
     id: "",
     bmiClassification: "",
   });
-  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState<string>(
+    fetchedExercisePlanInfo && fetchedMealPlanInfo ? "Custom" : ""
+  );
   const [selectedBreadCrumb, setSelectedBreadCrumb] =
     useState<InterfaceBreadCrumbs>({
       id: 1,
@@ -174,16 +198,20 @@ const MutateForm = ({ personalInfo }: props) => {
 
   const [mealPlanFieldsVal, setMealPlanFieldsVal] =
     useState<mealPlanInterface>(mealPlanFieldsInit);
-  const [mealPlanInfo, setMealPlanInfo] =
-    useState<mealPlanType>(mealPlanInitial);
-  const [selectedBmis, setSelectedBmis] = useState<string[]>([]);
+  const [mealPlanInfo, setMealPlanInfo] = useState<mealPlanType>(
+    fetchedMealPlanInfo ? fetchedMealPlanInfo : mealPlanInitial
+  );
+  const [selectedBmis, setSelectedBmis] =
+    useState<string[]>(selectedBmisInitials);
 
   const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
     useState<exercisePlanInterface>(exercisePlanInitials);
-  const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>({});
+  const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>(
+    fetchedExercisePlanInfo ? fetchedExercisePlanInfo : {}
+  );
   const [selectedDifficulties, setSelectedDifficulties] = useState<
     Array<string>
-  >([]);
+  >(selectedDifficultiesInitials);
 
   const [visibilityPreference, setVisibilityPreference] = useState<string>("");
 
@@ -210,7 +238,9 @@ const MutateForm = ({ personalInfo }: props) => {
       exercisePlanFieldsVal.selectedExercisePlan
     );
 
-    setSubmitMessage("Creating your BodyTune... ⏳ Hang tight while we set up your plan!");
+    setSubmitMessage(
+      "Creating your BodyTune... ⏳ Hang tight while we set up your plan!"
+    );
     setIsSubmitting(true);
   };
 
@@ -247,8 +277,10 @@ const MutateForm = ({ personalInfo }: props) => {
   useEffect(() => {
     if (formState.success !== null || formState.error !== null) {
       if (formState.success) {
-        setSubmitMessage("Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪");
-        queryClient.invalidateQueries({ queryKey: ['bodyTunes'] })
+        setSubmitMessage(
+          "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+        );
+        queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
         router.push(`/plan/bodytune/${formState.data}`);
       } else {
         setIsSubmitting(false);
