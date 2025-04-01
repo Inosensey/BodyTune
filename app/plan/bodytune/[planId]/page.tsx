@@ -7,7 +7,11 @@ import { getBodyTune } from "@/lib/supabaseQueries";
 import PlanDetails from "@/components/planComponents/PlanDetails";
 
 // Types
-import { bodyTunePlan } from "@/types/planTypes";
+import {
+  bodyTunePlan,
+  exercisePlanInfo,
+  mealPlanInfo,
+} from "@/types/planTypes";
 import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
 interface props {
   params: { planId: string };
@@ -18,22 +22,14 @@ const BodyTunePlanPage = async ({ params }: props) => {
     parseInt(params.planId)
   );
   const bodyTune: bodyTunePlan | [] = res[0];
-  const exercisePlanInfo: {
-    planName: string;
-    shortDescription?: string;
-    tags: Array<{exercise_tags: {
-      id: number;
-      exerciseTagName: string;
-    }}>
-  } = { planName: bodyTune.meal_plan.planName, tags: bodyTune.exercise_plan.exercise_plan_tag };
-  const mealPlanInfo: {
-    planName: string;
-    shortDescription?: string;
-    tags: Array<{meal_tags: {
-      id: number;
-      mealTagName: string;
-    }}>
-  } = { planName: bodyTune.exercise_plan.planName, tags: bodyTune.meal_plan.meal_plan_tags };
+  const exercisePlanInfo: exercisePlanInfo = {
+    planName: bodyTune.meal_plan.planName,
+    tags: bodyTune.exercise_plan.exercise_plan_tag,
+  };
+  const mealPlanInfo: mealPlanInfo = {
+    planName: bodyTune.exercise_plan.planName,
+    tags: bodyTune.meal_plan.meal_plan_tags,
+  };
   const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTune);
 
   return (
