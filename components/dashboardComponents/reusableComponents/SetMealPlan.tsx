@@ -52,7 +52,7 @@ const SetMealPlan = ({
 }: props) => {
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
-    selectedCreateOption === "recommendation" ? true : false
+    selectedCreateOption === "recommendation" || mealPlanInfo ? true : false
   );
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [selectedMealType, setSelectedMealType] = useState<string>("");
