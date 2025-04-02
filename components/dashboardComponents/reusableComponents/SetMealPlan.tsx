@@ -19,6 +19,8 @@ import { weekDates, bmiClassifications } from "@/utils/initials";
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 import { mealPlanType } from "@/types/mealTypes";
+import { useQuery } from "@tanstack/react-query";
+import { getMealPlans } from "@/lib/supabaseQueries";
 interface mealPlanInterface {
   selectedMealPlan: string;
   mealPlanName: string;
@@ -50,6 +52,17 @@ const SetMealPlan = ({
   selectedBmis,
   setSelectedBmis
 }: props) => {
+  
+  // UseQuery
+  const { data: mealPlanList } = useQuery({
+    queryKey: ["mealPlans"],
+    queryFn: () => {
+      return getMealPlans();
+    },
+  });
+  console.log(mealPlanList);
+
+  // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || mealPlanInfo ? true : false
