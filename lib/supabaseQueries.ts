@@ -69,7 +69,7 @@ export const getMealPlans = async () => {
       cache: "force-cache",
     });
     const parsedData = await res.json();
-    const mealPlans: Array<mealPlanQuery> | [] = parsedData.res;
+    const mealPlans: Array<mealPlanQuery> | [] = parsedData;
     return mealPlans;
   } else {
     return [];
@@ -89,7 +89,7 @@ export const getExercisePlans = async () => {
       cache: "force-cache",
     });
     const parsedData = await res.json();
-    const exercisePlans: Array<exercisePlanQuery> | [] = parsedData.res;
+    const exercisePlans: Array<exercisePlanQuery> | [] = parsedData;
     return exercisePlans;
   } else {
     return [];
