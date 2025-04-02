@@ -24,7 +24,7 @@ const CreateBodyTunePage = async () => {
 
   return (
     <div className="px-4 mt-4 w-full">
-      <MutateForm personalInfo={personalInformation.response} />
+      <MutateForm personalInfo={personalInformation.response} action="Create" />
     </div>
   );
 };
