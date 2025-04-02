@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 // Libs
-import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
+import { arrangeBodyTunePlan } from "@/utils/dashboardUtils";
 
 // Icons
 import SolarEyeOutline from "@/icons/SolarEyeOutline";
@@ -140,7 +140,7 @@ const BodyTuneCard = ({
       <motion.button
         onClick={() => {
           setToggleBodyTuneDetails(true);
-          const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTunePlan);
+          const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTunePlan);
           setSelectedBodyTunePlan((prev) => ({
             ...prev,
             bodyTuneId: bodyTunePlan.id,
