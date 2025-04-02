@@ -37,6 +37,7 @@ import { exercisePlan } from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
 interface props {
+  action: string,
   personalInfo: TableRow<"personal_information">[];
   exercisePlanInfoTags?: Array<{
     exercise_tags: {
@@ -127,6 +128,7 @@ const mealPlanInitial: mealPlanType = {
 };
 
 const MutateForm = ({
+  action,
   personalInfo,
   fetchedExercisePlanInfo,
   fetchedMealPlanInfo,
@@ -294,7 +296,7 @@ const MutateForm = ({
       <div className="flex flex-col gap-2 h-[99%] relative">
         <div className="phone:h-[17%] laptop:h-[12%]">
           <DashboardHeader
-            headerText="Create Your BodyTune"
+            headerText={`${action === "Update" ? "Update" : "Create"} Your BodyTune`}
             headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
             Icon={SolarStarsMinimalisticLineDuotone}
           />
