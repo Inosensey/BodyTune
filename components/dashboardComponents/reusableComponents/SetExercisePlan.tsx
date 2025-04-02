@@ -40,6 +40,8 @@ interface props {
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
 import { TableInsert } from "@/types/database.types";
+import { getExercisePlans } from "@/lib/supabaseQueries";
+import { useQuery } from "@tanstack/react-query";
 const selectExerciseInitial: TableInsert<"exercise"> & {
   exerciseDemoInfo: {
     url: string;
@@ -78,6 +80,16 @@ const SetExercisePlan = ({
   selectedDifficulties,
   setSelectedDifficulties,
 }: props) => {
+  
+  // UseQuery
+  const { data: exercisePlanList } = useQuery({
+    queryKey: ["exercisePlans"],
+    queryFn: () => {
+      return getExercisePlans();
+    },
+  });
+  console.log(exercisePlanList);
+
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
   const [showExercisePlanHtml, setShowExercisePanHtml] = useState<boolean>(
