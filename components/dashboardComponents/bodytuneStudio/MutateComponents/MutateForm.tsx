@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "nextjs-toploader/app";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
 
 // Actions
@@ -33,11 +33,16 @@ import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLin
 // Types
 import { TableRow } from "@/types/database.types";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
-import { exercisePlan } from "@/types/planTypes";
+import {
+  exercisePlan,
+  exercisePlanQuery,
+  mealPlanQuery,
+} from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
+import { getExercisePlans, getMealPlans } from "@/lib/supabaseQueries";
 interface props {
-  action: string,
+  action: string;
   personalInfo: TableRow<"personal_information">[];
   exercisePlanInfoTags?: Array<{
     exercise_tags: {
@@ -53,6 +58,8 @@ interface props {
   }>;
   fetchedMealPlanInfo?: mealPlanType;
   fetchedExercisePlanInfo?: exercisePlan;
+  mealPlanList: Array<mealPlanQuery> | [];
+  exercisePlanList: Array<exercisePlanQuery> | [];
 }
 interface generalInfoType {
   weight: string;
@@ -134,9 +141,27 @@ const MutateForm = ({
   fetchedMealPlanInfo,
   exercisePlanInfoTags,
   mealPlanInfoTags,
+  exercisePlanList,
+  mealPlanList,
 }: props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  // UseQuery
+  useQuery({
+    queryKey: ["exercisePlans"],
+    initialData: exercisePlanList,
+    queryFn: () => {
+      return getExercisePlans();
+    },
+  });
+  useQuery({
+    queryKey: ["mealPlans"],
+    initialData: mealPlanList,
+    queryFn: () => {
+      return getMealPlans();
+    },
+  });
 
   // initials
   const formData = new FormData();
@@ -296,7 +321,9 @@ const MutateForm = ({
       <div className="flex flex-col gap-2 h-[99%] relative">
         <div className="phone:h-[17%] laptop:h-[12%]">
           <DashboardHeader
-            headerText={`${action === "Update" ? "Update" : "Create"} Your BodyTune`}
+            headerText={`${
+              action === "Update" ? "Update" : "Create"
+            } Your BodyTune`}
             headerDescription="Craft a personalized plan by combining workouts and meals into your perfect routine."
             Icon={SolarStarsMinimalisticLineDuotone}
           />
