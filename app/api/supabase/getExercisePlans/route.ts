@@ -83,6 +83,7 @@ const getSignedDemoUrls = async (exercisePlan: exercisePlanQuery[]) => {
             return exercise;
           })
         )) as typeof exercisePlanInfo.exercise;
+        return exercisePlanInfo;
       })
     );
     return updatedExercisePlan;
