@@ -9,7 +9,12 @@ import {
 } from "@/utils/initials";
 
 // Types
-import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
+import {
+  bodyTunePlan,
+  exercisePlan,
+  exercisePlanQuery,
+  mealPlanQuery,
+} from "@/types/planTypes";
 import { IngredientTypes, mealPlanType, Nutrients } from "@/types/mealTypes";
 import { TableInsert } from "@/types/database.types";
 
@@ -167,10 +172,72 @@ export const getExerciseTagIds = (
   return exerciseTagIds;
 };
 
-export const arrangeBodyTuePlan = (
+export const arrangeBodyTunePlan = (
   bodyTunePlan: bodyTunePlan
 ): { exercisePlan?: exercisePlan; mealPlan?: mealPlanType } => {
-  console.log(bodyTunePlan)
+  const exercisePlan: exercisePlan = arrangeExercisePlan(
+    bodyTunePlan.exercise_plan
+  );
+  const mealPlan: mealPlanType = arrangeMealPlan(bodyTunePlan.meal_plan);
+
+  return { exercisePlan, mealPlan };
+};
+
+const arrangeIngredientInfo = (
+  ingredients: Array<{
+    mealId: number;
+    ingredientName: string;
+    fat: number;
+    carbs: number;
+    protein: number;
+    calories: number;
+  }>
+) => {
+  let ingredientList: IngredientTypes = {};
+  const nutritionInfo: Nutrients = {
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  };
+  ingredients.forEach(
+    (ingredient: {
+      mealId: number;
+      ingredientName: string;
+      fat: number;
+      carbs: number;
+      protein: number;
+      calories: number;
+    }) => {
+      const UUID = crypto.randomUUID();
+      ingredientList = {
+        ...ingredientList,
+        [`ingredient${UUID}`]: {
+          id: UUID,
+          ingredientName: `Ingredients ${UUID}`,
+          ingredientValue: ingredient.ingredientName,
+          caloriesName: `Calories`,
+          caloriesValue: ingredient.calories.toString(),
+          proteinsName: `Proteins`,
+          proteinsValue: ingredient.protein.toString(),
+          carbsName: `Carbs`,
+          carbsValue: ingredient.carbs.toString(),
+          fatName: `Fat`,
+          fatValue: ingredient.fat.toString(),
+        },
+      };
+      nutritionInfo.calories += ingredient.calories;
+      nutritionInfo.protein += ingredient.protein;
+      nutritionInfo.carbs += ingredient.carbs;
+      nutritionInfo.fat += ingredient.fat;
+    }
+  );
+  return { ingredientList, nutritionInfo };
+};
+
+export const arrangeExercisePlan = (
+  exercisePlanQuery: exercisePlanQuery
+): exercisePlan => {
   const exercisePlan: exercisePlan = {
     ["Monday"]: [
       {
@@ -193,9 +260,6 @@ export const arrangeBodyTuePlan = (
       },
     ],
   };
-
-  const mealPlan: mealPlanType = {};
-
   weekDates.forEach((day) => {
     const filteredExercises: Array<
       TableInsert<"exercise"> & {
@@ -206,7 +270,7 @@ export const arrangeBodyTuePlan = (
           fileName: string;
         };
       }
-    > = bodyTunePlan.exercise_plan.exercise
+    > = exercisePlanQuery.exercise
       .filter((exercise) => exercise.day === day)
       .map(
         (exercise: {
@@ -251,9 +315,14 @@ export const arrangeBodyTuePlan = (
 
     exercisePlan[day] = filteredExercises.length > 0 ? filteredExercises : [];
   });
+  return exercisePlan;
+};
+
+export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
+  const mealPlan: mealPlanType = {};
 
   weekDates.forEach((day) => {
-    bodyTunePlan.meal_plan.daily_meals
+    mealPlanQuery.daily_meals
       .filter((meal) => meal.day === day)
       .forEach(
         (meal: {
@@ -369,58 +438,5 @@ export const arrangeBodyTuePlan = (
         }
       );
   });
-
-  return { exercisePlan, mealPlan };
-};
-
-const arrangeIngredientInfo = (
-  ingredients: Array<{
-    mealId: number;
-    ingredientName: string;
-    fat: number;
-    carbs: number;
-    protein: number;
-    calories: number;
-  }>
-) => {
-  let ingredientList: IngredientTypes = {};
-  const nutritionInfo: Nutrients = {
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
-  };
-  ingredients.forEach(
-    (ingredient: {
-      mealId: number;
-      ingredientName: string;
-      fat: number;
-      carbs: number;
-      protein: number;
-      calories: number;
-    }) => {
-      const UUID = crypto.randomUUID();
-      ingredientList = {
-        ...ingredientList,
-        [`ingredient${UUID}`]: {
-          id: UUID,
-          ingredientName: `Ingredients ${UUID}`,
-          ingredientValue: ingredient.ingredientName,
-          caloriesName: `Calories`,
-          caloriesValue: ingredient.calories.toString(),
-          proteinsName: `Proteins`,
-          proteinsValue: ingredient.protein.toString(),
-          carbsName: `Carbs`,
-          carbsValue: ingredient.carbs.toString(),
-          fatName: `Fat`,
-          fatValue: ingredient.fat.toString(),
-        },
-      };
-      nutritionInfo.calories += ingredient.calories;
-      nutritionInfo.protein += ingredient.protein;
-      nutritionInfo.carbs += ingredient.carbs;
-      nutritionInfo.fat += ingredient.fat;
-    }
-  );
-  return { ingredientList, nutritionInfo };
+  return mealPlan;
 };
