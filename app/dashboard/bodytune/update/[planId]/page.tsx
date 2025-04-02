@@ -1,7 +1,11 @@
 "use server";
 
 // lib
-import { getBodyTune, getExercisePlans, getMealPlans } from "@/lib/supabaseQueries";
+import {
+  getBodyTune,
+  getExercisePlans,
+  getMealPlans,
+} from "@/lib/supabaseQueries";
 import getUserInformation from "@/lib/getUserInformation";
 
 // utils
@@ -24,11 +28,16 @@ interface props {
 }
 
 const BodyTunePlanPage = async ({ params }: props) => {
-  const [bodyTuneRes, personalRes, exercisePlanRes, mealPlanRes]:[Array<bodyTunePlan>, Response | undefined, Array<exercisePlanQuery>, Array<mealPlanQuery> ] = await Promise.all([
+  const [bodyTuneRes, personalRes, exercisePlanRes, mealPlanRes]: [
+    Array<bodyTunePlan>,
+    Response | undefined,
+    Array<exercisePlanQuery>,
+    Array<mealPlanQuery>
+  ] = await Promise.all([
     getBodyTune(parseInt(params.planId)),
     getUserInformation(),
     getExercisePlans(),
-    getMealPlans()
+    getMealPlans(),
   ]);
 
   let userInformation:
@@ -39,9 +48,7 @@ const BodyTunePlanPage = async ({ params }: props) => {
   } else {
     userInformation = { response: [] };
   }
-  const personalInformation:
-    | { response: TableRow<"personal_information">[] }
-    | [] = userInformation;
+  const personalInformation = userInformation;
 
   const bodyTune: bodyTunePlan | [] = bodyTuneRes[0];
   const exercisePlanInfo: exercisePlanInfo = {
@@ -53,12 +60,12 @@ const BodyTunePlanPage = async ({ params }: props) => {
     tags: bodyTune.meal_plan.meal_plan_tags,
   };
   const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTune);
-  console.log(exercisePlanRes)
-  console.log(mealPlanRes)
   return (
     <div className="px-4 mt-4 w-full">
       <MutateForm
         action="Update"
+        exercisePlanList={exercisePlanRes}
+        mealPlanList={mealPlanRes}
         personalInfo={personalInformation.response}
         exercisePlanInfoTags={exercisePlanInfo.tags}
         mealPlanInfoTags={mealPlanInfo.tags}
