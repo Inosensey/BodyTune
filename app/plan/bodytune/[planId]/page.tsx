@@ -12,7 +12,7 @@ import {
   exercisePlanInfo,
   mealPlanInfo,
 } from "@/types/planTypes";
-import { arrangeBodyTuePlan } from "@/utils/dashboardUtils";
+import { arrangeBodyTunePlan } from "@/utils/dashboardUtils";
 interface props {
   params: { planId: string };
 }
@@ -30,7 +30,7 @@ const BodyTunePlanPage = async ({ params }: props) => {
     planName: bodyTune.exercise_plan.planName,
     tags: bodyTune.meal_plan.meal_plan_tags,
   };
-  const { exercisePlan, mealPlan } = arrangeBodyTuePlan(bodyTune);
+  const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTune);
 
   return (
     <div className="w-full">
