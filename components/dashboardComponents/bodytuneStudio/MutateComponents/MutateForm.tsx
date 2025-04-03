@@ -38,24 +38,15 @@ import {
   exercisePlanQuery,
   mealPlanQuery,
 } from "@/types/planTypes";
-import { mealPlanType } from "@/types/mealTypes";
+import { mealPlanGeneralInfo, mealPlanName, mealPlanType } from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
 import { getExercisePlans, getMealPlans } from "@/lib/supabaseQueries";
+import { exercisePlanGeneralInfo, exercisePlanName } from "@/types/exerciseTypes";
 interface props {
   action: string;
   personalInfo: TableRow<"personal_information">[];
-  exercisePlanInfoTags?: Array<{
-    exercise_tags: {
-      id: number;
-      exerciseTagName: string;
-    };
-  }>;
-  mealPlanInfoTags?: Array<{
-    meal_tags: {
-      id: number | string;
-      mealTagName: string;
-    };
-  }>;
+  exercisePlanGeneralInfo?: exercisePlanGeneralInfo;
+  mealPlanGeneralInfo?: mealPlanGeneralInfo;
   fetchedMealPlanInfo?: mealPlanType;
   fetchedExercisePlanInfo?: exercisePlan;
   mealPlanList: Array<mealPlanQuery> | [];
@@ -67,70 +58,29 @@ interface generalInfoType {
   experience: string;
   bmi: string;
 }
-interface mealPlanInterface {
-  selectedMealPlan: string;
-  mealPlanName: string;
-}
-interface exercisePlanInterface {
-  selectedExercisePlan: string;
-  exercisePlanName: string;
-}
 
-// Initials
+// Form State Initials
 const useFormStateInitials: formReturnType<[] | number> = {
   success: null,
   error: null,
   message: "",
   data: [],
 };
-const mealPlanFieldsInit: mealPlanInterface = {
-  selectedMealPlan: "0",
-  mealPlanName: "",
-};
-const exercisePlanInitials: exercisePlanInterface = {
-  selectedExercisePlan: "0",
-  exercisePlanName: "",
-};
-const BreadCrumbsInitials: InterfaceBreadCrumbs[] = [
-  {
-    id: 1,
-    title: "Body Metrics",
-    shortDescription: "Set weight, height, and experience",
-  },
-  {
-    id: 2,
-    title: "Meal Plan",
-    shortDescription: "Customize your daily meals",
-  },
-  {
-    id: 3,
-    title: "Exercise Plan",
-    shortDescription: "Define your workout routine",
-  },
-  {
-    id: 4,
-    title: "Finalize & Share",
-    shortDescription: "Review and set visibility",
-  },
+
+// BreadCrumbs Initials
+const BreadCrumbsInitials: Array<InterfaceBreadCrumbs> = [
+  { id: 1, title: "Body Metrics", shortDescription: "Set weight, height, and experience" },
+  { id: 2, title: "Meal Plan", shortDescription: "Customize your daily meals" },
+  { id: 3, title: "Exercise Plan", shortDescription: "Define your workout routine" },
+  { id: 4, title: "Finalize & Share", shortDescription: "Review and set visibility" },
 ];
 
+// Meal Plan Initial Structure
 const mealPlanInitial: mealPlanType = {
   ["Monday"]: {
-    breakFast: {
-      mealInfo: undefined,
-      ingredients: undefined,
-      nutrition: undefined,
-    },
-    lunch: {
-      mealInfo: undefined,
-      ingredients: undefined,
-      nutrition: undefined,
-    },
-    dinner: {
-      mealInfo: undefined,
-      ingredients: undefined,
-      nutrition: undefined,
-    },
+    breakFast: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
+    lunch: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
+    dinner: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
   },
 };
 
@@ -139,13 +89,14 @@ const MutateForm = ({
   personalInfo,
   fetchedExercisePlanInfo,
   fetchedMealPlanInfo,
-  exercisePlanInfoTags,
-  mealPlanInfoTags,
+  exercisePlanGeneralInfo,
+  mealPlanGeneralInfo,
   exercisePlanList,
   mealPlanList,
 }: props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const formData = new FormData();
 
   // UseQuery
   useQuery({
@@ -163,84 +114,69 @@ const MutateForm = ({
     },
   });
 
-  // initials
-  const formData = new FormData();
-  const selectedBmisInitials: Array<string> = mealPlanInfoTags
-    ? mealPlanInfoTags.map(
-        (info: {
-          meal_tags: {
-            id: number | string;
-            mealTagName: string;
-          };
-        }) => info.meal_tags.mealTagName
-      )
-    : [];
-  const selectedDifficultiesInitials: Array<string> = exercisePlanInfoTags
-    ? exercisePlanInfoTags.map(
-        (info: {
-          exercise_tags: {
-            id: number | string;
-            exerciseTagName: string;
-          };
-        }) => info.exercise_tags.exerciseTagName
-      )
+  // Derived Values
+    
+  const mealPlanNameInit: mealPlanName = {
+    selectedMealPlan: mealPlanGeneralInfo ? mealPlanGeneralInfo.id : "0",
+    mealPlanName: mealPlanGeneralInfo ? mealPlanGeneralInfo.planName : "",
+  };
+  const exercisePlanNameInit: exercisePlanName = {
+    selectedExercisePlan: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.id : "0",
+    exercisePlanName: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.planName : "",
+  };
+  const selectedBmisInitials: string[] = mealPlanGeneralInfo
+    ? mealPlanGeneralInfo.tags.map((info) => info.meal_tags.mealTagName)
     : [];
 
-  // UseFormState
-  const [formState, formAction] = useFormState(
-    createBodyTunePlan,
-    useFormStateInitials
-  );
+  const selectedDifficultiesInitials: string[] = exercisePlanGeneralInfo
+    ? exercisePlanGeneralInfo.tags.map((info) => info.exercise_tags.exerciseTagName)
+    : [];
 
-  // States
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitMessage, setSubmitMessage] = useState<string>("");
-  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] =
-    useState<generalInfoType>({
-      height: personalInfo[0].height!.toString(),
-      weight: personalInfo[0].weight!.toString(),
-      experience: "",
-      bmi: "",
-    });
-  const [bmiClassification, setBmiClassification] = useState<{
-    id: string;
-    bmiClassification: string;
-  }>({
-    id: "",
-    bmiClassification: "",
-  });
-  const [selectedOption, setSelectedOption] = useState<string>(
+  // Form State
+  const [formState, formAction] = useFormState(createBodyTunePlan, useFormStateInitials);
+
+  // State Hooks
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [selectedOption, setSelectedOption] = useState(
     fetchedExercisePlanInfo && fetchedMealPlanInfo ? "Custom" : ""
   );
-  const [selectedBreadCrumb, setSelectedBreadCrumb] =
-    useState<InterfaceBreadCrumbs>({
-      id: 1,
-      title: "Body Metrics",
-      shortDescription: "Set weight, height, and experience",
-    });
-  const [progress, setProgress] = useState<number>(1);
-  const [togglePreviewBodyTune, setTogglePreviewBodyTune] =
-    useState<boolean>(false);
+
+  // BreadCrumbs State
   const [disabledBreadCrumbs, setDisabledBreadCrumbs] = useState<number[]>([]);
+  const [selectedBreadCrumb, setSelectedBreadCrumb] = useState<InterfaceBreadCrumbs>(
+    BreadCrumbsInitials[0]
+  );
+  const [progress, setProgress] = useState(1);
+  const [togglePreviewBodyTune, setTogglePreviewBodyTune] = useState(false);
 
-  const [mealPlanFieldsVal, setMealPlanFieldsVal] =
-    useState<mealPlanInterface>(mealPlanFieldsInit);
+  // General Info Fields
+  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] = useState<generalInfoType>({
+    height: personalInfo[0].height!.toString(),
+    weight: personalInfo[0].weight!.toString(),
+    experience: "",
+    bmi: "",
+  });
+
+  // Meal Plan State
   const [mealPlanInfo, setMealPlanInfo] = useState<mealPlanType>(
-    fetchedMealPlanInfo ? fetchedMealPlanInfo : mealPlanInitial
+    fetchedMealPlanInfo || mealPlanInitial
   );
-  const [selectedBmis, setSelectedBmis] =
-    useState<string[]>(selectedBmisInitials);
+  const [mealPlanNameVal, setMealPlanNameVal] = useState(mealPlanNameInit);
+  const [selectedBmis, setSelectedBmis] = useState<string[]>(selectedBmisInitials);
+  const [bmiClassification, setBmiClassification] = useState({ id: "", bmiClassification: "" });
 
-  const [exercisePlanFieldsVal, setExercisePlanFieldsVal] =
-    useState<exercisePlanInterface>(exercisePlanInitials);
+  // Exercise Plan State
   const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>(
-    fetchedExercisePlanInfo ? fetchedExercisePlanInfo : {}
+    fetchedExercisePlanInfo || {}
   );
-  const [selectedDifficulties, setSelectedDifficulties] = useState<
-    Array<string>
-  >(selectedDifficultiesInitials);
+  const [exercisePlanNameVal, setExercisePlanNameVal] = useState(exercisePlanNameInit);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(
+    selectedDifficultiesInitials
+  );
 
-  const [visibilityPreference, setVisibilityPreference] = useState<string>("");
+  // Visibility Preference
+  const [visibilityPreference, setVisibilityPreference] = useState("");
 
   // Events
   const handleSubmit = () => {
@@ -251,18 +187,18 @@ const MutateForm = ({
       exercisePlanTags: selectedDifficulties,
     };
     formData.append("jsonData", JSON.stringify(jsonData));
-    formData.append("mealPlanName", mealPlanFieldsVal.mealPlanName);
-    formData.append("bmiClassification", mealPlanFieldsVal.mealPlanName);
+    formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
+    formData.append("bmiClassification", mealPlanNameVal.mealPlanName);
     formData.append(
       "exerciseDifficulty",
-      exercisePlanFieldsVal.exercisePlanName
+      exercisePlanNameVal.exercisePlanName
     );
-    formData.append("exercisePlanName", exercisePlanFieldsVal.exercisePlanName);
+    formData.append("exercisePlanName", exercisePlanNameVal.exercisePlanName);
     formData.append("visibilityPreference", visibilityPreference);
-    formData.append("selectedMealPlan", mealPlanFieldsVal.selectedMealPlan);
+    formData.append("selectedMealPlan", mealPlanNameVal.selectedMealPlan as string);
     formData.append(
       "selectedExercisePlan",
-      exercisePlanFieldsVal.selectedExercisePlan
+      exercisePlanNameVal.selectedExercisePlan as string
     );
 
     setSubmitMessage(
@@ -272,48 +208,49 @@ const MutateForm = ({
   };
 
   // useEffect
+
+  // Handles breadcrumb disabling based on selectedOption
   useEffect(() => {
     if (selectedOption === "") return;
-    if (selectedOption === "recommendation") {
-      setDisabledBreadCrumbs([2, 3, 4]);
-    } else {
-      setDisabledBreadCrumbs([]);
-    }
+    setDisabledBreadCrumbs(selectedOption === "recommendation" ? [2, 3, 4] : []);
   }, [selectedOption]);
+
+  // Updates BMI classification and generates a meal plan name
   useEffect(() => {
-    if (bmiClassification.id === "") return;
+    if (!bmiClassification.id) return;
+
     setSelectedBmis((prev) => [...prev, bmiClassification.bmiClassification]);
-    setMealPlanFieldsVal((prev) => ({
+    setMealPlanNameVal((prev) => ({
       ...prev,
       mealPlanName: generateMealPlanName(bmiClassification.bmiClassification),
     }));
   }, [bmiClassification]);
+
+  // Updates experience-based difficulty selection and exercise plan name
   useEffect(() => {
-    if (generalInfoFieldsVal.experience === "") return;
-    setSelectedDifficulties((prev) => [
+    if (!generalInfoFieldsVal.experience) return;
+
+    setSelectedDifficulties((prev) => [...prev, generalInfoFieldsVal.experience]);
+    setExercisePlanNameVal((prev) => ({
       ...prev,
-      generalInfoFieldsVal.experience,
-    ]);
-    setExercisePlanFieldsVal((prev) => ({
-      ...prev,
-      exercisePlanName: generateExercisePlanName(
-        generalInfoFieldsVal.experience
-      ),
+      exercisePlanName: generateExercisePlanName(generalInfoFieldsVal.experience),
     }));
   }, [generalInfoFieldsVal]);
+
+  // Handles form submission success or error
   useEffect(() => {
-    if (formState.success !== null || formState.error !== null) {
-      if (formState.success) {
-        setSubmitMessage(
-          "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
-        );
-        queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
-        router.push(`/plan/bodytune/${formState.data}`);
-      } else {
-        setIsSubmitting(false);
-      }
+    if (formState.success === null && formState.error === null) return;
+
+    if (formState.success) {
+      setSubmitMessage(
+        "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+      );
+      queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
+      router.push(`/plan/bodytune/${formState.data}`);
+    } else {
+      setIsSubmitting(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
   return (
@@ -369,8 +306,8 @@ const MutateForm = ({
                 {progress === 2 && (
                   <div className="flex flex-1 justify-center h-[75%] phone:w-full laptop:w-[90%]">
                     <SetMealPlan
-                      mealPlanFieldsVal={mealPlanFieldsVal}
-                      setMealPlanFieldsVal={setMealPlanFieldsVal}
+                      mealPlanNameVal={mealPlanNameVal}
+                      setMealPlanNameVal={setMealPlanNameVal}
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
@@ -385,8 +322,8 @@ const MutateForm = ({
                 {progress === 3 && (
                   <div className="flex flex-1 justify-center h-[75%]">
                     <SetExercisePlan
-                      exercisePlanFieldsVal={exercisePlanFieldsVal}
-                      setExercisePlanFieldsVal={setExercisePlanFieldsVal}
+                      exercisePlanNameVal={exercisePlanNameVal}
+                      setExercisePlanNameVal={setExercisePlanNameVal}
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
