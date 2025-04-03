@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
 
 // Components
+import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 import { Input } from "@/components/reusableComponent/formInputs/input";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 
@@ -73,7 +74,6 @@ interface generalInfoValidation {
 
 // Initials
 import { workoutDifficulties } from "@/utils/initials";
-import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 const generalInfoValidationInitials: generalInfoValidation = {
   height: {
     valid: null,
