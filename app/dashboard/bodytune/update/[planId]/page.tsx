@@ -17,12 +17,12 @@ import MutateForm from "@/components/dashboardComponents/bodytuneStudio/MutateCo
 // Types
 import {
   bodyTunePlan,
-  exercisePlanInfo,
   exercisePlanQuery,
-  mealPlanInfo,
   mealPlanQuery,
 } from "@/types/planTypes";
 import { TableRow } from "@/types/database.types";
+import { exercisePlanGeneralInfo } from "@/types/exerciseTypes";
+import { mealPlanGeneralInfo } from "@/types/mealTypes";
 interface props {
   params: { planId: string };
 }
@@ -51,11 +51,13 @@ const BodyTunePlanPage = async ({ params }: props) => {
   const personalInformation = userInformation;
 
   const bodyTune: bodyTunePlan | [] = bodyTuneRes[0];
-  const exercisePlanInfo: exercisePlanInfo = {
+  const exercisePlanGeneralInfo: exercisePlanGeneralInfo = {
+    id: bodyTune.mealPlanId,
     planName: bodyTune.meal_plan.planName,
     tags: bodyTune.exercise_plan.exercise_plan_tag,
   };
-  const mealPlanInfo: mealPlanInfo = {
+  const mealPlanGeneralInfo: mealPlanGeneralInfo = {
+    id: bodyTune.exercisePlanId,
     planName: bodyTune.exercise_plan.planName,
     tags: bodyTune.meal_plan.meal_plan_tags,
   };
@@ -67,8 +69,8 @@ const BodyTunePlanPage = async ({ params }: props) => {
         exercisePlanList={exercisePlanRes}
         mealPlanList={mealPlanRes}
         personalInfo={personalInformation.response}
-        exercisePlanInfoTags={exercisePlanInfo.tags}
-        mealPlanInfoTags={mealPlanInfo.tags}
+        exercisePlanGeneralInfo={exercisePlanGeneralInfo}
+        mealPlanGeneralInfo={mealPlanGeneralInfo}
         fetchedExercisePlanInfo={exercisePlan}
         fetchedMealPlanInfo={mealPlan}
       />
