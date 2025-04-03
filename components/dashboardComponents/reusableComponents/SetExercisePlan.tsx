@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+
+//lib
+import { getExercisePlans } from "@/lib/supabaseQueries";
 
 // components
 import { Input } from "@/components/reusableComponent/formInputs/input";
@@ -17,10 +21,8 @@ import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { arrangeExercisePlan } from "@/utils/dashboardUtils";
 
 // Types
-interface exercisePlanInterface {
-  selectedExercisePlan: string;
-  exercisePlanName: string;
-}
+import { TableInsert } from "@/types/database.types";
+import { exercisePlanName } from "@/types/exerciseTypes";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 import { exercisePlan } from "@/types/planTypes";
 interface props {
@@ -32,9 +34,9 @@ interface props {
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   exercisePlanInfo: exercisePlan;
   selectedCreateOption: string;
-  exercisePlanFieldsVal: exercisePlanInterface;
-  setExercisePlanFieldsVal: React.Dispatch<
-    React.SetStateAction<exercisePlanInterface>
+  exercisePlanNameVal: exercisePlanName;
+  setExercisePlanNameVal: React.Dispatch<
+    React.SetStateAction<exercisePlanName>
   >;
   selectedDifficulties: Array<string>;
   setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>;
@@ -42,9 +44,6 @@ interface props {
 
 // Initials
 import { weekDates, workoutDifficulties } from "@/utils/initials";
-import { TableInsert } from "@/types/database.types";
-import { getExercisePlans } from "@/lib/supabaseQueries";
-import { useQuery } from "@tanstack/react-query";
 const selectExerciseInitial: TableInsert<"exercise"> & {
   exerciseDemoInfo: {
     url: string;
@@ -78,8 +77,8 @@ const SetExercisePlan = ({
   exercisePlanInfo,
   setExercisePlanInfo,
   selectedCreateOption,
-  exercisePlanFieldsVal,
-  setExercisePlanFieldsVal,
+  exercisePlanNameVal,
+  setExercisePlanNameVal,
   selectedDifficulties,
   setSelectedDifficulties,
 }: props) => {
@@ -124,18 +123,18 @@ const SetExercisePlan = ({
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setExercisePlanFieldsVal((prev) => ({ ...prev, [name]: value }));
+    setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value, options } = event.target;
     if (name === "exercisePlan") {
-      setExercisePlanFieldsVal((prev) => ({
+      setExercisePlanNameVal((prev) => ({
         ...prev,
         exercisePlanName: options[event.target.selectedIndex].text,
       }));
       setActionType("Select");
     } else {
-      setExercisePlanFieldsVal((prev) => ({ ...prev, [name]: value }));
+      setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
     }
     setShowExercisePanHtml(true);
   };
@@ -265,7 +264,7 @@ const SetExercisePlan = ({
                         onChange={selectOnChange}
                         name="exercisePlan"
                         defaultValue={
-                          exercisePlanFieldsVal.selectedExercisePlan
+                          exercisePlanNameVal.selectedExercisePlan
                         }
                       >
                         <option
@@ -301,7 +300,7 @@ const SetExercisePlan = ({
                   <Input
                     name="exercisePlanName"
                     placeholder="Enter the name of the Exercise Plan"
-                    state={exercisePlanFieldsVal.exercisePlanName}
+                    state={exercisePlanNameVal.exercisePlanName}
                     type="text"
                     label="Exercise Plan Name"
                     onChange={onChange}
@@ -355,7 +354,7 @@ const SetExercisePlan = ({
                       className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                       onChange={selectOnChange}
                       name="exercisePlan"
-                      defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
+                      defaultValue={exercisePlanNameVal.selectedExercisePlan}
                     >
                       <option
                         className="bg-primary font-quickSand"
