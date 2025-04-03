@@ -1,3 +1,22 @@
+export type mealPlanName = {
+  selectedMealPlan: number | string;
+  mealPlanName: string;
+};
+
+export interface mealPlanGeneralInfo {
+  id: number,
+  planName: string;
+  shortDescription?: string;
+  tags: Array<mealPlanTag>;
+}
+
+export interface mealPlanTag {
+  meal_tags: {
+    id: number | string;
+    mealTagName: string;
+  };
+}
+
 export interface Meal {
   mealName: string;
   mealType: string;
@@ -7,7 +26,7 @@ export interface Meal {
 }
 
 export interface ingredient {
-  id: string,
+  id: string;
   name: string;
   nutrition: Nutrients;
 }
@@ -24,11 +43,11 @@ export interface mealPlanType {
 }
 
 export interface dailyMealInfo {
-  [key:string]: {
-      mealInfo: MealInfoTypes | undefined;
-      ingredients: IngredientTypes | undefined;
-      nutrition: Nutrients | undefined;
-  }
+  [key: string]: {
+    mealInfo: MealInfoTypes | undefined;
+    ingredients: IngredientTypes | undefined;
+    nutrition: Nutrients | undefined;
+  };
 }
 
 export interface MealInfoTypes {
@@ -42,7 +61,7 @@ export interface IngredientTypes {
   [key: string]: IngredientInfo;
 }
 export type IngredientInfo = {
-  id?: string,
+  id?: string;
   ingredientName: string;
   ingredientValue: string;
   caloriesName: string;
@@ -53,7 +72,7 @@ export type IngredientInfo = {
   carbsValue: string;
   fatName: string;
   fatValue: string;
-}
+};
 
 export interface IngredientInputValidation {
   [key: string]: {
@@ -78,7 +97,7 @@ export interface nutritionTypes {
 }
 
 export interface mealQueryHygraphType {
-  id: string,
+  id: string;
   mealType: string;
   mealName: string;
   ingredients: Array<ingredient>;
