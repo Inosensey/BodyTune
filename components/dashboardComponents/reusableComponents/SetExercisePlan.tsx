@@ -13,6 +13,9 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
+// Utils
+import { arrangeExercisePlan } from "@/utils/dashboardUtils";
+
 // Types
 interface exercisePlanInterface {
   selectedExercisePlan: string;
@@ -80,7 +83,6 @@ const SetExercisePlan = ({
   selectedDifficulties,
   setSelectedDifficulties,
 }: props) => {
-  
   // UseQuery
   const { data: exercisePlanList } = useQuery({
     queryKey: ["exercisePlans"],
@@ -88,7 +90,14 @@ const SetExercisePlan = ({
       return getExercisePlans();
     },
   });
-  console.log(exercisePlanList);
+  const exercisePlans = exercisePlanList!.map((exercisePlanInfo) => {
+    return {
+      exerciseId: exercisePlanInfo.id,
+      planName: exercisePlanInfo.planName,
+      planTags: exercisePlanInfo.exercise_plan_tag,
+      exercises: arrangeExercisePlan(exercisePlanInfo),
+    };
+  });
 
   // States
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
@@ -223,9 +232,11 @@ const SetExercisePlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Filter Exercise Plans
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
                         defaultValue={1}
@@ -246,9 +257,11 @@ const SetExercisePlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Choose a Exercise Plan
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="exercisePlan"
                         defaultValue={
@@ -262,18 +275,15 @@ const SetExercisePlan = ({
                         >
                           Exercise Plans
                         </option>
-                        <option className="bg-primary font-quickSand" value="1">
-                          Exercise Plan1
-                        </option>
-                        <option className="bg-primary font-quickSand" value="2">
-                          Exercise Plan2
-                        </option>
-                        <option className="bg-primary font-quickSand" value="3">
-                          Exercise Plan3
-                        </option>
-                        <option className="bg-primary font-quickSand" value="4">
-                          Exercise Plan4
-                        </option>
+                        {exercisePlans.map((exercisePlanInfo) => (
+                          <option
+                            key={exercisePlanInfo.exerciseId}
+                            className="bg-primary font-quickSand"
+                            value={exercisePlanInfo.exerciseId}
+                          >
+                            {exercisePlanInfo.planName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -313,9 +323,11 @@ const SetExercisePlan = ({
                   <label className="phone:text-sm font-quickSand font-semibold">
                     Filter Exercise Plans
                   </label>
-                  <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <div
+                    className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                  >
                     <select
-                      className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                      className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                       onChange={selectOnChange}
                       name="mealPlan"
                       defaultValue={1}
@@ -336,9 +348,11 @@ const SetExercisePlan = ({
                   <label className="phone:text-sm font-quickSand font-semibold">
                     Choose a Exercise Plan
                   </label>
-                  <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                  <div
+                    className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                  >
                     <select
-                      className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                      className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                       onChange={selectOnChange}
                       name="exercisePlan"
                       defaultValue={exercisePlanFieldsVal.selectedExercisePlan}
@@ -350,18 +364,15 @@ const SetExercisePlan = ({
                       >
                         Exercise Plans
                       </option>
-                      <option className="bg-primary font-quickSand" value="1">
-                        Exercise Plan1
-                      </option>
-                      <option className="bg-primary font-quickSand" value="2">
-                        Exercise Plan2
-                      </option>
-                      <option className="bg-primary font-quickSand" value="3">
-                        Exercise Plan3
-                      </option>
-                      <option className="bg-primary font-quickSand" value="4">
-                        Exercise Plan4
-                      </option>
+                      {exercisePlans.map((exercisePlanInfo) => (
+                        <option
+                          key={exercisePlanInfo.exerciseId}
+                          className="bg-primary font-quickSand"
+                          value={exercisePlanInfo.exerciseId}
+                        >
+                          {exercisePlanInfo.planName}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
