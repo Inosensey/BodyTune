@@ -19,13 +19,9 @@ import { arrangeMealPlan } from "@/utils/dashboardUtils";
 
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
-import { mealPlanType } from "@/types/mealTypes";
+import { mealPlanName, mealPlanType } from "@/types/mealTypes";
 import { useQuery } from "@tanstack/react-query";
 import { getMealPlans } from "@/lib/supabaseQueries";
-interface mealPlanInterface {
-  selectedMealPlan: string;
-  mealPlanName: string;
-}
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -35,8 +31,8 @@ interface props {
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
   mealPlanInfo: mealPlanType;
   selectedCreateOption: string;
-  mealPlanFieldsVal: mealPlanInterface;
-  setMealPlanFieldsVal: React.Dispatch<React.SetStateAction<mealPlanInterface>>;
+  mealPlanNameVal: mealPlanName;
+  setMealPlanNameVal: React.Dispatch<React.SetStateAction<mealPlanName>>;
   selectedBmis: Array<string>;
   setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>;
 }
@@ -48,8 +44,8 @@ const SetMealPlan = ({
   mealPlanInfo,
   setMealPlanInfo,
   selectedCreateOption,
-  mealPlanFieldsVal,
-  setMealPlanFieldsVal,
+  mealPlanNameVal,
+  setMealPlanNameVal,
   selectedBmis,
   setSelectedBmis,
 }: props) => {
@@ -85,19 +81,19 @@ const SetMealPlan = ({
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     // checkValidations(validationResult);
-    setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
+    setMealPlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, textContent } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
       setActionType("Select");
-      setMealPlanFieldsVal((prev) => ({
+      setMealPlanNameVal((prev) => ({
         ...prev,
         mealPlanName: textContent!,
       }));
     } else {
-      setMealPlanFieldsVal((prev) => ({ ...prev, [name]: textContent! }));
+      setMealPlanNameVal((prev) => ({ ...prev, [name]: textContent! }));
     }
   };
   return (
@@ -211,7 +207,7 @@ const SetMealPlan = ({
                         className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
-                        value={`${mealPlanFieldsVal.selectedMealPlan}`}
+                        value={`${mealPlanNameVal.selectedMealPlan}`}
                       >
                         <option
                           className="bg-primary font-quickSand"
@@ -245,7 +241,7 @@ const SetMealPlan = ({
                   <Input
                     name="mealPlanName"
                     placeholder="Enter the name of the Meal Plan"
-                    state={mealPlanFieldsVal.mealPlanName}
+                    state={mealPlanNameVal.mealPlanName}
                     type="text"
                     label="Meal Plan Name"
                     onChange={onChange}
@@ -295,7 +291,7 @@ const SetMealPlan = ({
                         className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
-                        defaultValue={0}
+                        value={`${mealPlanNameVal.selectedMealPlan}`}
                       >
                         <option
                           className="bg-primary font-quickSand"
