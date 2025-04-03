@@ -166,25 +166,3 @@ export interface mealPlanQuery {
     };
   }>;
 }
-
-export interface exercisePlanInfo {
-  planName: string;
-  shortDescription?: string;
-  tags: Array<{
-    exercise_tags: {
-      id: number;
-      exerciseTagName: string;
-    };
-  }>
-}
-
-export interface mealPlanInfo {
-  planName: string;
-    shortDescription?: string;
-    tags: Array<{
-      meal_tags: {
-        id: number | string;
-        mealTagName: string;
-      };
-    }>
-}
