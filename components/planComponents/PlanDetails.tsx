@@ -9,12 +9,13 @@ import Image from "next/image";
 import SolarStarsMinimalisticLineDuotone from "@/icons/SolarStarsMinimalisticLineDuotone";
 
 // types
-import { exercisePlan, exercisePlanInfo, mealPlanInfo } from "@/types/planTypes";
-import { mealPlanType } from "@/types/mealTypes";
+import { exercisePlanGeneralInfo } from "@/types/exerciseTypes";
+import { exercisePlan } from "@/types/planTypes";
+import { mealPlanGeneralInfo, mealPlanType } from "@/types/mealTypes";
 import { TableInsert } from "@/types/database.types";
 interface props {
-  exercisePlanInfo: exercisePlanInfo;
-  mealPlanInfo: mealPlanInfo;
+  exercisePlanGeneralInfo: exercisePlanGeneralInfo;
+  mealPlanGeneralInfo: mealPlanGeneralInfo;
   exercisePlan?: exercisePlan;
   mealPlan?: mealPlanType;
 }
@@ -58,8 +59,8 @@ const exerciseAnimationVariant = {
 const PlanDetails = ({
   exercisePlan,
   mealPlan,
-  mealPlanInfo,
-  exercisePlanInfo,
+  mealPlanGeneralInfo,
+  exercisePlanGeneralInfo,
 }: props) => {
   // States
   const [selectedMealTab, setSelectedMealTab] = useState<string>("breakFast");
@@ -92,10 +93,10 @@ const PlanDetails = ({
             <p className="font-dmSans">
               Recommended BMI Categories:{" "}
               <span className="font-normal text-lightSecondary">
-                {mealPlanInfo.tags.length === 1
-                  ? `${mealPlanInfo.tags[0].meal_tags.mealTagName}`
-                  : `From ${mealPlanInfo.tags[0].meal_tags.mealTagName}} to ${
-                      mealPlanInfo.tags[mealPlanInfo.tags.length - 1].meal_tags
+                {mealPlanGeneralInfo.tags.length === 1
+                  ? `${mealPlanGeneralInfo.tags[0].meal_tags.mealTagName}`
+                  : `From ${mealPlanGeneralInfo.tags[0].meal_tags.mealTagName}} to ${
+                      mealPlanGeneralInfo.tags[mealPlanGeneralInfo.tags.length - 1].meal_tags
                         .mealTagName
                     }
                     }`}
@@ -105,7 +106,7 @@ const PlanDetails = ({
               Exercise Difficulty:{" "}
               <span className="font-normal text-lightSecondary">
                 Suitable for{" "}
-                {exercisePlanInfo.tags
+                {exercisePlanGeneralInfo.tags
                   .map(
                     (tagInfo: {
                       exercise_tags: { id: number; exerciseTagName: string };
@@ -122,10 +123,10 @@ const PlanDetails = ({
                   Meal Plan Name:
                   <span className="font-normal text-lightSecondary">
                     {" "}
-                    {mealPlanInfo.planName}
+                    {mealPlanGeneralInfo.planName}
                   </span>
                 </p>
-                {mealPlanInfo.shortDescription && (
+                {mealPlanGeneralInfo.shortDescription && (
                   <div className="font-dmSans">
                     <label className="font-bold">Short Description:</label>
                     <p className="font-normal text-lightSecondary text-sm text-justify">
@@ -321,10 +322,10 @@ const PlanDetails = ({
                   Exercise Plan Name:
                   <span className="font-normal text-lightSecondary">
                     {" "}
-                    {exercisePlanInfo.planName}
+                    {exercisePlanGeneralInfo.planName}
                   </span>
                 </p>
-                {exercisePlanInfo.shortDescription && (
+                {exercisePlanGeneralInfo.shortDescription && (
                   <div className="font-dmSans">
                     <label className="font-bold">Short Description:</label>
                     <p className="font-normal text-lightSecondary text-sm text-justify">
