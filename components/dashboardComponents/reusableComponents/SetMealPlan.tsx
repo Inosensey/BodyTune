@@ -15,6 +15,7 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 // Utils
 import { weekDates, bmiClassifications } from "@/utils/initials";
+import { arrangeMealPlan } from "@/utils/dashboardUtils";
 
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
@@ -36,8 +37,8 @@ interface props {
   selectedCreateOption: string;
   mealPlanFieldsVal: mealPlanInterface;
   setMealPlanFieldsVal: React.Dispatch<React.SetStateAction<mealPlanInterface>>;
-  selectedBmis: Array<string>,
-  setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>,
+  selectedBmis: Array<string>;
+  setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>;
 }
 
 const SetMealPlan = ({
@@ -50,9 +51,8 @@ const SetMealPlan = ({
   mealPlanFieldsVal,
   setMealPlanFieldsVal,
   selectedBmis,
-  setSelectedBmis
+  setSelectedBmis,
 }: props) => {
-  
   // UseQuery
   const { data: mealPlanList } = useQuery({
     queryKey: ["mealPlans"],
@@ -60,7 +60,14 @@ const SetMealPlan = ({
       return getMealPlans();
     },
   });
-  console.log(mealPlanList);
+  const mealPlans = mealPlanList!.map((mealPlanInfo) => {
+    return {
+      mealId: mealPlanInfo.id,
+      planName: mealPlanInfo.planName,
+      planTags: mealPlanInfo.meal_plan_tags,
+      meals: arrangeMealPlan(mealPlanInfo),
+    };
+  });
 
   // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
@@ -81,16 +88,16 @@ const SetMealPlan = ({
     setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = event.target;
+    const { name, textContent } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
       setActionType("Select");
       setMealPlanFieldsVal((prev) => ({
         ...prev,
-        mealPlanName: value,
+        mealPlanName: textContent!,
       }));
     } else {
-      setMealPlanFieldsVal((prev) => ({ ...prev, [name]: value }));
+      setMealPlanFieldsVal((prev) => ({ ...prev, [name]: textContent! }));
     }
   };
   return (
@@ -172,9 +179,11 @@ const SetMealPlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Filter Meal Plans
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
                         defaultValue={1}
@@ -195,9 +204,11 @@ const SetMealPlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Choose a Meal Plan
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
                         value={`${mealPlanFieldsVal.selectedMealPlan}`}
@@ -209,18 +220,15 @@ const SetMealPlan = ({
                         >
                           Meal Plans
                         </option>
-                        <option className="bg-primary font-quickSand" value="1">
-                          Meal Plan1
-                        </option>
-                        <option className="bg-primary font-quickSand" value="2">
-                          Meal Plan2
-                        </option>
-                        <option className="bg-primary font-quickSand" value="3">
-                          Meal Plan3
-                        </option>
-                        <option className="bg-primary font-quickSand" value="4">
-                          Meal Plan4
-                        </option>
+                        {mealPlans.map((mealPlanInfo) => (
+                          <option
+                            key={mealPlanInfo.mealId}
+                            className="bg-primary font-quickSand"
+                            value={mealPlanInfo.planName}
+                          >
+                            {mealPlanInfo.planName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -255,9 +263,11 @@ const SetMealPlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Filter Meal Plans
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
                         defaultValue={1}
@@ -278,9 +288,11 @@ const SetMealPlan = ({
                     <label className="phone:text-sm font-quickSand font-semibold">
                       Choose a Meal Plan
                     </label>
-                    <div className={`flex flex-col w-full gap-2 bg-primary`}>
+                    <div
+                      className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
+                    >
                       <select
-                        className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                        className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
                         defaultValue={0}
@@ -292,18 +304,15 @@ const SetMealPlan = ({
                         >
                           Meal Plans
                         </option>
-                        <option className="bg-primary font-quickSand" value="1">
-                          Meal Plan1
-                        </option>
-                        <option className="bg-primary font-quickSand" value="2">
-                          Meal Plan2
-                        </option>
-                        <option className="bg-primary font-quickSand" value="3">
-                          Meal Plan3
-                        </option>
-                        <option className="bg-primary font-quickSand" value="4">
-                          Meal Plan4
-                        </option>
+                        {mealPlans.map((mealPlanInfo) => (
+                          <option
+                            key={mealPlanInfo.mealId}
+                            className="bg-primary font-quickSand"
+                            value={mealPlanInfo.planName}
+                          >
+                            {mealPlanInfo.planName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
