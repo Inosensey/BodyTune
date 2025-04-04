@@ -159,6 +159,9 @@ const MutateForm = ({
   });
 
   // Meal Plan State
+  const [originalFetchedMealPlanInfo] = useState<mealPlanType | undefined>(
+    fetchedMealPlanInfo
+  );
   const [mealPlanInfo, setMealPlanInfo] = useState<mealPlanType>(
     fetchedMealPlanInfo || mealPlanInitial
   );
@@ -311,6 +314,7 @@ const MutateForm = ({
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
+                      originalFetchedMealPlanInfo={originalFetchedMealPlanInfo}
                       mealPlanInfo={mealPlanInfo}
                       setMealPlanInfo={setMealPlanInfo}
                       selectedCreateOption={selectedOption}
