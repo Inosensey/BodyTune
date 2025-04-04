@@ -200,27 +200,29 @@ const SetExercisePlan = ({
           <div className="flex flex-col">
             {!showExercisePlanHtml && (
               <>
-                <div className="flex flex-col justify-center items-center">
-                  <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
-                    <button
-                      onClick={() => {
-                        setActionType("New");
-                        setShowExercisePanHtml(true);
-                      }}
-                      type="button"
-                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
-                    >
-                      Create a New Plan
-                      <FontAwesomeIcon
-                        icon={faPlusSquare}
-                        className="text-white text-lg"
-                      />
-                    </button>
+                {actionType !== "" && actionType !== "New" && (
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
+                      <button
+                        onClick={() => {
+                          setActionType("New");
+                          setShowExercisePanHtml(true);
+                        }}
+                        type="button"
+                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                      >
+                        Create a New Plan
+                        <FontAwesomeIcon
+                          icon={faPlusSquare}
+                          className="text-white text-lg"
+                        />
+                      </button>
+                    </div>
+                    <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
+                      OR
+                    </p>
                   </div>
-                  <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
-                    OR
-                  </p>
-                </div>
+                )}
                 <div
                   className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
                   style={{
@@ -263,9 +265,7 @@ const SetExercisePlan = ({
                         className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="exercisePlan"
-                        defaultValue={
-                          exercisePlanNameVal.selectedExercisePlan
-                        }
+                        defaultValue={exercisePlanNameVal.selectedExercisePlan}
                       >
                         <option
                           className="bg-primary font-quickSand"
@@ -294,89 +294,86 @@ const SetExercisePlan = ({
 
         {showExercisePlanHtml && (
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1">
-            {actionType === "New" ? (
-              <div className="flex flex-col gap-2 ">
-                <motion.div className="phone:w-4/12 min-w-[260px]">
-                  <Input
-                    name="exercisePlanName"
-                    placeholder="Enter the name of the Exercise Plan"
-                    state={exercisePlanNameVal.exercisePlanName}
-                    type="text"
-                    label="Exercise Plan Name"
-                    onChange={onChange}
-                    onBlur={onChange}
-                    autoComplete="off"
-                    valid={null}
-                    validationMessage={""}
-                  />
-                </motion.div>
-              </div>
-            ) : (
-              <div
-                className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
-                style={{
-                  flexDirection: showExercisePlanHtml ? "row" : "column",
-                }}
-              >
-                <div className="relative pl-2 w-[270px]">
-                  <label className="phone:text-sm font-quickSand font-semibold">
-                    Filter Exercise Plans
-                  </label>
-                  <div
-                    className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+            <div className="flex flex-col gap-2 ">
+              <motion.div className="phone:w-4/12 min-w-[260px]">
+                <Input
+                  name="exercisePlanName"
+                  placeholder="Enter the name of the Exercise Plan"
+                  state={exercisePlanNameVal.exercisePlanName}
+                  type="text"
+                  label="Exercise Plan Name"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={null}
+                  validationMessage={""}
+                />
+              </motion.div>
+            </div>
+            <div
+              className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
+              style={{
+                flexDirection: showExercisePlanHtml ? "row" : "column",
+              }}
+            >
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Filter Exercise Plans
+                </label>
+                <div
+                  className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                >
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="mealPlan"
+                    defaultValue={1}
                   >
-                    <select
-                      className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
-                      onChange={selectOnChange}
-                      name="mealPlan"
-                      defaultValue={1}
-                    >
-                      <option className="bg-primary font-quickSand" value="1">
-                        All
-                      </option>
-                      <option className="bg-primary font-quickSand" value="2">
-                        Saved Exercise Plans
-                      </option>
-                      <option className="bg-primary font-quickSand" value="3">
-                        Created Exercise Plans
-                      </option>
-                    </select>
-                  </div>
+                    <option className="bg-primary font-quickSand" value="1">
+                      All
+                    </option>
+                    <option className="bg-primary font-quickSand" value="2">
+                      Saved Exercise Plans
+                    </option>
+                    <option className="bg-primary font-quickSand" value="3">
+                      Created Exercise Plans
+                    </option>
+                  </select>
                 </div>
-                <div className="relative pl-2 w-[270px]">
-                  <label className="phone:text-sm font-quickSand font-semibold">
-                    Choose a Exercise Plan
-                  </label>
-                  <div
-                    className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+              </div>
+              <div className="relative pl-2 w-[270px]">
+                <label className="phone:text-sm font-quickSand font-semibold">
+                  Choose a Exercise Plan
+                </label>
+                <div
+                  className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                >
+                  <select
+                    className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
+                    onChange={selectOnChange}
+                    name="exercisePlan"
+                    defaultValue={exercisePlanNameVal.selectedExercisePlan}
                   >
-                    <select
-                      className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
-                      onChange={selectOnChange}
-                      name="exercisePlan"
-                      defaultValue={exercisePlanNameVal.selectedExercisePlan}
+                    <option
+                      className="bg-primary font-quickSand"
+                      value="0"
+                      disabled
                     >
+                      Exercise Plans
+                    </option>
+                    {exercisePlans.map((exercisePlanInfo) => (
                       <option
+                        key={exercisePlanInfo.exerciseId}
                         className="bg-primary font-quickSand"
-                        value="0"
-                        disabled
+                        value={exercisePlanInfo.exerciseId}
                       >
-                        Exercise Plans
+                        {exercisePlanInfo.planName}
                       </option>
-                      {exercisePlans.map((exercisePlanInfo) => (
-                        <option
-                          key={exercisePlanInfo.exerciseId}
-                          className="bg-primary font-quickSand"
-                          value={exercisePlanInfo.exerciseId}
-                        >
-                          {exercisePlanInfo.planName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    ))}
+                  </select>
                 </div>
               </div>
-            )}
+            </div>
             <div className="flex flex-col gap-1">
               <label className="font-dmSans phone:text-sm">
                 Select Workout Difficulty Tags:
