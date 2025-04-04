@@ -9,9 +9,11 @@ import AddMealForm from "./AddMealForm";
 import MealPlanCard from "./MealPlanCard";
 
 // Icons
+import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import SolarUndoLeftRoundSquareOutline from "@/icons/SolarUndoLeftRoundSquareOutline";
+import SolarRestartSquareLineDuotone from "@/icons/SolarRestartSquareLineDuotone";
 
 // Utils
 import { weekDates, bmiClassifications } from "@/utils/initials";
@@ -29,6 +31,7 @@ interface props {
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  originalFetchedMealPlanInfo: mealPlanType | undefined;
   mealPlanInfo: mealPlanType;
   selectedCreateOption: string;
   mealPlanNameVal: mealPlanName;
@@ -41,6 +44,7 @@ const SetMealPlan = ({
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
+  originalFetchedMealPlanInfo,
   mealPlanInfo,
   setMealPlanInfo,
   selectedCreateOption,
@@ -49,6 +53,7 @@ const SetMealPlan = ({
   selectedBmis,
   setSelectedBmis,
 }: props) => {
+  console.log(originalFetchedMealPlanInfo);
   // UseQuery
   const { data: mealPlanList } = useQuery({
     queryKey: ["mealPlans"],
@@ -56,7 +61,7 @@ const SetMealPlan = ({
       return getMealPlans();
     },
   });
-  const mealPlans = mealPlanList!.map((mealPlanInfo) => {
+  const selectMealPlans = mealPlanList!.map((mealPlanInfo) => {
     return {
       mealId: mealPlanInfo.id,
       planName: mealPlanInfo.planName,
@@ -84,16 +89,27 @@ const SetMealPlan = ({
     setMealPlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, textContent } = event.target;
+    const { value, name, selectedIndex, options } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
       setActionType("Select");
       setMealPlanNameVal((prev) => ({
         ...prev,
-        mealPlanName: textContent!,
+        selectedMealPlan: value,
+        mealPlanName: options[selectedIndex].innerHTML,
       }));
+      const selectedMealPlan = mealPlanList!.filter(
+        (mealPlan) => mealPlan.id === parseInt(value)
+      );
+      const arrangedMealPlan: mealPlanType = arrangeMealPlan(
+        selectedMealPlan[0]
+      );
+      setMealPlanInfo(arrangedMealPlan);
     } else {
-      setMealPlanNameVal((prev) => ({ ...prev, [name]: textContent! }));
+      setMealPlanNameVal((prev) => ({
+        ...prev,
+        [name]: options[selectedIndex].innerHTML,
+      }));
     }
   };
   return (
@@ -104,72 +120,109 @@ const SetMealPlan = ({
       >
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
           <div className="flex items-center gap-1 pr-2 cursor-pointer w-full">
-            <div className="flex phone:flex-col mdtablet:justify-between mdtablet:items-center mdtablet:flex-row group">
-              <div
-                className="flex items-center gap-1"
-                onClick={() => {
-                  setSelectedOption("");
-                  setProgress(1);
-                  setSelectedBreadCrumb({
-                    id: 1,
-                    title: "Body Metrics",
-                    shortDescription: "Set weight, height, and experience",
-                  });
-                }}
-              >
-                <IcOutlineArrowBackIosNew
-                  color="#4B6F64"
-                  width="1.7em"
-                  height="1.7em"
-                />
-                <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
-                  Return to BodyTune creation options
-                </p>
+            <div className="flex w-full phone:flex-col mdtablet:justify-between mdtablet:items-center mdtablet:flex-row">
+              <div className="flex items-center gap-1">
+                <div
+                  className="flex items-center gap-1 group"
+                  onClick={() => {
+                    setSelectedOption("");
+                    setProgress(1);
+                    setSelectedBreadCrumb({
+                      id: 1,
+                      title: "Body Metrics",
+                      shortDescription: "Set weight, height, and experience",
+                    });
+                  }}
+                >
+                  <IcOutlineArrowBackIosNew
+                    color="#4B6F64"
+                    width="1.7em"
+                    height="1.7em"
+                  />
+                  <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
+                    Return to BodyTune creation options
+                  </p>
+                </div>
+                {actionType !== "" &&
+                  (actionType !== "New" ? (
+                    <button
+                      type="button"
+                      onClick={() => setActionType("New")}
+                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+                    >
+                      Create Meal Plan
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setActionType("Select")}
+                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+                    >
+                      Select Meal Plan
+                    </button>
+                  ))}
+              </div>
+              <div className="flex items-center">
+                {originalFetchedMealPlanInfo ? (
+                  <button
+                    onClick={() => {
+                      setMealPlanInfo(originalFetchedMealPlanInfo);
+                    }}
+                    type="button"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                  >
+                    Undo
+                    <SolarUndoLeftRoundSquareOutline
+                      color="#ffffff"
+                      width="1.5em"
+                      height="1.5em"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setMealPlanInfo(mealPlanInfo);
+                    }}
+                    type="button"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                  >
+                    Reset
+                    <SolarRestartSquareLineDuotone
+                      color="#ffffff"
+                      width="1.5em"
+                      height="1.5em"
+                    />
+                  </button>
+                )}
               </div>
             </div>
-            {actionType !== "" &&
-              (actionType !== "New" ? (
-                <button
-                  type="button"
-                  onClick={() => setActionType("New")}
-                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                >
-                  Create Meal Plan
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setActionType("Select")}
-                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                >
-                  Select Meal Plan
-                </button>
-              ))}
           </div>
           <div className="flex flex-col">
             {!showMealPlanHtml && (
               <>
-                <div className="flex flex-col justify-center items-center">
-                  <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group ">
-                    <button
-                      onClick={() => {
-                        setActionType("New");
-                        setShowMealPanHtml(true);
-                      }}
-                      type="button"
-                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
-                    >
-                      Create a New Plan
-                      <FontAwesomeIcon
-                        icon={faPlusSquare}
-                        className="text-white text-lg"
-                      />
-                    </button>
+                {actionType !== "" && actionType !== "New" && (
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group ">
+                      <button
+                        onClick={() => {
+                          setActionType("New");
+                          setShowMealPanHtml(true);
+                        }}
+                        type="button"
+                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                      >
+                        Create a New Plan
+                        <FontAwesomeIcon
+                          icon={faPlusSquare}
+                          className="text-white text-lg"
+                        />
+                      </button>
+                    </div>
+                    <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
+                      OR
+                    </p>
                   </div>
-                  <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
-                    OR
-                  </p>
-                </div>
+                )}
                 <div className="relative flex flex-col flex-wrap items-center gap-1 w-full">
                   <div className="relative pl-2 w-[270px]">
                     <label className="phone:text-sm font-quickSand font-semibold">
@@ -198,8 +251,8 @@ const SetMealPlan = ({
                   </div>
                   <div className="relative pl-2 w-[270px]">
                     <label className="phone:text-sm font-quickSand font-semibold">
-                      Choose a Meal Plan
-                    </label>
+                      
+                    </label>Choose a Meal Plan
                     <div
                       className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
                     >
@@ -207,7 +260,7 @@ const SetMealPlan = ({
                         className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="mealPlan"
-                        value={`${mealPlanNameVal.selectedMealPlan}`}
+                        value={mealPlanNameVal.selectedMealPlan}
                       >
                         <option
                           className="bg-primary font-quickSand"
@@ -216,11 +269,11 @@ const SetMealPlan = ({
                         >
                           Meal Plans
                         </option>
-                        {mealPlans.map((mealPlanInfo) => (
+                        {selectMealPlans.map((mealPlanInfo) => (
                           <option
                             key={mealPlanInfo.mealId}
                             className="bg-primary font-quickSand"
-                            value={mealPlanInfo.planName}
+                            value={mealPlanInfo.mealId}
                           >
                             {mealPlanInfo.planName}
                           </option>
@@ -235,86 +288,83 @@ const SetMealPlan = ({
         </div>
         {showMealPlanHtml && (
           <div className="flex gap-4 bg-black rounded-b-lg pt-2 pb-4 px-2 flex-col laptop:w-full">
-            {actionType === "New" ? (
-              <div className="flex gap-2 phone:flex-col">
-                <motion.div className="phone:w-4/12 min-w-[260px]">
-                  <Input
-                    name="mealPlanName"
-                    placeholder="Enter the name of the Meal Plan"
-                    state={mealPlanNameVal.mealPlanName}
-                    type="text"
-                    label="Meal Plan Name"
-                    onChange={onChange}
-                    onBlur={onChange}
-                    autoComplete="off"
-                    valid={null}
-                    validationMessage={""}
-                  />
-                </motion.div>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
-                  <div className="relative w-[270px]">
-                    <label className="phone:text-sm font-quickSand font-semibold">
-                      Filter Meal Plans
-                    </label>
-                    <div
-                      className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+            <div className="flex gap-2 phone:flex-col">
+              <motion.div className="phone:w-4/12 min-w-[260px]">
+                <Input
+                  name="mealPlanName"
+                  placeholder="Enter the name of the Meal Plan"
+                  state={mealPlanNameVal.mealPlanName}
+                  type="text"
+                  label="Meal Plan Name"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={null}
+                  validationMessage={""}
+                />
+              </motion.div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
+                <div className="relative w-[270px]">
+                  <label className="phone:text-sm font-quickSand font-semibold">
+                    Filter Meal Plans
+                  </label>
+                  <div
+                    className={`flex flex-col w-full h-[2.7rem] gap-2 bg-primary`}
+                  >
+                    <select
+                      className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
+                      onChange={selectOnChange}
+                      name="mealPlan"
+                      defaultValue={1}
                     >
-                      <select
-                        className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
-                        onChange={selectOnChange}
-                        name="mealPlan"
-                        defaultValue={1}
-                      >
-                        <option className="bg-primary font-quickSand" value="1">
-                          All
-                        </option>
-                        <option className="bg-primary font-quickSand" value="2">
-                          Saved Meal Plans
-                        </option>
-                        <option className="bg-primary font-quickSand" value="3">
-                          Created Meal Plans
-                        </option>
-                      </select>
-                    </div>
+                      <option className="bg-primary font-quickSand" value="1">
+                        All
+                      </option>
+                      <option className="bg-primary font-quickSand" value="2">
+                        Saved Meal Plans
+                      </option>
+                      <option className="bg-primary font-quickSand" value="3">
+                        Created Meal Plans
+                      </option>
+                    </select>
                   </div>
-                  <div className="relative w-[270px]">
-                    <label className="phone:text-sm font-quickSand font-semibold">
-                      Choose a Meal Plan
-                    </label>
-                    <div
-                      className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
+                </div>
+                <div className="relative w-[270px]">
+                  <label className="phone:text-sm font-quickSand font-semibold">
+                    Choose a Meal Plan
+                  </label>
+                  <div
+                    className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
+                  >
+                    <select
+                      className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
+                      onChange={selectOnChange}
+                      name="mealPlan"
+                      value={mealPlanNameVal.selectedMealPlan}
                     >
-                      <select
-                        className={`bg-transparent w-full text-white h-full phone:text-sm font-quickSand`}
-                        onChange={selectOnChange}
-                        name="mealPlan"
-                        value={`${mealPlanNameVal.selectedMealPlan}`}
+                      <option
+                        className="bg-primary font-quickSand"
+                        value="0"
+                        disabled
                       >
+                        Meal Plans
+                      </option>
+                      {selectMealPlans.map((mealPlanInfo) => (
                         <option
+                          key={mealPlanInfo.mealId}
                           className="bg-primary font-quickSand"
-                          value="0"
-                          disabled
+                          value={mealPlanInfo.mealId}
                         >
-                          Meal Plans
+                          {mealPlanInfo.planName}
                         </option>
-                        {mealPlans.map((mealPlanInfo) => (
-                          <option
-                            key={mealPlanInfo.mealId}
-                            className="bg-primary font-quickSand"
-                            value={mealPlanInfo.planName}
-                          >
-                            {mealPlanInfo.planName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
             <div className="flex flex-col gap-1">
               <div className="flex flex-col gap-1">
                 <label className="font-dmSans phone:text-sm">
