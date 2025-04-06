@@ -115,7 +115,6 @@ const MutateForm = ({
   });
 
   // Derived Values
-    
   const mealPlanNameInit: mealPlanName = {
     selectedMealPlan: mealPlanGeneralInfo ? mealPlanGeneralInfo.id : "0",
     mealPlanName: mealPlanGeneralInfo ? mealPlanGeneralInfo.planName : "",
@@ -314,6 +313,7 @@ const MutateForm = ({
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
+                      originalMealPlanGeneralInfo={mealPlanGeneralInfo}
                       originalFetchedMealPlanInfo={originalFetchedMealPlanInfo}
                       mealPlanInfo={mealPlanInfo}
                       setMealPlanInfo={setMealPlanInfo}
