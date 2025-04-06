@@ -9,9 +9,7 @@ import AddMealForm from "./AddMealForm";
 import MealPlanCard from "./MealPlanCard";
 
 // Icons
-import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SolarUndoLeftRoundSquareOutline from "@/icons/SolarUndoLeftRoundSquareOutline";
 import SolarRestartSquareLineDuotone from "@/icons/SolarRestartSquareLineDuotone";
 
@@ -21,7 +19,7 @@ import { arrangeMealPlan } from "@/utils/dashboardUtils";
 
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
-import { mealPlanName, mealPlanType } from "@/types/mealTypes";
+import { mealPlanGeneralInfo, mealPlanName, mealPlanType } from "@/types/mealTypes";
 import { useQuery } from "@tanstack/react-query";
 import { getMealPlans } from "@/lib/supabaseQueries";
 interface props {
@@ -31,6 +29,7 @@ interface props {
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  originalMealPlanGeneralInfo: mealPlanGeneralInfo | undefined,
   originalFetchedMealPlanInfo: mealPlanType | undefined;
   mealPlanInfo: mealPlanType;
   selectedCreateOption: string;
@@ -44,6 +43,7 @@ const SetMealPlan = ({
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
+  originalMealPlanGeneralInfo,
   originalFetchedMealPlanInfo,
   mealPlanInfo,
   setMealPlanInfo,
@@ -53,7 +53,6 @@ const SetMealPlan = ({
   selectedBmis,
   setSelectedBmis,
 }: props) => {
-  console.log(originalFetchedMealPlanInfo);
   // UseQuery
   const { data: mealPlanList } = useQuery({
     queryKey: ["mealPlans"],
@@ -78,9 +77,6 @@ const SetMealPlan = ({
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
   const [selectedMealType, setSelectedMealType] = useState<string>("");
   const [formAction, setFormAction] = useState<string>("Add");
-  const [actionType, setActionType] = useState<string>(
-    selectedCreateOption === "recommendation" ? "New" : ""
-  );
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,17 +88,21 @@ const SetMealPlan = ({
     const { value, name, selectedIndex, options } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
-      setActionType("Select");
-      setMealPlanNameVal((prev) => ({
-        ...prev,
-        selectedMealPlan: value,
-        mealPlanName: options[selectedIndex].innerHTML,
-      }));
       const selectedMealPlan = mealPlanList!.filter(
         (mealPlan) => mealPlan.id === parseInt(value)
       );
       const arrangedMealPlan: mealPlanType = arrangeMealPlan(
         selectedMealPlan[0]
+      );
+      setMealPlanNameVal((prev) => ({
+        ...prev,
+        selectedMealPlan: value,
+        mealPlanName: options[selectedIndex].innerHTML,
+      }));
+      setSelectedBmis(
+        selectedMealPlan[0].meal_plan_tags.map(
+          (info) => info.meal_tags.mealTagName
+        )
       );
       setMealPlanInfo(arrangedMealPlan);
     } else {
@@ -120,7 +120,7 @@ const SetMealPlan = ({
       >
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
           <div className="flex items-center gap-1 pr-2 cursor-pointer w-full">
-            <div className="flex w-full phone:flex-col mdtablet:justify-between mdtablet:items-center mdtablet:flex-row">
+            <div className="flex w-full phone:flex-col mdphone:justify-between mdphone:items-center mdphone:flex-row">
               <div className="flex items-center gap-1">
                 <div
                   className="flex items-center gap-1 group"
@@ -143,33 +143,27 @@ const SetMealPlan = ({
                     Return to BodyTune creation options
                   </p>
                 </div>
-                {actionType !== "" &&
-                  (actionType !== "New" ? (
-                    <button
-                      type="button"
-                      onClick={() => setActionType("New")}
-                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                    >
-                      Create Meal Plan
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setActionType("Select")}
-                      className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                    >
-                      Select Meal Plan
-                    </button>
-                  ))}
               </div>
-              <div className="flex items-center">
-                {originalFetchedMealPlanInfo ? (
+              <div className="flex phone:justify-center mdphone:items-center">
+                {originalFetchedMealPlanInfo && originalMealPlanGeneralInfo ? (
                   <button
                     onClick={() => {
                       setMealPlanInfo(originalFetchedMealPlanInfo);
+                      console.log(selectMealPlans)
+                      setMealPlanNameVal((prev) => ({
+                        ...prev,
+                        selectedMealPlan: originalMealPlanGeneralInfo.id,
+                        mealPlanName: originalMealPlanGeneralInfo.planName,
+                      }));
+                      setSelectedBmis(
+                        originalMealPlanGeneralInfo.tags.map(
+                          (info) => info.meal_tags.mealTagName
+                        )
+                      );
+                      setMealPlanInfo(selectMealPlans[0].meals);
                     }}
                     type="button"
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
                   >
                     Undo
                     <SolarUndoLeftRoundSquareOutline
@@ -184,7 +178,7 @@ const SetMealPlan = ({
                       setMealPlanInfo(mealPlanInfo);
                     }}
                     type="button"
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
                   >
                     Reset
                     <SolarRestartSquareLineDuotone
@@ -200,29 +194,6 @@ const SetMealPlan = ({
           <div className="flex flex-col">
             {!showMealPlanHtml && (
               <>
-                {actionType !== "" && actionType !== "New" && (
-                  <div className="flex flex-col justify-center items-center">
-                    <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group ">
-                      <button
-                        onClick={() => {
-                          setActionType("New");
-                          setShowMealPanHtml(true);
-                        }}
-                        type="button"
-                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
-                      >
-                        Create a New Plan
-                        <FontAwesomeIcon
-                          icon={faPlusSquare}
-                          className="text-white text-lg"
-                        />
-                      </button>
-                    </div>
-                    <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
-                      OR
-                    </p>
-                  </div>
-                )}
                 <div className="relative flex flex-col flex-wrap items-center gap-1 w-full">
                   <div className="relative pl-2 w-[270px]">
                     <label className="phone:text-sm font-quickSand font-semibold">
@@ -250,9 +221,8 @@ const SetMealPlan = ({
                     </div>
                   </div>
                   <div className="relative pl-2 w-[270px]">
-                    <label className="phone:text-sm font-quickSand font-semibold">
-                      
-                    </label>Choose a Meal Plan
+                    <label className="phone:text-sm font-quickSand font-semibold"></label>
+                    Choose a Meal Plan
                     <div
                       className={`flex flex-col w-full gap-2 h-[2.7rem] bg-primary`}
                     >
@@ -288,22 +258,6 @@ const SetMealPlan = ({
         </div>
         {showMealPlanHtml && (
           <div className="flex gap-4 bg-black rounded-b-lg pt-2 pb-4 px-2 flex-col laptop:w-full">
-            <div className="flex gap-2 phone:flex-col">
-              <motion.div className="phone:w-4/12 min-w-[260px]">
-                <Input
-                  name="mealPlanName"
-                  placeholder="Enter the name of the Meal Plan"
-                  state={mealPlanNameVal.mealPlanName}
-                  type="text"
-                  label="Meal Plan Name"
-                  onChange={onChange}
-                  onBlur={onChange}
-                  autoComplete="off"
-                  valid={null}
-                  validationMessage={""}
-                />
-              </motion.div>
-            </div>
             <div className="flex flex-col gap-1">
               <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
                 <div className="relative w-[270px]">
@@ -364,6 +318,22 @@ const SetMealPlan = ({
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="flex gap-2 phone:flex-col">
+              <motion.div className="phone:w-4/12 min-w-[260px]">
+                <Input
+                  name="mealPlanName"
+                  placeholder="Enter the name of the Meal Plan"
+                  state={mealPlanNameVal.mealPlanName}
+                  type="text"
+                  label="Meal Plan Name"
+                  onChange={onChange}
+                  onBlur={onChange}
+                  autoComplete="off"
+                  valid={null}
+                  validationMessage={""}
+                />
+              </motion.div>
             </div>
             <div className="flex flex-col gap-1">
               <div className="flex flex-col gap-1">
