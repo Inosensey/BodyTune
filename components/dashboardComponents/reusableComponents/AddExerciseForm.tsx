@@ -532,10 +532,10 @@ const AddExerciseForm = ({
                     event.currentTarget.setAttribute("data-loaded", "true");
                   }}
                   src={demoSrc}
-                  width={200}
-                  height={200}
+                  width={50}
+                  height={50}
                   alt="Preview"
-                  className="w-full h-full object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+                  className="w-[190px] h-[190px] object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
                 />
               )}
             </motion.div>
@@ -545,7 +545,7 @@ const AddExerciseForm = ({
                 state={exerciseFormInputVal.instruction!}
                 label="Instruction"
                 cols={30}
-                rows={3}
+                rows={10}
                 onChange={handleTextareaChange}
                 onBlur={handleTextareaChange}
                 valid={exerciseValidations.instruction.valid}
