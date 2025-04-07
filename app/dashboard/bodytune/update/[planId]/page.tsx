@@ -19,6 +19,7 @@ import {
   bodyTunePlan,
   exercisePlanQuery,
   mealPlanQuery,
+  visibilityInterface,
 } from "@/types/planTypes";
 import { TableRow } from "@/types/database.types";
 import { exercisePlanGeneralInfo } from "@/types/exerciseTypes";
@@ -55,12 +56,18 @@ const BodyTunePlanPage = async ({ params }: props) => {
     id: bodyTune.mealPlanId,
     planName: bodyTune.meal_plan.planName,
     tags: bodyTune.meal_plan.meal_plan_tags,
+    createdBy: bodyTune.meal_plan.created_by
   };
   const exercisePlanGeneralInfo: exercisePlanGeneralInfo = {
     id: bodyTune.exercisePlanId,
     planName: bodyTune.exercise_plan.planName,
     tags: bodyTune.exercise_plan.exercise_plan_tag,
+    createdBy: bodyTune.exercise_plan.created_by
   };
+  const visibility: visibilityInterface = {
+    id: bodyTune.visibility,
+    visibility: bodyTune.plan_visibility.visibility,
+  }
   const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTune);
   return (
     <div className="px-4 mt-4 w-full">
@@ -71,6 +78,7 @@ const BodyTunePlanPage = async ({ params }: props) => {
         personalInfo={personalInformation.response}
         exercisePlanGeneralInfo={exercisePlanGeneralInfo}
         mealPlanGeneralInfo={mealPlanGeneralInfo}
+        planVisibilityInfo={visibility}
         fetchedExercisePlanInfo={exercisePlan}
         fetchedMealPlanInfo={mealPlan}
       />
