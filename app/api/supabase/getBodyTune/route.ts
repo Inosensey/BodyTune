@@ -16,6 +16,10 @@ export async function GET(req: Request) {
                     personal_information:personal_information (
                         name
                     ),
+                    visibility,
+                    plan_visibility:plan_visibility (
+                        visibility
+                    ),
                     meal_plan (
                         id,
                         planName,
@@ -31,6 +35,7 @@ export async function GET(req: Request) {
                                 mealTagName
                             )
                         ),
+                        visibility,
                         plan_visibility (
                             visibility
                         ),
