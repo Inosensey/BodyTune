@@ -13,6 +13,7 @@ export interface exercisePlanGeneralInfo {
   planName: string;
   shortDescription?: string;
   tags: Array<exercisePlanTag>;
+  createdBy: string;
 }
 
 export interface exercisePlanTag {
