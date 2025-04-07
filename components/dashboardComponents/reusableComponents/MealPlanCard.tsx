@@ -55,7 +55,7 @@ const MealPlanCard = ({
               </p>
             </div>
           </div>
-          {meal.mealInfo.veganAlternative !== null && (
+          {meal.mealInfo.veganAlternative !== null && meal.mealInfo.veganAlternative !== "" && (
             <div className="flex flex-col gap-1">
               <label className="text-[#a3e09f] font-dmSans text-base font-semibold underline">
                 Vegan Alternative:
