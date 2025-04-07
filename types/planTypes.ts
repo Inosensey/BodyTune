@@ -45,6 +45,10 @@ export interface bodyTunePlan {
   personal_information: {
     name: string;
   };
+  visibility: number;
+  plan_visibility: {
+    visibility: string;
+  },
   meal_plan: mealPlanQuery;
   exercise_plan: exercisePlanQuery;
 }
@@ -165,4 +169,9 @@ export interface mealPlanQuery {
       veganAlternative: string | null;
     };
   }>;
+}
+
+export interface visibilityInterface {
+  id: number,
+  visibility: string,
 }
