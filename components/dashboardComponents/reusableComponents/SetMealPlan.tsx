@@ -63,6 +63,7 @@ const SetMealPlan = ({
   const selectMealPlans = mealPlanList!.map((mealPlanInfo) => {
     return {
       mealId: mealPlanInfo.id,
+      createdBy: mealPlanInfo.created_by,
       planName: mealPlanInfo.planName,
       planTags: mealPlanInfo.meal_plan_tags,
       meals: arrangeMealPlan(mealPlanInfo),
@@ -70,6 +71,7 @@ const SetMealPlan = ({
   });
 
   // States
+  
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || mealPlanInfo ? true : false
