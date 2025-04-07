@@ -8,6 +8,7 @@ export interface mealPlanGeneralInfo {
   planName: string;
   shortDescription?: string;
   tags: Array<mealPlanTag>;
+  createdBy: string;
 }
 
 export interface mealPlanTag {
