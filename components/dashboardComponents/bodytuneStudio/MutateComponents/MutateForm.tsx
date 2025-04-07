@@ -37,6 +37,7 @@ import {
   exercisePlan,
   exercisePlanQuery,
   mealPlanQuery,
+  visibilityInterface,
 } from "@/types/planTypes";
 import { mealPlanGeneralInfo, mealPlanName, mealPlanType } from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
@@ -48,6 +49,7 @@ interface props {
   exercisePlanGeneralInfo?: exercisePlanGeneralInfo;
   mealPlanGeneralInfo?: mealPlanGeneralInfo;
   fetchedMealPlanInfo?: mealPlanType;
+  planVisibilityInfo?: visibilityInterface;
   fetchedExercisePlanInfo?: exercisePlan;
   mealPlanList: Array<mealPlanQuery> | [];
   exercisePlanList: Array<exercisePlanQuery> | [];
@@ -87,6 +89,7 @@ const mealPlanInitial: mealPlanType = {
 const MutateForm = ({
   action,
   personalInfo,
+  planVisibilityInfo,
   fetchedExercisePlanInfo,
   fetchedMealPlanInfo,
   exercisePlanGeneralInfo,
@@ -178,8 +181,8 @@ const MutateForm = ({
   );
 
   // Visibility Preference
-  const [visibilityPreference, setVisibilityPreference] = useState("");
-
+  const [visibilityPreference, setVisibilityPreference] = useState(planVisibilityInfo ? planVisibilityInfo.id.toString() : "");
+  
   // Events
   const handleSubmit = () => {
     const jsonData = {
