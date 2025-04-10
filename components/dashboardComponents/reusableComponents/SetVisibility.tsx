@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { motion } from "framer-motion";
 
@@ -9,14 +9,15 @@ import TablerCirclePlus from "@/icons/TablerCirclePlus";
 //Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 interface props {
+  action: string;
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   Icon: React.ComponentType<{ color: string; width?: string; height?: string }>;
-  visibilityPreference: string,
-  setVisibilityPreference: React.Dispatch<React.SetStateAction<string>>,
+  visibilityPreference: string;
+  setVisibilityPreference: React.Dispatch<React.SetStateAction<string>>;
   setTogglePreviewBodyTune: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -31,13 +32,14 @@ const childContainer = {
 };
 
 const SetVisibility = ({
+  action,
   setProgress,
   setSelectedBreadCrumb,
   setSelectedOption,
   Icon,
   visibilityPreference,
   setVisibilityPreference,
-  setTogglePreviewBodyTune
+  setTogglePreviewBodyTune,
 }: props) => {
   // Events
   const radioOnChange = (value: string) => {
@@ -95,8 +97,8 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-[#a3e09f]">Private:</span>{" "}
-                Only you can see this{" "}
+                <span className="font-bold text-[#a3e09f]">Private:</span> Only
+                you can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
@@ -123,9 +125,7 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-[#a3e09f]">
-                  Followers:
-                </span>{" "}
+                <span className="font-bold text-[#a3e09f]">Followers:</span>{" "}
                 Only your followers can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
@@ -181,7 +181,7 @@ const SetVisibility = ({
               type="submit"
             >
               <TablerCirclePlus color="#D3F0D1" width="1.2em" height="1.2em" />
-              Save Plan
+              {action === "Update" ? "Update Plan" : "Save Plan"}
             </button>
           </div>
         </motion.div>
