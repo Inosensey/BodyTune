@@ -90,11 +90,8 @@ const SetMealPlan = ({
     const { value, name, selectedIndex, options } = event.target;
     setShowMealPanHtml(true);
     if (name === "mealPlan") {
-      const selectedMealPlan = mealPlanList!.filter(
-        (mealPlan) => mealPlan.id === parseInt(value)
-      );
-      const arrangedMealPlan: mealPlanType = arrangeMealPlan(
-        selectedMealPlan[0]
+      const selectedMealPlan = selectMealPlans!.filter(
+        (mealPlan) => mealPlan.mealId === parseInt(value)
       );
       setMealPlanNameVal((prev) => ({
         ...prev,
@@ -102,11 +99,11 @@ const SetMealPlan = ({
         mealPlanName: options[selectedIndex].innerHTML,
       }));
       setSelectedBmis(
-        selectedMealPlan[0].meal_plan_tags.map(
+        selectedMealPlan[0].planTags.map(
           (info) => info.meal_tags.mealTagName
         )
       );
-      setMealPlanInfo(arrangedMealPlan);
+      setMealPlanInfo(selectedMealPlan[0].meals);
     } else {
       setMealPlanNameVal((prev) => ({
         ...prev,
@@ -162,7 +159,6 @@ const SetMealPlan = ({
                           (info) => info.meal_tags.mealTagName
                         )
                       );
-                      setMealPlanInfo(selectMealPlans[0].meals);
                     }}
                     type="button"
                     className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
