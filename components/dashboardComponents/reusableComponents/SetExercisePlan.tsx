@@ -11,18 +11,20 @@ import { Input } from "@/components/reusableComponent/formInputs/input";
 import AddExerciseForm from "./AddExerciseForm";
 
 // Icons
+import SolarRestartSquareLineDuotone from "@/icons/SolarRestartSquareLineDuotone";
+import SolarUndoLeftRoundSquareOutline from "@/icons/SolarUndoLeftRoundSquareOutline";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import TablerBarbell from "@/icons/TablerBarbellLight";
-import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Utils
 import { arrangeExercisePlan } from "@/utils/dashboardUtils";
 
 // Types
 import { TableInsert } from "@/types/database.types";
-import { exercisePlanName } from "@/types/exerciseTypes";
+import { exercisePlanGeneralInfo, exercisePlanName } from "@/types/exerciseTypes";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 import { exercisePlan } from "@/types/planTypes";
 interface props {
@@ -31,6 +33,8 @@ interface props {
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
+  originalExercisePlanGeneralInfo: exercisePlanGeneralInfo | undefined,
+  originalFetchedExercisePlanInfo: exercisePlan | undefined;
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   exercisePlanInfo: exercisePlan;
   selectedCreateOption: string;
@@ -76,6 +80,8 @@ const SetExercisePlan = ({
   setSelectedBreadCrumb,
   exercisePlanInfo,
   setExercisePlanInfo,
+  originalExercisePlanGeneralInfo,
+  originalFetchedExercisePlanInfo,
   selectedCreateOption,
   exercisePlanNameVal,
   setExercisePlanNameVal,
@@ -116,9 +122,6 @@ const SetExercisePlan = ({
     }
   >(selectExerciseInitial);
   const [formAction, setFormAction] = useState<string>("");
-  const [actionType, setActionType] = useState<string>(
-    selectedCreateOption === "recommendation" ? "New" : ""
-  );
 
   // Events
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,13 +129,16 @@ const SetExercisePlan = ({
     setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value, options } = event.target;
+    const { name, value, options, selectedIndex } = event.target;
     if (name === "exercisePlan") {
+      const selectedExercisePlan = exercisePlans.filter((exercise) => exercise.exerciseId === parseInt(value))
       setExercisePlanNameVal((prev) => ({
         ...prev,
-        exercisePlanName: options[event.target.selectedIndex].text,
+        selectedExercisePlan: value,
+        exercisePlanName: options[selectedIndex].innerHTML,
       }));
-      setActionType("Select");
+      setSelectedDifficulties(selectedExercisePlan[0].planTags.map((info) => info.exercise_tags.exerciseTagName))
+      setExercisePlanInfo(selectedExercisePlan[0].exercises)
     } else {
       setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
     }
@@ -155,74 +161,78 @@ const SetExercisePlan = ({
       >
         <div className="bg-black rounded-t-lg pt-4 py-2 w-full">
           <div className="flex items-center gap-1 pr-2 cursor-pointer w-full">
-            <div
-              className="flex items-center gap-1 pr-2 cursor-pointer w-max group"
-              onClick={() => {
-                setSelectedOption("");
-                setProgress(1);
-                setSelectedBreadCrumb({
-                  id: 1,
-                  title: "Body Metrics",
-                  shortDescription: "Set weight, height, and experience",
-                });
-              }}
-            >
-              <IcOutlineArrowBackIosNew
-                color="#4B6F64"
-                width="1.7em"
-                height="1.7em"
-              />
-              <div>
-                <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
-                  Return to BodyTune creation options
-                </p>
+            <div className="flex w-full phone:flex-col mdphone:justify-between mdphone:items-center mdphone:flex-row">
+              <div className="flex items-center gap-1">
+                <div
+                  className="flex items-center gap-1 group"
+                  onClick={() => {
+                    setSelectedOption("");
+                    setProgress(1);
+                    setSelectedBreadCrumb({
+                      id: 1,
+                      title: "Body Metrics",
+                      shortDescription: "Set weight, height, and experience",
+                    });
+                  }}
+                >
+                  <IcOutlineArrowBackIosNew
+                    color="#4B6F64"
+                    width="1.7em"
+                    height="1.7em"
+                  />
+                  <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
+                    Return to BodyTune creation options
+                  </p>
+                </div>
+              </div>
+              <div className="flex phone:justify-center mdphone:items-center">
+                {originalFetchedExercisePlanInfo && originalExercisePlanGeneralInfo ? (
+                  <button
+                    onClick={() => {
+                      setExercisePlanInfo(originalFetchedExercisePlanInfo);
+                      setExercisePlanNameVal((prev) => ({
+                        ...prev,
+                        selectedExercisePlan: originalExercisePlanGeneralInfo.id,
+                        exercisePlanName: originalExercisePlanGeneralInfo.planName,
+                      }));
+                      setSelectedDifficulties(
+                        originalExercisePlanGeneralInfo.tags.map(
+                          (info) => info.exercise_tags.exerciseTagName
+                        )
+                      );
+                    }}
+                    type="button"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                  >
+                    Undo
+                    <SolarUndoLeftRoundSquareOutline
+                      color="#ffffff"
+                      width="1.5em"
+                      height="1.5em"
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setExercisePlanInfo(exercisePlanInfo);
+                    }}
+                    type="button"
+                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+                  >
+                    Reset
+                    <SolarRestartSquareLineDuotone
+                      color="#ffffff"
+                      width="1.5em"
+                      height="1.5em"
+                    />
+                  </button>
+                )}
               </div>
             </div>
-            {actionType !== "" &&
-              (actionType !== "New" ? (
-                <button
-                  onClick={() => setActionType("New")}
-                  type="button"
-                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                >
-                  Create Exercise Plan
-                </button>
-              ) : (
-                <button
-                  onClick={() => setActionType("Select")}
-                  type="button"
-                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
-                >
-                  Select Exercise Plan
-                </button>
-              ))}
           </div>
           <div className="flex flex-col">
             {!showExercisePlanHtml && (
               <>
-                {actionType !== "" && actionType !== "New" && (
-                  <div className="flex flex-col justify-center items-center">
-                    <div className="px-2 phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] group">
-                      <button
-                        onClick={() => {
-                          setActionType("New");
-                          setShowExercisePanHtml(true);
-                        }}
-                        type="button"
-                        className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
-                      >
-                        Create a New Plan
-                        <FontAwesomeIcon
-                          icon={faPlusSquare}
-                          className="text-white text-lg"
-                        />
-                      </button>
-                    </div>
-                    <p className="text-center pl-2 font-dmSans font-bold text-lightSecondary phone:text-sm phone:w-[96%] mdphone:w-11/12 laptop:w-[270px] laptop:text-base">
-                      OR
-                    </p>
-                  </div>
-                )}
                 <div
                   className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
                   style={{
@@ -239,8 +249,8 @@ const SetExercisePlan = ({
                       <select
                         className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
-                        name="mealPlan"
-                        defaultValue={1}
+                        name="filterExercisePlan"
+                        value={1}
                       >
                         <option className="bg-primary font-quickSand" value="1">
                           All
@@ -265,7 +275,7 @@ const SetExercisePlan = ({
                         className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                         onChange={selectOnChange}
                         name="exercisePlan"
-                        defaultValue={exercisePlanNameVal.selectedExercisePlan}
+                        value={exercisePlanNameVal.selectedExercisePlan}
                       >
                         <option
                           className="bg-primary font-quickSand"
@@ -326,8 +336,8 @@ const SetExercisePlan = ({
                   <select
                     className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                     onChange={selectOnChange}
-                    name="mealPlan"
-                    defaultValue={1}
+                    name="filterExercisePlan"
+                    value={1}
                   >
                     <option className="bg-primary font-quickSand" value="1">
                       All
@@ -352,7 +362,7 @@ const SetExercisePlan = ({
                     className={`bg-transparent w-[92%] text-white h-full phone:text-sm font-quickSand`}
                     onChange={selectOnChange}
                     name="exercisePlan"
-                    defaultValue={exercisePlanNameVal.selectedExercisePlan}
+                    value={exercisePlanNameVal.selectedExercisePlan}
                   >
                     <option
                       className="bg-primary font-quickSand"
@@ -442,24 +452,22 @@ const SetExercisePlan = ({
               </div>
             </div>
             <div className="flex w-full gap-1 flex-col overflow-auto justify-start">
-              {actionType === "New" && (
-                <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
-                  <button
-                    onClick={() => {
-                      setFormAction("Add");
-                      setToggleAddExerciseForm(true);
-                    }}
-                    type="button"
-                    className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
-                  >
-                    Add an Exercise
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      className="text-white text-xl"
-                    />
-                  </button>
-                </div>
-              )}
+              <div className="mt-2 phone:h-[30px] phone:w-max laptop:w-[175px] group">
+                <button
+                  onClick={() => {
+                    setFormAction("Add");
+                    setToggleAddExerciseForm(true);
+                  }}
+                  type="button"
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm px-4 w-full h-full rounded-md flex items-center justify-center gap-1 transition duration-200 group-hover:bg-secondary"
+                >
+                  Add an Exercise
+                  <FontAwesomeIcon
+                    icon={faPlusSquare}
+                    className="text-white text-xl"
+                  />
+                </button>
+              </div>
               {exercisePlanInfo[selectedWeekDay] &&
                 exercisePlanInfo[selectedWeekDay].length !== 0 && (
                   <div className="flex flex-wrap gap-1 w-full h-full mt-1 overflow-auto">
