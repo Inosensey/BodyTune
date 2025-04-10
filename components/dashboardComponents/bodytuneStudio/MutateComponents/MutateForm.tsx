@@ -47,10 +47,10 @@ interface props {
   action: string;
   personalInfo: TableRow<"personal_information">[];
   exercisePlanGeneralInfo?: exercisePlanGeneralInfo;
+  fetchedExercisePlanInfo?: exercisePlan;
   mealPlanGeneralInfo?: mealPlanGeneralInfo;
   fetchedMealPlanInfo?: mealPlanType;
   planVisibilityInfo?: visibilityInterface;
-  fetchedExercisePlanInfo?: exercisePlan;
   mealPlanList: Array<mealPlanQuery> | [];
   exercisePlanList: Array<exercisePlanQuery> | [];
 }
@@ -172,6 +172,8 @@ const MutateForm = ({
   const [bmiClassification, setBmiClassification] = useState({ id: "", bmiClassification: "" });
 
   // Exercise Plan State
+  const [originalFetchedExercisePlanInfo] = useState<exercisePlan | undefined>(
+    fetchedExercisePlanInfo || {});
   const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>(
     fetchedExercisePlanInfo || {}
   );
@@ -334,6 +336,8 @@ const MutateForm = ({
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
+                      originalExercisePlanGeneralInfo={exercisePlanGeneralInfo}
+                      originalFetchedExercisePlanInfo={originalFetchedExercisePlanInfo}
                       exercisePlanInfo={exercisePlanInfo}
                       setExercisePlanInfo={setExercisePlanInfo}
                       selectedCreateOption={selectedOption}
@@ -345,6 +349,7 @@ const MutateForm = ({
                 {progress === 4 && (
                   <div className="flex flex-1 justify-center w-full">
                     <SetVisibility
+                      action={action}
                       setSelectedOption={setSelectedOption}
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
