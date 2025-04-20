@@ -164,7 +164,7 @@ const validateDate = (data: params): validationInfo => {
 };
 const validateNumber = (data: params): validationInfo => {
   const numberRegex = /^\d*\.?\d+$/;
-  if (data.value.length === 0 || data.value === "0") {
+  if (data.value.length === 0) {
     return (validationInfo = {
       validationName: data.stateName,
       valid: false,
