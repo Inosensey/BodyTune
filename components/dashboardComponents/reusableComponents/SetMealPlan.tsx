@@ -95,6 +95,7 @@ const SetMealPlan = ({
       );
       setMealPlanNameVal((prev) => ({
         ...prev,
+        selectedMealPlanUserId: selectedMealPlan[0].createdBy,
         selectedMealPlan: value,
         mealPlanName: options[selectedIndex].innerHTML,
       }));
@@ -148,9 +149,9 @@ const SetMealPlan = ({
                   <button
                     onClick={() => {
                       setMealPlanInfo(originalFetchedMealPlanInfo);
-                      console.log(selectMealPlans)
                       setMealPlanNameVal((prev) => ({
                         ...prev,
+                        selectedMealPlanUserId: originalMealPlanGeneralInfo.createdBy,
                         selectedMealPlan: originalMealPlanGeneralInfo.id,
                         mealPlanName: originalMealPlanGeneralInfo.planName,
                       }));
