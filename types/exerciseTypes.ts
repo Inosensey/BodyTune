@@ -4,6 +4,7 @@ export interface ExercisePlanInfoTypes {
 }
 
 export type exercisePlanName = {
+  selectedExercisePlanUserId: string,
   selectedExercisePlan: number | string;
   exercisePlanName: string;
 };
