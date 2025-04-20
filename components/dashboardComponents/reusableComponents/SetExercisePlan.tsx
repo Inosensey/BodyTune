@@ -98,6 +98,7 @@ const SetExercisePlan = ({
   const exercisePlans = exercisePlanList!.map((exercisePlanInfo) => {
     return {
       exerciseId: exercisePlanInfo.id,
+      createdBy: exercisePlanInfo.created_by,
       planName: exercisePlanInfo.planName,
       planTags: exercisePlanInfo.exercise_plan_tag,
       exercises: arrangeExercisePlan(exercisePlanInfo),
@@ -134,6 +135,7 @@ const SetExercisePlan = ({
       const selectedExercisePlan = exercisePlans.filter((exercise) => exercise.exerciseId === parseInt(value))
       setExercisePlanNameVal((prev) => ({
         ...prev,
+        selectedExercisePlanUserId: selectedExercisePlan[0].createdBy,
         selectedExercisePlan: value,
         exercisePlanName: options[selectedIndex].innerHTML,
       }));
@@ -192,6 +194,7 @@ const SetExercisePlan = ({
                       setExercisePlanInfo(originalFetchedExercisePlanInfo);
                       setExercisePlanNameVal((prev) => ({
                         ...prev,
+                        selectedExercisePlanUserId: originalExercisePlanGeneralInfo.createdBy,
                         selectedExercisePlan: originalExercisePlanGeneralInfo.id,
                         exercisePlanName: originalExercisePlanGeneralInfo.planName,
                       }));
