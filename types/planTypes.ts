@@ -38,7 +38,7 @@ export interface exercisePlan {
 }
 
 export interface bodyTunePlan {
-  id: number,
+  id: number;
   mealPlanId: number;
   exercisePlanId: number;
   created_by: string;
@@ -48,7 +48,7 @@ export interface bodyTunePlan {
   visibility: number;
   plan_visibility: {
     visibility: string;
-  },
+  };
   meal_plan: mealPlanQuery;
   exercise_plan: exercisePlanQuery;
 }
@@ -120,14 +120,7 @@ export interface mealPlanQuery {
         mealType: string;
       };
       instructions: string;
-      meal_ingredients: Array<{
-        mealId: number;
-        ingredientName: string;
-        fat: number;
-        carbs: number;
-        protein: number;
-        calories: number;
-      }>;
+      meal_ingredients: Array<mealPlanIngredientQuery>;
       veganAlternative: string | null;
     };
     lunch: {
@@ -137,16 +130,7 @@ export interface mealPlanQuery {
         mealType: string;
       };
       instructions: string;
-      meal_ingredients: [
-        {
-          mealId: number;
-          ingredientName: string;
-          fat: number;
-          carbs: number;
-          protein: number;
-          calories: number;
-        }
-      ];
+      meal_ingredients: Array<mealPlanIngredientQuery>;
       veganAlternative: string | null;
     };
     dinner: {
@@ -156,22 +140,23 @@ export interface mealPlanQuery {
         mealType: string;
       };
       instructions: string;
-      meal_ingredients: [
-        {
-          mealId: number;
-          ingredientName: string;
-          fat: number;
-          carbs: number;
-          protein: number;
-          calories: number;
-        }
-      ];
+      meal_ingredients: Array<mealPlanIngredientQuery>;
       veganAlternative: string | null;
     };
   }>;
 }
 
+export interface mealPlanIngredientQuery {
+  id: number;
+  mealId: number;
+  ingredientName: string;
+  fat: number;
+  carbs: number;
+  protein: number;
+  calories: number;
+}
+
 export interface visibilityInterface {
-  id: number,
-  visibility: string,
+  id: number;
+  visibility: string;
 }
