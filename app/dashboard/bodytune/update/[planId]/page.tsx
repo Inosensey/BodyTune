@@ -73,6 +73,7 @@ const BodyTunePlanPage = async ({ params }: props) => {
     <div className="px-4 mt-4 w-full">
       <MutateForm
         action="Update"
+        bodyTuneId={bodyTune.id}
         exercisePlanList={exercisePlanRes}
         mealPlanList={mealPlanRes}
         personalInfo={personalInformation.response}
