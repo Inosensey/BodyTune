@@ -47,6 +47,7 @@ export async function GET() {
                       mealType
                   ),
                   meal_ingredients (
+                      id,
                       mealId,
                       ingredientName,
                       calories,
@@ -65,6 +66,7 @@ export async function GET() {
                       mealType
                   ),
                   meal_ingredients (
+                      id,
                       mealId,
                       ingredientName,
                       calories,
@@ -83,6 +85,7 @@ export async function GET() {
                       mealType
                   ),
                   meal_ingredients (
+                      id,
                       mealId,
                       ingredientName,
                       calories,
