@@ -8,7 +8,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Oval } from "react-loader-spinner";
 
 // Actions
-import { createBodyTunePlan } from "@/actions/planActions";
+import { createBodyTunePlan, updateBodyTunePlan } from "@/actions/planActions";
 import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 
 // Components
@@ -46,6 +46,7 @@ import { exercisePlanGeneralInfo, exercisePlanName } from "@/types/exerciseTypes
 interface props {
   action: string;
   personalInfo: TableRow<"personal_information">[];
+  bodyTuneId?: number,
   exercisePlanGeneralInfo?: exercisePlanGeneralInfo;
   fetchedExercisePlanInfo?: exercisePlan;
   mealPlanGeneralInfo?: mealPlanGeneralInfo;
@@ -88,6 +89,7 @@ const mealPlanInitial: mealPlanType = {
 
 const MutateForm = ({
   action,
+  bodyTuneId,
   personalInfo,
   planVisibilityInfo,
   fetchedExercisePlanInfo,
@@ -119,10 +121,12 @@ const MutateForm = ({
 
   // Derived Values
   const mealPlanNameInit: mealPlanName = {
+    selectedMealPlanUserId: mealPlanGeneralInfo ? mealPlanGeneralInfo.createdBy : "",
     selectedMealPlan: mealPlanGeneralInfo ? mealPlanGeneralInfo.id : "0",
     mealPlanName: mealPlanGeneralInfo ? mealPlanGeneralInfo.planName : "",
   };
   const exercisePlanNameInit: exercisePlanName = {
+    selectedExercisePlanUserId: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.createdBy : "0",
     selectedExercisePlan: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.id : "0",
     exercisePlanName: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.planName : "",
   };
@@ -135,7 +139,7 @@ const MutateForm = ({
     : [];
 
   // Form State
-  const [formState, formAction] = useFormState(createBodyTunePlan, useFormStateInitials);
+  const [formState, formAction] = useFormState(action === "Update" ? udpateBodyTunePlan : createBodyTunePlan, useFormStateInitials);
 
   // State Hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,6 +192,7 @@ const MutateForm = ({
   // Events
   const handleSubmit = () => {
     const jsonData = {
+      bodyTuneId: bodyTuneId,
       mealPlan: mealPlanInfo,
       exercisePlan: exercisePlanInfo,
       mealPlanTags: selectedBmis,
@@ -195,17 +200,20 @@ const MutateForm = ({
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
-    formData.append("bmiClassification", mealPlanNameVal.mealPlanName);
-    formData.append(
-      "exerciseDifficulty",
-      exercisePlanNameVal.exercisePlanName
-    );
     formData.append("exercisePlanName", exercisePlanNameVal.exercisePlanName);
     formData.append("visibilityPreference", visibilityPreference);
-    formData.append("selectedMealPlan", mealPlanNameVal.selectedMealPlan as string);
+    formData.append("selectedMealPlan", 
+      JSON.stringify({
+        selectedMealPlanId: mealPlanNameVal.selectedMealPlan, 
+        selectedMealPlanUserId: mealPlanNameVal.selectedMealPlanUserId
+      })
+    )
     formData.append(
       "selectedExercisePlan",
-      exercisePlanNameVal.selectedExercisePlan as string
+      JSON.stringify({
+        selectedExercisePlan: exercisePlanNameVal.selectedExercisePlan, 
+        selectedExercisePlanUserId: exercisePlanNameVal.selectedExercisePlanUserId
+      })
     );
 
     setSubmitMessage(
@@ -247,16 +255,16 @@ const MutateForm = ({
   // Handles form submission success or error
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
-
-    if (formState.success) {
-      setSubmitMessage(
-        "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
-      );
-      queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
-      router.push(`/plan/bodytune/${formState.data}`);
-    } else {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(false);
+    // if (formState.success) {
+    //   setSubmitMessage(
+    //     "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+    //   );
+    //   queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
+    //   router.push(`/plan/bodytune/${formState.data}`);
+    // } else {
+    //   setIsSubmitting(false);
+    // }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
