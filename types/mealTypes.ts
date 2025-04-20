@@ -1,4 +1,5 @@
 export type mealPlanName = {
+  selectedMealPlanUserId: string,
   selectedMealPlan: number | string;
   mealPlanName: string;
 };
@@ -52,6 +53,7 @@ export interface dailyMealInfo {
 }
 
 export interface MealInfoTypes {
+  id?: number,
   mealName: string;
   shortDescription: string;
   cookingInstruction: string;
