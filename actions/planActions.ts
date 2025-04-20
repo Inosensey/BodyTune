@@ -1,7 +1,7 @@
 "use server";
 
 // Types
-import { TableInsert } from "@/types/database.types";
+import { TableInsert, TablesUpdate } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import {
   IngredientTypes,
@@ -12,6 +12,113 @@ import { exercisePlan } from "@/types/planTypes";
 import { getExerciseTagIds, getMealTagIds, getMealType } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
 import { revalidateTag } from "next/cache";
+
+export const updateBodyTunePlan = async (
+  prevState: formReturnType<[] | number>,
+  formData: FormData,
+): Promise<formReturnType<[] | number>> => {
+  const supabase = await createSSR();
+
+  const jsonData: {
+    bodyTuneId?: number,
+    mealPlan: mealPlanType;
+    exercisePlan: exercisePlan;
+    mealPlanTags: Array<string>;
+    exercisePlanTags: Array<string>;
+  } = JSON.parse(formData.get("jsonData") as string);
+  const selectedMealPlan: {
+    selectedMealPlanUserId: string,
+    selectedMealPlan: number | string;
+  } = JSON.parse(formData.get("selectedMealPlan") as string);
+  const selectedExercisePlan: {
+    selectedExercisePlan: number | string,
+    selectedExercisePlanUserId: string;
+  } = JSON.parse(formData.get("selectedExercisePlan") as string);
+  // const mealPlanName = formData.get("mealPlanName") as string;
+  // const exercisePlanName = formData.get("exercisePlanName") as string;
+  const visibilityPreference = parseInt(
+    formData.get("visibilityPreference") as string
+  );
+  // const selectedMealPlan = formData.get("selectedMealPlan") as string;
+  // const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
+  const mealPlan: mealPlanType = jsonData.mealPlan;
+  // const exercisePlan: exercisePlan = jsonData.exercisePlan;
+  // const mealPlanTags: Array<string> = jsonData.mealPlanTags;
+  // const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
+
+  const user = await supabase.auth.getUser();
+  const userId = user.data.user!.id;
+  try {
+    if( selectedMealPlan.selectedMealPlanUserId !== userId ) {
+
+    const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
+      mealPlanId: parseInt(selectedMealPlan.selectedMealPlan as string),
+      exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
+      visibility: visibilityPreference,
+      created_by: userId
+    }).eq("id", jsonData.bodyTuneId).select()
+
+    if (error) {
+      const errorMessage: string = `There is an error Updating the BodyTune Plan: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
+    const response = data as TableInsert<"bodytune_plan">[];
+    const bodyTunePlanId = response[0].id!;
+
+    revalidateTag(`bodyTunes${bodyTunePlanId}`);
+    return {
+      success: true,
+      error: false,
+      data: bodyTunePlanId,
+      message: ``,
+    };
+  }
+
+  // console.log(jsonData.mealPlan);
+  // console.log(jsonData.exercisePlan);
+  
+  Object.entries(mealPlan).map(([day]) => {
+    Object.entries(mealPlan[day]).map(([mealType]) => {
+      // Object.entries(mealPlan.Monday!.breakFast!.ingredients!).forEach(([, value]) => {
+      //   const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
+      //   console.log(isNumeric(value!.id!))
+      // });
+      const arrangedIngredients = arrangeIngredients(
+        mealPlan[day][mealType].ingredients!,
+        userId,
+        mealPlan[day][mealType].mealInfo!.id!
+      );
+      console.log(arrangedIngredients)
+      // console.log(mealPlan.Monday![mealType]!.mealInfo!)
+      // console.log(mealPlan.Monday![mealType]!.ingredients)
+    })
+  })
+
+  return {
+    success: true,
+    error: false,
+    data: [],
+    message: "",
+  };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Updating new BodyTune: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
 
 export const createBodyTunePlan = async (
   prevState: formReturnType<[] | number>,
@@ -41,7 +148,7 @@ export const createBodyTunePlan = async (
   const userId = user.data.user!.id;
 
   try {
-    const createMealPlanResult = await createMealPlan(
+    const createMealPlanResult = await mutateMealPlan(
       mealPlan,
       mealPlanName,
       visibilityPreference,
@@ -122,26 +229,28 @@ export const createBodyTunePlan = async (
 };
 
 // Meals functions
-const createMealPlan = async (
+const mutateMealPlan = async (
   mealPlan: mealPlanType,
   mealPlanName: string,
   visibilityPreference: number,
   mealPlanTags: Array<string>,
-  userId: string
+  userId: string,
+  planId?: number,
 ) => {
   const supabase = await createSSR();
 
   try {
     const { data, error } = await supabase
       .from("meal_plan")
-      .insert<TableInsert<"meal_plan">>({
+      .upsert<TableInsert<"meal_plan">>({
+        id: planId,
         planName: mealPlanName,
         visibility: visibilityPreference,
         created_by: userId,
       })
       .select();
     if (error) {
-      const errorMessage: string = `There is an error Creating the Meal Plan: ${error.message}`;
+      const errorMessage: string = `There is an error ${planId ? "Updating" : "Creating" } the Meal Plan: ${error.message}`;
       return {
         success: false,
         error: true,
@@ -167,7 +276,7 @@ const createMealPlan = async (
       };
     }
 
-    const createAMealResult = await createMeals(mealPlan, userId)
+    const createAMealResult = await mutateMeals(mealPlan, userId)
 
     if(createAMealResult.error) {      
       return {
@@ -237,7 +346,7 @@ const mapMealPlanWithMealTag = async (
   try {
     const { error } = await supabase
       .from("meal_plan_tags")
-      .insert<TableInsert<"meal_plan_tags">>(mealTagData);
+      .upsert<TableInsert<"meal_plan_tags">>(mealTagData, {onConflict: "mealPlanId, tagId"});
 
     if (error) {
       const errorMessage: string = `There is an error Mapping the Meal Tags: ${error.message}`;
@@ -313,7 +422,7 @@ const createTheDailyMeal = async (
   }
 };
 
-const createMeals = async (
+const mutateMeals = async (
   mealPlan: mealPlanType,
   userId: string
 ) => {
@@ -321,6 +430,7 @@ const createMeals = async (
 
   const mealIds: {
     [key: string]: {
+      id?: number,
       breakFast: number;
       lunch: number;
       dinner: number;
@@ -339,7 +449,8 @@ const createMeals = async (
     
             const { data, error } = await supabase
               .from("meal")
-              .insert<TableInsert<"meal">>({
+              .upsert<TableInsert<"meal">>({
+                id:  mealPlan[day][mealType].mealInfo?.id,
                 mealType: mealTypeId,
                 mealName: mealPlan[day][mealType].mealInfo!.mealName,
                 instructions: mealPlan[day][mealType].mealInfo!.cookingInstruction,
@@ -349,7 +460,7 @@ const createMeals = async (
               .select();
     
             if (error) {
-              throw new Error(`Error creating meal: ${error.message}`);
+              throw new Error(`Error ${mealPlan[day][mealType].mealInfo?.id ? "updating" : "creating"} meal: ${error.message}`);
             }
     
             const mealMutationResult = data as TableInsert<"meal">[];
@@ -371,6 +482,7 @@ const createMeals = async (
             }
     
             mealIds[day] = {
+              id: mealPlan[day][mealType].mealInfo?.id,
               breakFast: breakFastId,
               lunch: lunchId,
               dinner: dinnerId,
@@ -383,7 +495,7 @@ const createMeals = async (
               mealId
             );
     
-            const ingredientMutationResult = await insertMealIngredients(
+            const ingredientMutationResult = await mutateMealIngredients(
               arrangedIngredients
             );
     
@@ -419,7 +531,7 @@ const createMeals = async (
   }
 };
 
-const insertMealIngredients = async (
+const mutateMealIngredients = async (
   ingredients: Array<
     Nutrients & { ingredientName: string; created_by: string; mealId: number }
   >
@@ -467,11 +579,15 @@ const arrangeIngredients = (
   Nutrients & { ingredientName: string; created_by: string; mealId: number }
 > => {
   const ingredientInfos: Array<
-    Nutrients & { ingredientName: string; created_by: string; mealId: number }
+    Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
   > = [];
 
   Object.entries(ingredients).forEach(([key]) => {
+    
+    const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
+    const numeric = isNumeric(ingredients[key].id!)
     ingredientInfos.push({
+      id: numeric ? parseInt(ingredients[key].id!) : undefined,
       ingredientName: ingredients[key].ingredientValue,
       protein: parseFloat(
         parseFloat(ingredients[key].proteinsValue).toFixed(2)
