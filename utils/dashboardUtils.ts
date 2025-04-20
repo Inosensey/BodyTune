@@ -13,6 +13,7 @@ import {
   bodyTunePlan,
   exercisePlan,
   exercisePlanQuery,
+  mealPlanIngredientQuery,
   mealPlanQuery,
 } from "@/types/planTypes";
 import { IngredientTypes, mealPlanType, Nutrients } from "@/types/mealTypes";
@@ -184,14 +185,7 @@ export const arrangeBodyTunePlan = (
 };
 
 const arrangeIngredientInfo = (
-  ingredients: Array<{
-    mealId: number;
-    ingredientName: string;
-    fat: number;
-    carbs: number;
-    protein: number;
-    calories: number;
-  }>
+  ingredients: Array<mealPlanIngredientQuery>
 ) => {
   let ingredientList: IngredientTypes = {};
   const nutritionInfo: Nutrients = {
@@ -201,20 +195,12 @@ const arrangeIngredientInfo = (
     fat: 0,
   };
   ingredients.forEach(
-    (ingredient: {
-      mealId: number;
-      ingredientName: string;
-      fat: number;
-      carbs: number;
-      protein: number;
-      calories: number;
-    }) => {
-      const UUID = crypto.randomUUID();
+    (ingredient: mealPlanIngredientQuery) => {
       ingredientList = {
         ...ingredientList,
-        [`ingredient${UUID}`]: {
-          id: UUID,
-          ingredientName: `Ingredients ${UUID}`,
+        [ingredient.id]: {
+          id: ingredient.id,
+          ingredientName: `Ingredient ${ingredient.id}`,
           ingredientValue: ingredient.ingredientName,
           caloriesName: `Calories`,
           caloriesValue: ingredient.calories.toString(),
@@ -335,14 +321,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
               mealType: string;
             };
             instructions: string;
-            meal_ingredients: Array<{
-              mealId: number;
-              ingredientName: string;
-              fat: number;
-              carbs: number;
-              protein: number;
-              calories: number;
-            }>;
+            meal_ingredients: Array<mealPlanIngredientQuery>;
             veganAlternative: string | null;
           };
           lunch: {
@@ -352,16 +331,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
               mealType: string;
             };
             instructions: string;
-            meal_ingredients: [
-              {
-                mealId: number;
-                ingredientName: string;
-                fat: number;
-                carbs: number;
-                protein: number;
-                calories: number;
-              }
-            ];
+            meal_ingredients: Array<mealPlanIngredientQuery>;
             veganAlternative: string | null;
           };
           dinner: {
@@ -371,16 +341,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
               mealType: string;
             };
             instructions: string;
-            meal_ingredients: [
-              {
-                mealId: number;
-                ingredientName: string;
-                fat: number;
-                carbs: number;
-                protein: number;
-                calories: number;
-              }
-            ];
+            meal_ingredients: Array<mealPlanIngredientQuery>;
             veganAlternative: string | null;
           };
         }) => {
@@ -397,6 +358,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
           mealPlan[day] = {
             breakFast: {
               mealInfo: {
+                id: meal.breakFast.id,
                 mealName: meal.breakFast.mealName,
                 shortDescription: "",
                 cookingInstruction: meal.breakFast.instructions,
@@ -410,6 +372,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
             },
             lunch: {
               mealInfo: {
+                id: meal.lunch.id,
                 mealName: meal.lunch.mealName,
                 shortDescription: "",
                 cookingInstruction: meal.lunch.instructions,
@@ -423,6 +386,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
             },
             dinner: {
               mealInfo: {
+                id: meal.dinner.id,
                 mealName: meal.dinner.mealName,
                 shortDescription: "",
                 cookingInstruction: meal.dinner.instructions,
