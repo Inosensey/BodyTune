@@ -252,7 +252,7 @@ const AddMealForm = ({
       ).map(([, value]) => {
         setIngredientValidations((prev) => ({
           ...prev,
-          [`ingredient${value.id}`]: {
+          [`${value.id}`]: {
             ingredientValid: null,
             ingredientValidationMessage: "",
             caloriesValid: null,
