@@ -558,7 +558,7 @@ const mutateMeals = async (
 
 const mutateMealIngredients = async (
   ingredients: Array<
-    Nutrients & { ingredientName: string; created_by: string; mealId: number }
+  Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
   >
 ) => {
   const supabase = await createSSR();
@@ -575,8 +575,8 @@ const mutateMealIngredients = async (
         message: errorMessage,
       };
     }
-    console.log(data);
-    console.log(error);
+    
+    console.log(`result`,{data, ingredients});
 
     return {
       success: true,
@@ -614,7 +614,7 @@ const arrangeIngredients = (
     const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
     const numeric = isNumeric(ingredients[key].id!)
     ingredientInfos.push({
-      id: numeric ? parseInt(ingredients[key].id!) : undefined,
+      ...(numeric && { id: parseInt(ingredients[key].id! as string) }),
       ingredientName: ingredients[key].ingredientValue,
       protein: parseFloat(
         parseFloat(ingredients[key].proteinsValue).toFixed(2)
