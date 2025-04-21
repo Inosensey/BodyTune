@@ -139,7 +139,7 @@ const MutateForm = ({
     : [];
 
   // Form State
-  const [formState, formAction] = useFormState(action === "Update" ? udpateBodyTunePlan : createBodyTunePlan, useFormStateInitials);
+  const [formState, formAction] = useFormState(action === "Update" ? updateBodyTunePlan : createBodyTunePlan, useFormStateInitials);
 
   // State Hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -256,6 +256,7 @@ const MutateForm = ({
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
     setIsSubmitting(false);
+    console.log(formState);
     // if (formState.success) {
     //   setSubmitMessage(
     //     "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
