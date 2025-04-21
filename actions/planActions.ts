@@ -28,13 +28,13 @@ export const updateBodyTunePlan = async (
   } = JSON.parse(formData.get("jsonData") as string);
   const selectedMealPlan: {
     selectedMealPlanUserId: string,
-    selectedMealPlan: number | string;
+    selectedMealPlanId: number | string;
   } = JSON.parse(formData.get("selectedMealPlan") as string);
   const selectedExercisePlan: {
     selectedExercisePlan: number | string,
     selectedExercisePlanUserId: string;
   } = JSON.parse(formData.get("selectedExercisePlan") as string);
-  // const mealPlanName = formData.get("mealPlanName") as string;
+  const mealPlanName = formData.get("mealPlanName") as string;
   // const exercisePlanName = formData.get("exercisePlanName") as string;
   const visibilityPreference = parseInt(
     formData.get("visibilityPreference") as string
@@ -43,69 +43,91 @@ export const updateBodyTunePlan = async (
   // const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
   const mealPlan: mealPlanType = jsonData.mealPlan;
   // const exercisePlan: exercisePlan = jsonData.exercisePlan;
-  // const mealPlanTags: Array<string> = jsonData.mealPlanTags;
+  const mealPlanTags: Array<string> = jsonData.mealPlanTags;
   // const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
 
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
   try {
-    if( selectedMealPlan.selectedMealPlanUserId !== userId ) {
+    if( selectedMealPlan.selectedMealPlanUserId !== userId || selectedExercisePlan.selectedExercisePlanUserId !== userId ) {
 
-    const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
-      mealPlanId: parseInt(selectedMealPlan.selectedMealPlan as string),
-      exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
-      visibility: visibilityPreference,
-      created_by: userId
-    }).eq("id", jsonData.bodyTuneId).select()
+      const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
+        mealPlanId: parseInt(selectedMealPlan.selectedMealPlanId as string),
+        exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
+        visibility: visibilityPreference,
+        created_by: userId
+      }).eq("id", jsonData.bodyTuneId).select()
 
-    if (error) {
-      const errorMessage: string = `There is an error Updating the BodyTune Plan: ${error.message}`;
+      if (error) {
+        const errorMessage: string = `There is an error Updating the BodyTune Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+
+      const response = data as TableInsert<"bodytune_plan">[];
+      const bodyTunePlanId = response[0].id!;
+
+      revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
       return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
+        success: true,
+        error: false,
+        data: bodyTunePlanId,
+        message: ``,
       };
     }
+    // console.log(jsonData.mealPlan);
+    // console.log(jsonData.exercisePlan);
+    
+    // Object.entries(mealPlan).map(([day]) => {
+    //   Object.entries(mealPlan[day]).map(([mealType]) => {
+        // Object.entries(mealPlan.Monday!.breakFast!.ingredients!).forEach(([, value]) => {
+        //   const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
+        //   console.log(isNumeric(value!.id!))
+        // });
+        // const arrangedIngredients = arrangeIngredients(
+        //   mealPlan[day][mealType].ingredients!,
+        //   userId,
+        //   mealPlan[day][mealType].mealInfo!.id!
+        // );
+        // console.log(arrangedIngredients)
+        // console.log(mealPlan.Monday![mealType]!.mealInfo!)
+        // console.log(mealPlan.Monday![mealType]!.ingredients)
+    //   })
+    // })
 
-    const response = data as TableInsert<"bodytune_plan">[];
-    const bodyTunePlanId = response[0].id!;
-
-    revalidateTag(`bodyTunes${bodyTunePlanId}`);
+    const createMealPlanResult = await mutateMealPlan(
+      mealPlan,
+      mealPlanName,
+      visibilityPreference,
+      mealPlanTags,
+      userId,
+      parseInt(selectedMealPlan.selectedMealPlanId as string)
+    );
+    if (createMealPlanResult.error) {
+      return {
+        success: createMealPlanResult.success,
+        error: createMealPlanResult.error,
+        data: [],
+        message: createMealPlanResult.message,
+      };
+    }
+    revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
     return {
       success: true,
       error: false,
-      data: bodyTunePlanId,
+      data: jsonData.bodyTuneId!,
       message: ``,
     };
-  }
-
-  // console.log(jsonData.mealPlan);
-  // console.log(jsonData.exercisePlan);
-  
-  Object.entries(mealPlan).map(([day]) => {
-    Object.entries(mealPlan[day]).map(([mealType]) => {
-      // Object.entries(mealPlan.Monday!.breakFast!.ingredients!).forEach(([, value]) => {
-      //   const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
-      //   console.log(isNumeric(value!.id!))
-      // });
-      const arrangedIngredients = arrangeIngredients(
-        mealPlan[day][mealType].ingredients!,
-        userId,
-        mealPlan[day][mealType].mealInfo!.id!
-      );
-      console.log(arrangedIngredients)
-      // console.log(mealPlan.Monday![mealType]!.mealInfo!)
-      // console.log(mealPlan.Monday![mealType]!.ingredients)
-    })
-  })
-
-  return {
-    success: true,
-    error: false,
-    data: [],
-    message: "",
-  };
+    // return {
+    //   success: true,
+    //   error: false,
+    //   data: [],
+    //   message: "",
+    // };
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
@@ -292,15 +314,18 @@ const mutateMealPlan = async (
       dinner: number;
       day: string;
     } }
-    const createTheDailyMealResult = await createTheDailyMeal(mealIds, mealPlanId, userId)
 
-    if(createTheDailyMealResult.error) {      
-      return {
-        success: createTheDailyMealResult.success,
-        error: createTheDailyMealResult.error,
-        data: [],
-        message: createTheDailyMealResult.message,
-      };
+    if(!planId) {
+      const createTheDailyMealResult = await createTheDailyMeal(mealIds, mealPlanId, userId)
+  
+      if(createTheDailyMealResult.error) {      
+        return {
+          success: createTheDailyMealResult.success,
+          error: createTheDailyMealResult.error,
+          data: [],
+          message: createTheDailyMealResult.message,
+        };
+      }
     }
 
     return {
@@ -539,9 +564,9 @@ const mutateMealIngredients = async (
   const supabase = await createSSR();
 
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("meal_ingredients")
-      .insert<TableInsert<"meal_ingredients">>(ingredients);
+      .upsert<TableInsert<"meal_ingredients">>(ingredients).select();
     if (error) {
       const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`;
       return {
@@ -550,6 +575,8 @@ const mutateMealIngredients = async (
         message: errorMessage,
       };
     }
+    console.log(data);
+    console.log(error);
 
     return {
       success: true,
