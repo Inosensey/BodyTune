@@ -174,6 +174,7 @@ const MutateForm = ({
   const [mealPlanNameVal, setMealPlanNameVal] = useState(mealPlanNameInit);
   const [selectedBmis, setSelectedBmis] = useState<string[]>(selectedBmisInitials);
   const [bmiClassification, setBmiClassification] = useState({ id: "", bmiClassification: "" });
+  const [toBeDeletedIngredients, setToBeDeletedIngredients] = useState<number[]>([]);
 
   // Exercise Plan State
   const [originalFetchedExercisePlanInfo] = useState<exercisePlan | undefined>(
@@ -197,6 +198,7 @@ const MutateForm = ({
       exercisePlan: exercisePlanInfo,
       mealPlanTags: selectedBmis,
       exercisePlanTags: selectedDifficulties,
+      toBeDeletedIngredients: toBeDeletedIngredients,
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
@@ -217,7 +219,7 @@ const MutateForm = ({
     );
 
     setSubmitMessage(
-      "Creating your BodyTune... ⏳ Hang tight while we set up your plan!"
+      action === "Update" ? "Updating your BodyTune... 🔄 Just a moment while we refresh your plan!" : "Creating your BodyTune... ⏳ Hang tight while we set up your plan!"
     );
     setIsSubmitting(true);
   };
@@ -255,17 +257,17 @@ const MutateForm = ({
   // Handles form submission success or error
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
-    setIsSubmitting(false);
-    console.log(formState);
-    // if (formState.success) {
-    //   setSubmitMessage(
-    //     "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
-    //   );
-    //   queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
-    //   router.push(`/plan/bodytune/${formState.data}`);
-    // } else {
-    //   setIsSubmitting(false);
-    // }
+    // setIsSubmitting(false);
+    // console.log(formState);
+    if (formState.success) {
+      setSubmitMessage(
+        "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+      );
+      queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
+      router.push(`/plan/bodytune/${formState.data}`);
+    } else {
+      setIsSubmitting(false);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
@@ -334,6 +336,7 @@ const MutateForm = ({
                       selectedCreateOption={selectedOption}
                       selectedBmis={selectedBmis}
                       setSelectedBmis={setSelectedBmis}
+                      setToBeDeletedIngredients={setToBeDeletedIngredients}
                     />
                   </div>
                 )}
