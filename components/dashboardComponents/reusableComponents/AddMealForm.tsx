@@ -57,6 +57,7 @@ interface props {
   dailyMealInfo: dailyMealInfo;
   formAction: string;
   selectedWeekDate: string;
+  setToBeDeletedIngredients: React.Dispatch<React.SetStateAction<Array<number>>>
 }
 
 // Initials
@@ -98,6 +99,7 @@ const AddMealForm = ({
   formAction,
   dailyMealInfo,
   selectedWeekDate,
+  setToBeDeletedIngredients
 }: props) => {
   // Init Values
   const initUUID = crypto.randomUUID();
@@ -510,6 +512,9 @@ const AddMealForm = ({
                                 delete updatedValidations[key];
                                 return updatedValidations;
                               });
+                              if(formAction === "Edit") {
+                                setToBeDeletedIngredients((prev) => [...prev, parseInt(value.id! as string)])
+                              }
                             }}
                           />
                         </div>
@@ -753,7 +758,7 @@ const AddMealForm = ({
                   width="1.3em"
                   height="1.3em"
                 />
-                Create Meal
+                {formAction === "Edit" ? "Update Meal" : "Create Meal"}
               </motion.button>
             </div>
           </div>
