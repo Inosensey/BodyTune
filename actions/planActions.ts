@@ -25,6 +25,7 @@ export const updateBodyTunePlan = async (
     exercisePlan: exercisePlan;
     mealPlanTags: Array<string>;
     exercisePlanTags: Array<string>;
+    toBeDeletedIngredients: Array<number>;
   } = JSON.parse(formData.get("jsonData") as string);
   const selectedMealPlan: {
     selectedMealPlanUserId: string,
@@ -105,7 +106,8 @@ export const updateBodyTunePlan = async (
       visibilityPreference,
       mealPlanTags,
       userId,
-      parseInt(selectedMealPlan.selectedMealPlanId as string)
+      parseInt(selectedMealPlan.selectedMealPlanId as string),
+      jsonData.toBeDeletedIngredients
     );
     if (createMealPlanResult.error) {
       return {
@@ -258,6 +260,7 @@ const mutateMealPlan = async (
   mealPlanTags: Array<string>,
   userId: string,
   planId?: number,
+  toBeDeletedIngredients?: Array<number>
 ) => {
   const supabase = await createSSR();
 
@@ -308,12 +311,25 @@ const mutateMealPlan = async (
         message: createAMealResult.message,
       };
     }
-    const mealIds = createAMealResult.data[0]! as {[key: string]: {
-      breakFast: number;
-      lunch: number;
-      dinner: number;
-      day: string;
-    } }
+      const mealIds = createAMealResult.data[0]! as {[key: string]: {
+        breakFast: number;
+        lunch: number;
+        dinner: number;
+        day: string;
+      } 
+    }
+
+    if(toBeDeletedIngredients) {
+      const deleteIngredientsResult = await deleteIngredients(toBeDeletedIngredients)
+      if(deleteIngredientsResult.error) {
+        return {
+          success: deleteIngredientsResult.success,
+          error: deleteIngredientsResult.error,
+          data: [],
+          message: deleteIngredientsResult.message,
+        };
+      }
+    }
 
     if(!planId) {
       const createTheDailyMealResult = await createTheDailyMeal(mealIds, mealPlanId, userId)
@@ -369,6 +385,22 @@ const mapMealPlanWithMealTag = async (
   });
 
   try {
+    const deleteTagRes = await supabase
+      .from('meal_plan_tags')
+      .delete()
+      .eq('mealPlanId', mealPlanId)
+      .not('tagId', 'in', `(${mealTagIds})`);
+
+    if (deleteTagRes.error) {
+      const errorMessage: string = `There is an error Delete Meal Tags: ${deleteTagRes.error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
     const { error } = await supabase
       .from("meal_plan_tags")
       .upsert<TableInsert<"meal_plan_tags">>(mealTagData, {onConflict: "mealPlanId, tagId"});
@@ -557,26 +589,42 @@ const mutateMeals = async (
 };
 
 const mutateMealIngredients = async (
-  ingredients: Array<
-  Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
-  >
+  ingredients: {
+    newIngredients: Array<
+    Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
+  >,
+  oldIngredients: Array<
+    Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number } >
+  }
 ) => {
   const supabase = await createSSR();
 
   try {
-    const { data, error } = await supabase
-      .from("meal_ingredients")
-      .upsert<TableInsert<"meal_ingredients">>(ingredients).select();
-    if (error) {
-      const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`;
-      return {
-        success: false,
-        error: true,
-        message: errorMessage,
-      };
+    if(ingredients.newIngredients.length !== 0) {
+      const { error } = await supabase
+        .from("meal_ingredients")
+        .insert<TableInsert<"meal_ingredients">>(ingredients.newIngredients).select();
+      if (error) {
+        const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          message: errorMessage,
+        };
+      }
+    } else {
+      const { error } = await supabase
+        .from("meal_ingredients")
+        .upsert<TableInsert<"meal_ingredients">>(ingredients.oldIngredients).select();
+      if (error) {
+        const errorMessage: string = `There is an error Inserting an ingredient: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          message: errorMessage,
+        };
+      }
     }
-    
-    console.log(`result`,{data, ingredients});
 
     return {
       success: true,
@@ -598,35 +646,100 @@ const mutateMealIngredients = async (
   }
 };
 
+const deleteIngredients = async (toBeDeletedIngredients: Array<number>) => {
+  const supabase = await createSSR();
+
+  try {
+    const { error } = await supabase
+      .from("meal_ingredients")
+      .delete()
+      .in("id", toBeDeletedIngredients);
+
+    if (error) {
+      const errorMessage: string = `There is an error Deleting the Ingredients: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Deleting the Ingredients: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
 const arrangeIngredients = (
   ingredients: IngredientTypes,
   userId: string,
   mealId: number
-): Array<
-  Nutrients & { ingredientName: string; created_by: string; mealId: number }
-> => {
-  const ingredientInfos: Array<
+): {
+  newIngredients: Array<
+  Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
+>,
+oldIngredients: Array<
+  Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number } >
+} => {
+  const ingredientInfos: {
+    newIngredients: Array<
     Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number }
-  > = [];
+  >,
+  oldIngredients: Array<
+    Nutrients & { id?: number, ingredientName: string; created_by: string; mealId: number } >
+  } = {
+    newIngredients: [],
+    oldIngredients: [],
+  };
 
   Object.entries(ingredients).forEach(([key]) => {
     
     const isNumeric = (num: string | number) => (typeof(num) === 'number' || typeof(num) === "string" && num.trim() !== '') && !isNaN(num as number)
     const numeric = isNumeric(ingredients[key].id!)
-    ingredientInfos.push({
-      ...(numeric && { id: parseInt(ingredients[key].id! as string) }),
-      ingredientName: ingredients[key].ingredientValue,
-      protein: parseFloat(
-        parseFloat(ingredients[key].proteinsValue).toFixed(2)
-      ),
-      calories: parseFloat(
-        parseFloat(ingredients[key].caloriesValue).toFixed(2)
-      ),
-      carbs: parseFloat(parseFloat(ingredients[key].carbsValue).toFixed(2)),
-      fat: parseFloat(parseFloat(ingredients[key].fatValue).toFixed(2)),
-      created_by: userId,
-      mealId: mealId,
-    });
+    if(numeric) {
+      ingredientInfos.oldIngredients.push({
+        id: parseInt(ingredients[key].id! as string),
+        ingredientName: ingredients[key].ingredientValue,
+        protein: parseFloat(
+          parseFloat(ingredients[key].proteinsValue).toFixed(2)
+        ),
+        calories: parseFloat(
+          parseFloat(ingredients[key].caloriesValue).toFixed(2)
+        ),
+        carbs: parseFloat(parseFloat(ingredients[key].carbsValue).toFixed(2)),
+        fat: parseFloat(parseFloat(ingredients[key].fatValue).toFixed(2)),
+        created_by: userId,
+        mealId: mealId,
+      });
+    } else {
+      ingredientInfos.newIngredients.push({
+        ingredientName: ingredients[key].ingredientValue,
+        protein: parseFloat(
+          parseFloat(ingredients[key].proteinsValue).toFixed(2)
+        ),
+        calories: parseFloat(
+          parseFloat(ingredients[key].caloriesValue).toFixed(2)
+        ),
+        carbs: parseFloat(parseFloat(ingredients[key].carbsValue).toFixed(2)),
+        fat: parseFloat(parseFloat(ingredients[key].fatValue).toFixed(2)),
+        created_by: userId,
+        mealId: mealId,
+      });
+    }
   });
 
   return ingredientInfos;
