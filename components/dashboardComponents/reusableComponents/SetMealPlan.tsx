@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Components
@@ -37,6 +37,7 @@ interface props {
   setMealPlanNameVal: React.Dispatch<React.SetStateAction<mealPlanName>>;
   selectedBmis: Array<string>;
   setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>;
+  setToBeDeletedIngredients: React.Dispatch<React.SetStateAction<Array<number>>>
 }
 
 const SetMealPlan = ({
@@ -52,6 +53,7 @@ const SetMealPlan = ({
   setMealPlanNameVal,
   selectedBmis,
   setSelectedBmis,
+  setToBeDeletedIngredients
 }: props) => {
   // UseQuery
   const { data: mealPlanList } = useQuery({
@@ -71,7 +73,6 @@ const SetMealPlan = ({
   });
 
   // States
-  
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
   const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || mealPlanInfo ? true : false
@@ -431,6 +432,7 @@ const SetMealPlan = ({
             formAction={formAction}
             dailyMealInfo={mealPlanInfo[selectedWeekDate]}
             selectedWeekDate={selectedWeekDate}
+            setToBeDeletedIngredients={setToBeDeletedIngredients}
           />
         )}
       </AnimatePresence>
