@@ -161,6 +161,7 @@ const SetMealPlan = ({
                           (info) => info.meal_tags.mealTagName
                         )
                       );
+                      setToBeDeletedIngredients([]);
                     }}
                     type="button"
                     className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
