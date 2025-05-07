@@ -9,7 +9,7 @@ import {
   Nutrients,
 } from "@/types/mealTypes";
 import { exercisePlan } from "@/types/planTypes";
-import { getExerciseTagIds, getMealTagIds, getMealType } from "@/utils/dashboardUtils";
+import { extractFilePathFromSignedUrl, getExerciseTagIds, getMealTagIds, getMealType } from "@/utils/dashboardUtils";
 import { createSSR } from "@/utils/supabaseSSR";
 import { revalidateTag } from "next/cache";
 
@@ -26,60 +26,70 @@ export const updateBodyTunePlan = async (
     mealPlanTags: Array<string>;
     exercisePlanTags: Array<string>;
     toBeDeletedIngredients: Array<number>;
+    toBeDeletedExercises: Array<number>;
   } = JSON.parse(formData.get("jsonData") as string);
-  const selectedMealPlan: {
-    selectedMealPlanUserId: string,
-    selectedMealPlanId: number | string;
-  } = JSON.parse(formData.get("selectedMealPlan") as string);
+  // const selectedMealPlan: {
+  //   selectedMealPlanUserId: string,
+  //   selectedMealPlanId: number | string;
+  // } = JSON.parse(formData.get("selectedMealPlan") as string);
   const selectedExercisePlan: {
     selectedExercisePlan: number | string,
     selectedExercisePlanUserId: string;
   } = JSON.parse(formData.get("selectedExercisePlan") as string);
-  const mealPlanName = formData.get("mealPlanName") as string;
+  // const mealPlanName = formData.get("mealPlanName") as string;
   // const exercisePlanName = formData.get("exercisePlanName") as string;
-  const visibilityPreference = parseInt(
-    formData.get("visibilityPreference") as string
-  );
+  // const visibilityPreference = parseInt(
+  //   formData.get("visibilityPreference") as string
+  // );
   // const selectedMealPlan = formData.get("selectedMealPlan") as string;
   // const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
-  const mealPlan: mealPlanType = jsonData.mealPlan;
+  // const mealPlan: mealPlanType = jsonData.mealPlan;
   // const exercisePlan: exercisePlan = jsonData.exercisePlan;
-  const mealPlanTags: Array<string> = jsonData.mealPlanTags;
+  // const mealPlanTags: Array<string> = jsonData.mealPlanTags;
   // const exercisePlanTags: Array<string> = jsonData.exercisePlanTags;
+
 
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
+
+  console.log(jsonData.exercisePlan.Monday[0].exerciseDemo)
+  console.log(jsonData.exercisePlanTags)
+  console.log(selectedExercisePlan)
+  const extractedFileResult = extractFilePathFromSignedUrl(jsonData.exercisePlan.Monday[0].exerciseDemo!)
+  const fileExist = await checkIfFileExistInSupabaseBucket(userId, parseInt(selectedExercisePlan.selectedExercisePlan as string), extractedFileResult!.fileName!);
+  console.log(extractedFileResult!.fileName!);
+  console.log(fileExist);
   try {
-    if( selectedMealPlan.selectedMealPlanUserId !== userId || selectedExercisePlan.selectedExercisePlanUserId !== userId ) {
+    // if( selectedMealPlan.selectedMealPlanUserId !== userId || selectedExercisePlan.selectedExercisePlanUserId !== userId ) {
 
-      const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
-        mealPlanId: parseInt(selectedMealPlan.selectedMealPlanId as string),
-        exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
-        visibility: visibilityPreference,
-        created_by: userId
-      }).eq("id", jsonData.bodyTuneId).select()
+    //   const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
+    //     mealPlanId: parseInt(selectedMealPlan.selectedMealPlanId as string),
+    //     exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
+    //     visibility: visibilityPreference,
+    //     created_by: userId
+    //   }).eq("id", jsonData.bodyTuneId).select()
 
-      if (error) {
-        const errorMessage: string = `There is an error Updating the BodyTune Plan: ${error.message}`;
-        return {
-          success: false,
-          error: true,
-          data: [],
-          message: errorMessage,
-        };
-      }
+    //   if (error) {
+    //     const errorMessage: string = `There is an error Updating the BodyTune Plan: ${error.message}`;
+    //     return {
+    //       success: false,
+    //       error: true,
+    //       data: [],
+    //       message: errorMessage,
+    //     };
+    //   }
 
-      const response = data as TableInsert<"bodytune_plan">[];
-      const bodyTunePlanId = response[0].id!;
+    //   const response = data as TableInsert<"bodytune_plan">[];
+    //   const bodyTunePlanId = response[0].id!;
 
-      revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
-      return {
-        success: true,
-        error: false,
-        data: bodyTunePlanId,
-        message: ``,
-      };
-    }
+    //   revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
+    //   return {
+    //     success: true,
+    //     error: false,
+    //     data: bodyTunePlanId,
+    //     message: ``,
+    //   };
+    // }
     // console.log(jsonData.mealPlan);
     // console.log(jsonData.exercisePlan);
     
@@ -100,36 +110,36 @@ export const updateBodyTunePlan = async (
     //   })
     // })
 
-    const createMealPlanResult = await mutateMealPlan(
-      mealPlan,
-      mealPlanName,
-      visibilityPreference,
-      mealPlanTags,
-      userId,
-      parseInt(selectedMealPlan.selectedMealPlanId as string),
-      jsonData.toBeDeletedIngredients
-    );
-    if (createMealPlanResult.error) {
-      return {
-        success: createMealPlanResult.success,
-        error: createMealPlanResult.error,
-        data: [],
-        message: createMealPlanResult.message,
-      };
-    }
-    revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
-    return {
-      success: true,
-      error: false,
-      data: jsonData.bodyTuneId!,
-      message: ``,
-    };
+    // const createMealPlanResult = await mutateMealPlan(
+    //   mealPlan,
+    //   mealPlanName,
+    //   visibilityPreference,
+    //   mealPlanTags,
+    //   userId,
+    //   parseInt(selectedMealPlan.selectedMealPlanId as string),
+    //   jsonData.toBeDeletedIngredients
+    // );
+    // if (createMealPlanResult.error) {
+    //   return {
+    //     success: createMealPlanResult.success,
+    //     error: createMealPlanResult.error,
+    //     data: [],
+    //     message: createMealPlanResult.message,
+    //   };
+    // }
+    // revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
     // return {
     //   success: true,
     //   error: false,
-    //   data: [],
-    //   message: "",
+    //   data: jsonData.bodyTuneId!,
+    //   message: ``,
     // };
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
@@ -858,6 +868,66 @@ const createExercisePlan = async (
     };
   }
 };
+
+const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: number, file: string) => {
+  const supabase = await createSSR();
+
+  const bucket = 'Exercise Demo'
+  const pathToFile = `exercise-demo/${userId}/${exercisePlanId}`;
+
+  try {  
+    const { data, error } = await supabase
+      .storage
+      .from(bucket)
+      .list(pathToFile, {
+        search: file
+      })
+    
+    if (error) {
+      const errorMessage: string = `There is an error checking the file: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+
+    return {
+      success: true,
+      error: false,
+      data: data,
+      message: '',
+    };
+
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error checking the file: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+
+  // const { data, error } = await supabase
+  //   .storage
+  //   .from(bucket)
+  //   .list(pathToFile, {
+  //     search: 'your-file.txt'
+  //   })
+
+  // if (error) {
+  //   console.error('Error listing files:', error)
+  //   return false
+  // }
+
+  // const exists = data.some(file => file.name === 'your-file.txt')
+  // return exists
+}
 
 const insertExercises = async(exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
   const supabase = await createSSR();
