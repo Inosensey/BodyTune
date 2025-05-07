@@ -44,6 +44,7 @@ interface props {
   >;
   selectedDifficulties: Array<string>;
   setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>;
+  setToBeDeletedExercises: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 // Initials
@@ -87,6 +88,7 @@ const SetExercisePlan = ({
   setExercisePlanNameVal,
   selectedDifficulties,
   setSelectedDifficulties,
+  setToBeDeletedExercises
 }: props) => {
   // UseQuery
   const { data: exercisePlanList } = useQuery({
@@ -203,6 +205,7 @@ const SetExercisePlan = ({
                           (info) => info.exercise_tags.exerciseTagName
                         )
                       );
+                      setToBeDeletedExercises([]);
                     }}
                     type="button"
                     className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
@@ -499,7 +502,12 @@ const SetExercisePlan = ({
                                   height="1.3em"
                                 />
                                 <button
-                                  onClick={() => removeAnExercise(index)}
+                                  onClick={() => {
+                                    removeAnExercise(index)
+                                    if(originalFetchedExercisePlanInfo && originalExercisePlanGeneralInfo) {
+                                      setToBeDeletedExercises((prev) => [...prev, exercise.id!])
+                                    }
+                                  }}
                                   type="button"
                                 >
                                   <FontAwesomeIcon
