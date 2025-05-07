@@ -227,6 +227,7 @@ export const arrangeExercisePlan = (
   const exercisePlan: exercisePlan = {
     ["Monday"]: [
       {
+        id: 0,
         exerciseName: "",
         bodyPart: "",
         equipment: "",
@@ -260,6 +261,7 @@ export const arrangeExercisePlan = (
       .filter((exercise) => exercise.day === day)
       .map(
         (exercise: {
+          id?: number,
           exerciseName: string;
           bodyPart: string;
           equipment: string;
@@ -279,6 +281,7 @@ export const arrangeExercisePlan = (
           };
         }) => {
           return {
+            id: exercise.id,
             exerciseName: exercise.exerciseName,
             bodyPart: exercise.bodyPart,
             equipment: exercise.equipment,
@@ -303,6 +306,27 @@ export const arrangeExercisePlan = (
   });
   return exercisePlan;
 };
+
+export const extractFilePathFromSignedUrl = (signedUrl: string): {path: string | null, fileName: string} | null => {
+  try {
+    const url = new URL(signedUrl)
+    const path = url.pathname
+    const match = path.match(/\/sign\/(.+)/)
+
+    if (!match || !match[1]) return null
+    const decodedPath = decodeURIComponent(match[1])
+    const segments = decodedPath.split('/')
+    const fileName = segments[segments.length - 1]
+
+    return {
+      path: decodedPath,
+      fileName,
+    }
+  } catch (err) {
+    console.error('Invalid URL:', err)
+    return null
+  }
+}
 
 export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
   const mealPlan: mealPlanType = {};
