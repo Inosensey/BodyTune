@@ -186,6 +186,7 @@ const MutateForm = ({
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(
     selectedDifficultiesInitials
   );
+  const [toBeDeletedExercises, setToBeDeletedExercises] = useState<number[]>([]);
 
   // Visibility Preference
   const [visibilityPreference, setVisibilityPreference] = useState(planVisibilityInfo ? planVisibilityInfo.id.toString() : "");
@@ -199,6 +200,7 @@ const MutateForm = ({
       mealPlanTags: selectedBmis,
       exercisePlanTags: selectedDifficulties,
       toBeDeletedIngredients: toBeDeletedIngredients,
+      toBeDeletedExercises: toBeDeletedExercises,
     };
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
@@ -257,17 +259,17 @@ const MutateForm = ({
   // Handles form submission success or error
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
-    // setIsSubmitting(false);
-    // console.log(formState);
-    if (formState.success) {
-      setSubmitMessage(
-        "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
-      );
-      queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
-      router.push(`/plan/bodytune/${formState.data}`);
-    } else {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(false);
+    console.log(formState);
+    // if (formState.success) {
+    //   setSubmitMessage(
+    //     "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+    //   );
+    //   queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
+    //   router.push(`/plan/bodytune/${formState.data}`);
+    // } else {
+    //   setIsSubmitting(false);
+    // }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
@@ -355,6 +357,7 @@ const MutateForm = ({
                       selectedCreateOption={selectedOption}
                       selectedDifficulties={selectedDifficulties}
                       setSelectedDifficulties={setSelectedDifficulties}
+                      setToBeDeletedExercises={setToBeDeletedExercises}
                     />
                   </div>
                 )}
