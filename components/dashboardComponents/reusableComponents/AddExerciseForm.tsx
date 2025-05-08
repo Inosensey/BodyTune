@@ -274,10 +274,11 @@ const AddExerciseForm = ({
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("File content as base64:", e.target?.result);
+        console.log(e.target);
+        console.log(file);
         setExerciseFormInputVal((prev) => ({
           ...prev,
-          exerciseDemo: e.target?.result as string,
+          exerciseDemo: '',
           exerciseDemoInfo: {
             fileName: file.name,
             url: e.target?.result as string,
@@ -345,8 +346,8 @@ const AddExerciseForm = ({
       FormValidation({ stateName: "exerciseMeasurementType", value }),
     measurement: (value: string) =>
       FormValidation({ stateName: "measurement", value }),
-    exerciseDemo: (value: string) =>
-      FormValidation({ stateName: "exerciseDemo", value }),
+    // exerciseDemo: (value: string) =>
+    //   FormValidation({ stateName: "exerciseDemo", value }),
     bmiClassification: (value: string) =>
       FormValidation({ stateName: "bmiClassification", value }),
     instruction: (value: string) =>
@@ -361,7 +362,7 @@ const AddExerciseForm = ({
       exerciseMeasurementType:
         exerciseFormInputVal.exerciseMeasurementType!.toString(),
       measurement: exerciseFormInputVal.measurement!,
-      exerciseDemo: exerciseFormInputVal.exerciseDemo!,
+      // exerciseDemo: exerciseFormInputVal.exerciseDemo!,
       bmiClassification: exerciseFormInputVal.bmiClassification!.toString(),
       instruction: exerciseFormInputVal.instruction!,
     };
@@ -376,7 +377,7 @@ const AddExerciseForm = ({
   const setInitials = () => {
     if (formAction === "Edit") {
       setExerciseFormInputVal(selectedExercise);
-      setDemoSrc(selectedExercise.exerciseDemo!);
+      setDemoSrc(selectedExercise.exerciseDemoInfo.url!);
     } else {
       setExerciseFormInputVal(ExerciseFormInputValInitial);
     }
