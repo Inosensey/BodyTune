@@ -1,7 +1,7 @@
 "use server";
 
 // Types
-import { TableInsert, TablesUpdate } from "@/types/database.types";
+import { TableInsert, TablesUpdate, TableUpdate } from "@/types/database.types";
 import { formReturnType } from "@/types/formTypes";
 import {
   IngredientTypes,
@@ -33,14 +33,14 @@ export const updateBodyTunePlan = async (
   //   selectedMealPlanId: number | string;
   // } = JSON.parse(formData.get("selectedMealPlan") as string);
   const selectedExercisePlan: {
-    selectedExercisePlan: number | string,
     selectedExercisePlanUserId: string;
+    selectedExercisePlanId: number | string,
   } = JSON.parse(formData.get("selectedExercisePlan") as string);
   // const mealPlanName = formData.get("mealPlanName") as string;
-  // const exercisePlanName = formData.get("exercisePlanName") as string;
-  // const visibilityPreference = parseInt(
-  //   formData.get("visibilityPreference") as string
-  // );
+  const exercisePlanName = formData.get("exercisePlanName") as string;
+  const visibilityPreference = parseInt(
+    formData.get("visibilityPreference") as string
+  );
   // const selectedMealPlan = formData.get("selectedMealPlan") as string;
   // const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
   // const mealPlan: mealPlanType = jsonData.mealPlan;
@@ -52,19 +52,50 @@ export const updateBodyTunePlan = async (
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
 
+  console.log(jsonData);
   console.log(jsonData.exercisePlan.Monday[0].exerciseDemo)
+  console.log(jsonData.exercisePlan.Monday);
   console.log(jsonData.exercisePlanTags)
   console.log(selectedExercisePlan)
-  const extractedFileResult = extractFilePathFromSignedUrl(jsonData.exercisePlan.Monday[0].exerciseDemo!)
-  const fileExist = await checkIfFileExistInSupabaseBucket(userId, parseInt(selectedExercisePlan.selectedExercisePlan as string), extractedFileResult!.fileName!);
-  console.log(extractedFileResult!.fileName!);
-  console.log(fileExist);
   try {
-    // if( selectedMealPlan.selectedMealPlanUserId !== userId || selectedExercisePlan.selectedExercisePlanUserId !== userId ) {
+    if(selectedExercisePlan.selectedExercisePlanUserId !== userId) {
+      const { error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
+        exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlanId as string),
+        visibility: visibilityPreference,
+        created_by: userId
+      }).eq("id", parseInt(selectedExercisePlan.selectedExercisePlanId as string)).select()
 
+      if (error) {
+        const errorMessage: string = `There is an error Updating the Exercise Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+    } else {
+      const mutateExercisePlanResult = await mutateExercisePlan(
+        exercisePlanName,
+        selectedExercisePlan.selectedExercisePlanId as string,
+        jsonData.exercisePlan,
+        visibilityPreference,
+        jsonData.exercisePlanTags,
+        userId
+      );
+
+      if (mutateExercisePlanResult.error) {
+        return {
+          success: mutateExercisePlanResult.success,
+          error: mutateExercisePlanResult.error,
+          data: [],
+          message: mutateExercisePlanResult.message,
+        };
+      }
+    }
+    // if( selectedMealPlan.selectedMealPlanUserId !== userId ) {
     //   const {data, error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
     //     mealPlanId: parseInt(selectedMealPlan.selectedMealPlanId as string),
-    //     exercisePlanId: parseInt(selectedExercisePlan.selectedExercisePlan as string),
     //     visibility: visibilityPreference,
     //     created_by: userId
     //   }).eq("id", jsonData.bodyTuneId).select()
@@ -78,18 +109,31 @@ export const updateBodyTunePlan = async (
     //       message: errorMessage,
     //     };
     //   }
-
-    //   const response = data as TableInsert<"bodytune_plan">[];
-    //   const bodyTunePlanId = response[0].id!;
-
+    // } else {
+    //   const createMealPlanResult = await mutateMealPlan(
+    //     mealPlan,
+    //     mealPlanName,
+    //     visibilityPreference,
+    //     mealPlanTags,
+    //     userId,
+    //     parseInt(selectedMealPlan.selectedMealPlanId as string),
+    //     jsonData.toBeDeletedIngredients
+    //   );
+    //   if (createMealPlanResult.error) {
+    //     return {
+    //       success: createMealPlanResult.success,
+    //       error: createMealPlanResult.error,
+    //       data: [],
+    //       message: createMealPlanResult.message,
+    //     };
+    //   }
     //   revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
     //   return {
     //     success: true,
     //     error: false,
-    //     data: bodyTunePlanId,
+    //     data: jsonData.bodyTuneId!,
     //     message: ``,
     //   };
-    // }
     // console.log(jsonData.mealPlan);
     // console.log(jsonData.exercisePlan);
     
@@ -109,31 +153,6 @@ export const updateBodyTunePlan = async (
         // console.log(mealPlan.Monday![mealType]!.ingredients)
     //   })
     // })
-
-    // const createMealPlanResult = await mutateMealPlan(
-    //   mealPlan,
-    //   mealPlanName,
-    //   visibilityPreference,
-    //   mealPlanTags,
-    //   userId,
-    //   parseInt(selectedMealPlan.selectedMealPlanId as string),
-    //   jsonData.toBeDeletedIngredients
-    // );
-    // if (createMealPlanResult.error) {
-    //   return {
-    //     success: createMealPlanResult.success,
-    //     error: createMealPlanResult.error,
-    //     data: [],
-    //     message: createMealPlanResult.message,
-    //   };
-    // }
-    // revalidateTag(`bodyTunes${jsonData.bodyTuneId}`);
-    // return {
-    //   success: true,
-    //   error: false,
-    //   data: jsonData.bodyTuneId!,
-    //   message: ``,
-    // };
     return {
       success: true,
       error: false,
@@ -199,26 +218,26 @@ export const createBodyTunePlan = async (
       };
     }
 
-    const createExercisePlanResult = await createExercisePlan(
+    const mutateExercisePlanResult = await mutateExercisePlan(
       exercisePlanName,
       selectedExercisePlan,
       exercisePlan,
       visibilityPreference,
       exercisePlanTags,
-      userId
+      userId,
     );
 
-    if (createExercisePlanResult.error) {
+    if (mutateExercisePlanResult.error) {
       return {
-        success: createExercisePlanResult.success,
-        error: createExercisePlanResult.error,
+        success: mutateExercisePlanResult.success,
+        error: mutateExercisePlanResult.error,
         data: [],
-        message: createExercisePlanResult.message,
+        message: mutateExercisePlanResult.message,
       };
     }
 
     const mealPlanId = createMealPlanResult.data[0].id!;
-    const exercisePlanId = createExercisePlanResult.data[0].id!;
+    const exercisePlanId = mutateExercisePlanResult.data[0].id!;
 
     const {data, error} = await supabase.from("bodytune_plan").insert<TableInsert<"bodytune_plan">>({
       mealPlanId: mealPlanId,
@@ -780,18 +799,20 @@ const arrangeDailyMeal = (mealIds:{
 }
 
 // Exercises functions
-const createExercisePlan = async (
+const mutateExercisePlan = async (
   exercisePlanName: string,
-  selectedExercisePlan: string,
+  selectedExercisePlanId: string,
   exercisePlan: exercisePlan,
   visibilityPreference: number,
   exercisePlanTags: Array<string>,
-  userId: string
+  userId: string,
+  toBeDeletedExercises?: Array<number>
 ) => {
   const supabase = await createSSR();
   
   try {
-    const { data, error } = await supabase.from("exercise_plan").insert<TableInsert<"exercise_plan">>({
+    const { data, error } = await supabase.from("exercise_plan").upsert<TablesUpdate<"exercise_plan">>({
+      id: parseInt(selectedExercisePlanId),
       planName: exercisePlanName,
       visibility: visibilityPreference,
       created_by: userId
@@ -809,6 +830,18 @@ const createExercisePlan = async (
 
     const response = data as TableInsert<"exercise_plan">[];
     const exercisePlanId = response[0].id!;
+    
+    if(toBeDeletedExercises) {
+      const deleteExercisesResult = await deleteExercises(toBeDeletedExercises)
+      if(deleteExercisesResult.error) {
+        return {
+          success: deleteExercisesResult.success,
+          error: deleteExercisesResult.error,
+          data: [],
+          message: deleteExercisesResult.message,
+        };
+      }
+    }
 
     const mapExercisePlanWithExerciseTagResult = await mapExercisePlanWithExerciseTag(exercisePlanId, exercisePlanTags, userId)
 
@@ -836,15 +869,15 @@ const createExercisePlan = async (
       }
     }
 
-    const insertExercisesResult = await insertExercises(exercisePlan, exercisePlanId, userId);
+    const mutateExercisesResult = await mutateExercises(exercisePlan, exercisePlanId, userId);
 
-    if(insertExercisesResult.error) {
-      if(insertExercisesResult.error) {      
+    if(mutateExercisesResult.error) {
+      if(mutateExercisesResult.error) {      
         return {
-          success: insertExercisesResult.success,
-          error: insertExercisesResult.error,
+          success: mutateExercisesResult.success,
+          error: mutateExercisesResult.error,
           data: [],
-          message: insertExercisesResult.message,
+          message: mutateExercisesResult.message,
         };
       }
     }
@@ -858,7 +891,7 @@ const createExercisePlan = async (
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
-        ? `There is an error Inserting an ingredient: ${error.message}`
+        ? `There is an error Inserting the Exercises: ${error.message}`
         : "An unknown error occurred";
     return {
       success: false,
@@ -874,6 +907,13 @@ const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: 
 
   const bucket = 'Exercise Demo'
   const pathToFile = `exercise-demo/${userId}/${exercisePlanId}`;
+
+  if(file || file === '') return {
+    success: true,
+    error: false,
+    data: [],
+    message: '',
+  };
 
   try {  
     const { data, error } = await supabase
@@ -929,21 +969,34 @@ const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: 
   // return exists
 }
 
-const insertExercises = async(exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
+const mutateExercises = async(exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
   const supabase = await createSSR();
 
-  const arrangedExercises = arrangeExercises(exercisePlan, exercisePlanId, userId)
+  const {existingExercises, newExercises} = arrangeExercises(exercisePlan, exercisePlanId, userId)
   try {
-    const { error } = await supabase.from("exercise").insert<TableInsert<"exercise">>(arrangedExercises)
-    
-    if (error) {
-      const errorMessage: string = `There is an error Inserting your Exercise: ${error.message}`;
-      return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
-      };
+    if(existingExercises.length !== 0) {
+      const { error } = await supabase.from("exercise").upsert<TableUpdate<"exercise">>(existingExercises)
+      if (error) {
+        const errorMessage: string = `There is an error Inserting your Exercise: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+    }
+    if(newExercises.length !== 0) {
+      const { error } = await supabase.from("exercise").insert<TableInsert<"exercise">>(newExercises)
+      if (error) {
+        const errorMessage: string = `There is an error Inserting your Exercise: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
     }
 
     return {
@@ -980,23 +1033,27 @@ const uploadExerciseDemos = async (exercisePlan:exercisePlan, exercisePlanId: nu
           height: number;
           fileName: string;
         }}) => {
-          if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo === undefined) {
-            const demoFile = await urlToFile(exercise.exerciseDemoInfo);
-            const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
-              cacheControl: '3600',
-              upsert: false
-            })
-            
-            if (error) {
-              const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
-              return {
-                success: false,
-                error: true,
-                data: [],
-                message: errorMessage,
-              };
+          const extractedFileResult = extractFilePathFromSignedUrl(exercise.exerciseDemo!)
+          const fileExist = await checkIfFileExistInSupabaseBucket(userId, exercisePlanId, extractedFileResult!.fileName!);
+          if(fileExist.data.length === 0) {
+            if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
+              const demoFile = await urlToFile(exercise.exerciseDemoInfo);
+              const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
+                cacheControl: '3600',
+                upsert: false
+              })
+              
+              if (error) {
+                const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+                return {
+                  success: false,
+                  error: true,
+                  data: [],
+                  message: errorMessage,
+                };
+              }
+              demoPaths.push(data.fullPath);
             }
-            demoPaths.push(data.fullPath);
           }
         })
       })
@@ -1039,6 +1096,21 @@ const mapExercisePlanWithExerciseTag = async (exercisePlanId:number, exercisePla
   });
 
   try {
+    const deleteTagRes = await supabase
+      .from('exercise_plan_tag')
+      .delete()
+      .eq('exercisePlanId', exercisePlanId)
+      .not('tagId', 'in', `(${exerciseTagIds})`);
+
+    if (deleteTagRes.error) {
+      const errorMessage: string = `There is an error Delete Meal Tags: ${deleteTagRes.error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
     const { error } = await supabase.from("exercise_plan_tag").insert<TableInsert<"exercise_plan_tag">>(exerciseTagData)
     if (error) {
       const errorMessage: string = `There is an error Mapping your Exercise Plan: ${error.message}`;
@@ -1069,8 +1141,9 @@ const mapExercisePlanWithExerciseTag = async (exercisePlanId:number, exercisePla
   }
 }
 
-const arrangeExercises = (exercisePlan:exercisePlan, exercisePlanId: number, userId: string): Array<TableInsert<"exercise">> => {
-  const exercises:Array<TableInsert<"exercise">> = [];
+const arrangeExercises = (exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
+  const newExercises:Array<TableInsert<"exercise">> = [];
+  const existingExercises:Array<TableInsert<"exercise">> = [];
   Object.entries(exercisePlan).forEach(([day]) => {
     exercisePlan[day].forEach((exercise: TableInsert<"exercise">& {
       exerciseDemoInfo: {
@@ -1079,24 +1152,83 @@ const arrangeExercises = (exercisePlan:exercisePlan, exercisePlanId: number, use
         height: number;
         fileName: string;
       }}) => {
-      exercises.push({
-        exerciseName: exercise.exerciseName,
-        bodyPart: exercise.bodyPart,
-        equipment: exercise.equipment,
-        day: day,
-        exerciseDemo: exercise.exerciseDemoInfo === null ? "" :  `Exercise Demo/exercise-demo/${userId}/${exercisePlanId}/${exercise.exerciseDemoInfo.fileName}`,
-        exerciseMeasurementType: exercise.exerciseMeasurementType,
-        measurement: exercise.measurement,
-        instruction: exercise.instruction,
-        youtubeLink: exercise.youtubeLink,
-        bmiClassification: exercise.bmiClassification,
-        exercisePlanId: exercisePlanId,
-        created_by: userId
-      })
+        if(exercise.id) {
+          existingExercises.push({
+            id: exercise.id,
+            exerciseName: exercise.exerciseName,
+            bodyPart: exercise.bodyPart,
+            equipment: exercise.equipment,
+            day: day,
+            exerciseDemo: exercise.exerciseDemoInfo === null ? "" :  `Exercise Demo/exercise-demo/${userId}/${exercisePlanId}/${exercise.exerciseDemoInfo.fileName}`,
+            exerciseMeasurementType: exercise.exerciseMeasurementType,
+            measurement: exercise.measurement,
+            instruction: exercise.instruction,
+            youtubeLink: exercise.youtubeLink,
+            bmiClassification: exercise.bmiClassification,
+            exercisePlanId: exercisePlanId,
+            created_by: userId
+          })
+        } else {
+          newExercises.push({
+            exerciseName: exercise.exerciseName,
+            bodyPart: exercise.bodyPart,
+            equipment: exercise.equipment,
+            day: day,
+            exerciseDemo: exercise.exerciseDemoInfo === null ? "" :  `Exercise Demo/exercise-demo/${userId}/${exercisePlanId}/${exercise.exerciseDemoInfo.fileName}`,
+            exerciseMeasurementType: exercise.exerciseMeasurementType,
+            measurement: exercise.measurement,
+            instruction: exercise.instruction,
+            youtubeLink: exercise.youtubeLink,
+            bmiClassification: exercise.bmiClassification,
+            exercisePlanId: exercisePlanId,
+            created_by: userId
+          })
+        }
     })
   })
 
-  return exercises
+  return {newExercises, existingExercises};
+}
+
+
+const deleteExercises = async (toBeDeletedExercises: Array<number>) => {
+  
+  console.log(toBeDeletedExercises)
+  const supabase = await createSSR();
+
+  try {
+    const { error } = await supabase
+      .from("exercise")
+      .delete()
+      .in("id", toBeDeletedExercises);
+
+    if (error) {
+      const errorMessage: string = `There is an error Deleting the Exercise: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: "",
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Deleting the Exercise: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
 }
 
 const getFileTypeFromFileName = (fileName: string) => {
