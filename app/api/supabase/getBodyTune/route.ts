@@ -123,6 +123,7 @@ export async function GET(req: Request) {
                             name
                         ),
                         exercise (
+                            id,
                             exerciseName,
                             bodyPart,
                             equipment,
