@@ -202,6 +202,7 @@ const MutateForm = ({
       toBeDeletedIngredients: toBeDeletedIngredients,
       toBeDeletedExercises: toBeDeletedExercises,
     };
+    console.log(exercisePlanInfo);
     formData.append("jsonData", JSON.stringify(jsonData));
     formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
     formData.append("exercisePlanName", exercisePlanNameVal.exercisePlanName);
@@ -215,7 +216,7 @@ const MutateForm = ({
     formData.append(
       "selectedExercisePlan",
       JSON.stringify({
-        selectedExercisePlan: exercisePlanNameVal.selectedExercisePlan, 
+        selectedExercisePlanId: exercisePlanNameVal.selectedExercisePlan, 
         selectedExercisePlanUserId: exercisePlanNameVal.selectedExercisePlanUserId
       })
     );
