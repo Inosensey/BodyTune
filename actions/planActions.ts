@@ -1033,27 +1033,29 @@ const uploadExerciseDemos = async (exercisePlan:exercisePlan, exercisePlanId: nu
           height: number;
           fileName: string;
         }}) => {
-          const extractedFileResult = extractFilePathFromSignedUrl(exercise.exerciseDemo!)
-          const fileExist = await checkIfFileExistInSupabaseBucket(userId, exercisePlanId, extractedFileResult!.fileName!);
-          if(fileExist.data.length === 0) {
-            if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
-              const demoFile = await urlToFile(exercise.exerciseDemoInfo);
-              const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
-                cacheControl: '3600',
-                upsert: false
-              })
-              
-              if (error) {
-                const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
-                return {
-                  success: false,
-                  error: true,
-                  data: [],
-                  message: errorMessage,
-                };
+          const extractedFileResult = extractFilePathFromSignedUrl(exercise.exerciseDemoInfo.url)
+          if(!extractedFileResult) {
+            // const fileExist = await checkIfFileExistInSupabaseBucket(userId, exercisePlanId, extractedFileResult!.fileName!);
+            // if(fileExist.data.length === 0) {
+              if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
+                const demoFile = await urlToFile(exercise.exerciseDemoInfo);
+                const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
+                  cacheControl: '3600',
+                  upsert: false
+                })
+                
+                if (error) {
+                  const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+                  return {
+                    success: false,
+                    error: true,
+                    data: [],
+                    message: errorMessage,
+                  };
+                }
+                demoPaths.push(data.fullPath);
               }
-              demoPaths.push(data.fullPath);
-            }
+            // }
           }
         })
       })
