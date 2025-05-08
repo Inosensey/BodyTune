@@ -505,7 +505,9 @@ const SetExercisePlan = ({
                                   onClick={() => {
                                     removeAnExercise(index)
                                     if(originalFetchedExercisePlanInfo && originalExercisePlanGeneralInfo) {
-                                      setToBeDeletedExercises((prev) => [...prev, exercise.id!])
+                                      if(exercise.id) {
+                                        setToBeDeletedExercises((prev) => [...prev, exercise.id!])
+                                      }
                                     }
                                   }}
                                   type="button"
