@@ -280,6 +280,7 @@ export const arrangeExercisePlan = (
             classification: string;
           };
         }) => {
+          const fileInfo = extractFilePathFromSignedUrl(exercise.exerciseDemo);
           return {
             id: exercise.id,
             exerciseName: exercise.exerciseName,
@@ -294,7 +295,7 @@ export const arrangeExercisePlan = (
             youtubeLink: exercise?.youtubeLink,
             exerciseDemoInfo: {
               url: exercise.exerciseDemo,
-              fileName: "",
+              fileName: fileInfo?.fileName || "",
               height: 0,
               width: 0,
             },
