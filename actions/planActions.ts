@@ -57,6 +57,7 @@ export const updateBodyTunePlan = async (
   console.log(jsonData.exercisePlan.Monday);
   console.log(jsonData.exercisePlanTags)
   console.log(selectedExercisePlan)
+
   try {
     if(selectedExercisePlan.selectedExercisePlanUserId !== userId) {
       const { error} = await supabase.from("bodytune_plan").update<TablesUpdate<"bodytune_plan">>({
@@ -902,56 +903,56 @@ const mutateExercisePlan = async (
   }
 };
 
-const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: number, file: string) => {
-  const supabase = await createSSR();
+// const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: number, file: string) => {
+//   const supabase = await createSSR();
 
-  const bucket = 'Exercise Demo'
-  const pathToFile = `exercise-demo/${userId}/${exercisePlanId}`;
+//   const bucket = 'Exercise Demo'
+//   const pathToFile = `exercise-demo/${userId}/${exercisePlanId}`;
 
-  if(file || file === '') return {
-    success: true,
-    error: false,
-    data: [],
-    message: '',
-  };
+//   if(file || file === '') return {
+//     success: true,
+//     error: false,
+//     data: [],
+//     message: '',
+//   };
 
-  try {  
-    const { data, error } = await supabase
-      .storage
-      .from(bucket)
-      .list(pathToFile, {
-        search: file
-      })
+//   try {  
+//     const { data, error } = await supabase
+//       .storage
+//       .from(bucket)
+//       .list(pathToFile, {
+//         search: file
+//       })
     
-    if (error) {
-      const errorMessage: string = `There is an error checking the file: ${error.message}`;
-      return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
-      };
-    }
+//     if (error) {
+//       const errorMessage: string = `There is an error checking the file: ${error.message}`;
+//       return {
+//         success: false,
+//         error: true,
+//         data: [],
+//         message: errorMessage,
+//       };
+//     }
 
-    return {
-      success: true,
-      error: false,
-      data: data,
-      message: '',
-    };
+//     return {
+//       success: true,
+//       error: false,
+//       data: data,
+//       message: '',
+//     };
 
-  } catch (error) {
-    const errorMessage: string =
-      error instanceof Error
-        ? `There is an error checking the file: ${error.message}`
-        : "An unknown error occurred";
-    return {
-      success: false,
-      error: true,
-      data: [],
-      message: errorMessage,
-    };
-  }
+//   } catch (error) {
+//     const errorMessage: string =
+//       error instanceof Error
+//         ? `There is an error checking the file: ${error.message}`
+//         : "An unknown error occurred";
+//     return {
+//       success: false,
+//       error: true,
+//       data: [],
+//       message: errorMessage,
+//     };
+//   }
 
   // const { data, error } = await supabase
   //   .storage
@@ -967,7 +968,7 @@ const checkIfFileExistInSupabaseBucket = async (userId: string, exercisePlanId: 
 
   // const exists = data.some(file => file.name === 'your-file.txt')
   // return exists
-}
+// }
 
 const mutateExercises = async(exercisePlan:exercisePlan, exercisePlanId: number, userId: string) => {
   const supabase = await createSSR();
@@ -1035,27 +1036,26 @@ const uploadExerciseDemos = async (exercisePlan:exercisePlan, exercisePlanId: nu
         }}) => {
           const extractedFileResult = extractFilePathFromSignedUrl(exercise.exerciseDemoInfo.url)
           if(!extractedFileResult) {
-            // const fileExist = await checkIfFileExistInSupabaseBucket(userId, exercisePlanId, extractedFileResult!.fileName!);
-            // if(fileExist.data.length === 0) {
-              if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
-                const demoFile = await urlToFile(exercise.exerciseDemoInfo);
-                const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
-                  cacheControl: '3600',
-                  upsert: false
-                })
-                
-                if (error) {
-                  const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
-                  return {
-                    success: false,
-                    error: true,
-                    data: [],
-                    message: errorMessage,
-                  };
-                }
-                demoPaths.push(data.fullPath);
+            if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
+              const demoFile = await urlToFile(exercise.exerciseDemoInfo);
+              const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
+                cacheControl: '3600',
+                upsert: false
+              })
+              
+              if (error) {
+                const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+                return {
+                  success: false,
+                  error: true,
+                  data: [],
+                  message: errorMessage,
+                };
               }
-            // }
+              demoPaths.push(data.fullPath);
+            }
+          } else {
+            demoPaths.push(exercise.exerciseDemoInfo.url);
           }
         })
       })
@@ -1113,7 +1113,9 @@ const mapExercisePlanWithExerciseTag = async (exercisePlanId:number, exercisePla
         message: errorMessage,
       };
     }
-    const { error } = await supabase.from("exercise_plan_tag").insert<TableInsert<"exercise_plan_tag">>(exerciseTagData)
+    console.log(exerciseTagData);
+    const { error } = await supabase.from("exercise_plan_tag").upsert<TableUpdate<"exercise_plan_tag">>(exerciseTagData, {onConflict: "exercisePlanId, tagId"})
+
     if (error) {
       const errorMessage: string = `There is an error Mapping your Exercise Plan: ${error.message}`;
       return {
