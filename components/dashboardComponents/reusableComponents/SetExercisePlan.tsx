@@ -24,7 +24,10 @@ import { arrangeExercisePlan } from "@/utils/dashboardUtils";
 
 // Types
 import { TableInsert } from "@/types/database.types";
-import { exercisePlanGeneralInfo, exercisePlanName } from "@/types/exerciseTypes";
+import {
+  exercisePlanGeneralInfo,
+  exercisePlanName,
+} from "@/types/exerciseTypes";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 import { exercisePlan } from "@/types/planTypes";
 interface props {
@@ -33,7 +36,7 @@ interface props {
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
-  originalExercisePlanGeneralInfo: exercisePlanGeneralInfo | undefined,
+  originalExercisePlanGeneralInfo: exercisePlanGeneralInfo | undefined;
   originalFetchedExercisePlanInfo: exercisePlan | undefined;
   setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
   exercisePlanInfo: exercisePlan;
@@ -88,7 +91,7 @@ const SetExercisePlan = ({
   setExercisePlanNameVal,
   selectedDifficulties,
   setSelectedDifficulties,
-  setToBeDeletedExercises
+  setToBeDeletedExercises,
 }: props) => {
   // UseQuery
   const { data: exercisePlanList } = useQuery({
@@ -97,17 +100,19 @@ const SetExercisePlan = ({
       return getExercisePlans();
     },
   });
-  const exercisePlans = exercisePlanList!.map((exercisePlanInfo) => {
-    return {
-      exerciseId: exercisePlanInfo.id,
-      createdBy: exercisePlanInfo.created_by,
-      planName: exercisePlanInfo.planName,
-      planTags: exercisePlanInfo.exercise_plan_tag,
-      exercises: arrangeExercisePlan(exercisePlanInfo),
-    };
-  });
 
   // States
+  const [exercisePlans] = useState(() =>
+    exercisePlanList!.map((exercisePlanInfo) => {
+      return {
+        exerciseId: exercisePlanInfo.id,
+        createdBy: exercisePlanInfo.created_by,
+        planName: exercisePlanInfo.planName,
+        planTags: exercisePlanInfo.exercise_plan_tag,
+        exercises: arrangeExercisePlan(exercisePlanInfo),
+      };
+    })
+  );
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
   const [showExercisePlanHtml, setShowExercisePanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || exercisePlanInfo ? true : false
@@ -134,15 +139,21 @@ const SetExercisePlan = ({
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value, options, selectedIndex } = event.target;
     if (name === "exercisePlan") {
-      const selectedExercisePlan = exercisePlans.filter((exercise) => exercise.exerciseId === parseInt(value))
+      const selectedExercisePlan = exercisePlans.filter(
+        (exercise) => exercise.exerciseId === parseInt(value)
+      );
       setExercisePlanNameVal((prev) => ({
         ...prev,
         selectedExercisePlanUserId: selectedExercisePlan[0].createdBy,
         selectedExercisePlan: value,
         exercisePlanName: options[selectedIndex].innerHTML,
       }));
-      setSelectedDifficulties(selectedExercisePlan[0].planTags.map((info) => info.exercise_tags.exerciseTagName))
-      setExercisePlanInfo(selectedExercisePlan[0].exercises)
+      setSelectedDifficulties(
+        selectedExercisePlan[0].planTags.map(
+          (info) => info.exercise_tags.exerciseTagName
+        )
+      );
+      setExercisePlanInfo(selectedExercisePlan[0].exercises);
     } else {
       setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
     }
@@ -157,6 +168,8 @@ const SetExercisePlan = ({
       ),
     }));
   };
+
+  //
   return (
     <>
       <div
@@ -190,15 +203,19 @@ const SetExercisePlan = ({
                 </div>
               </div>
               <div className="flex phone:justify-center mdphone:items-center">
-                {originalFetchedExercisePlanInfo && originalExercisePlanGeneralInfo ? (
+                {originalFetchedExercisePlanInfo &&
+                originalExercisePlanGeneralInfo ? (
                   <button
                     onClick={() => {
                       setExercisePlanInfo(originalFetchedExercisePlanInfo);
                       setExercisePlanNameVal((prev) => ({
                         ...prev,
-                        selectedExercisePlanUserId: originalExercisePlanGeneralInfo.createdBy,
-                        selectedExercisePlan: originalExercisePlanGeneralInfo.id,
-                        exercisePlanName: originalExercisePlanGeneralInfo.planName,
+                        selectedExercisePlanUserId:
+                          originalExercisePlanGeneralInfo.createdBy,
+                        selectedExercisePlan:
+                          originalExercisePlanGeneralInfo.id,
+                        exercisePlanName:
+                          originalExercisePlanGeneralInfo.planName,
                       }));
                       setSelectedDifficulties(
                         originalExercisePlanGeneralInfo.tags.map(
@@ -503,10 +520,16 @@ const SetExercisePlan = ({
                                 />
                                 <button
                                   onClick={() => {
-                                    removeAnExercise(index)
-                                    if(originalFetchedExercisePlanInfo && originalExercisePlanGeneralInfo) {
-                                      if(exercise.id) {
-                                        setToBeDeletedExercises((prev) => [...prev, exercise.id!])
+                                    removeAnExercise(index);
+                                    if (
+                                      originalFetchedExercisePlanInfo &&
+                                      originalExercisePlanGeneralInfo
+                                    ) {
+                                      if (exercise.id) {
+                                        setToBeDeletedExercises((prev) => [
+                                          ...prev,
+                                          exercise.id!,
+                                        ]);
                                       }
                                     }
                                   }}
