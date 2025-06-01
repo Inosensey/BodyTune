@@ -260,17 +260,17 @@ const MutateForm = ({
   // Handles form submission success or error
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
-    setIsSubmitting(false);
-    console.log(formState);
-    // if (formState.success) {
-    //   setSubmitMessage(
-    //     "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
-    //   );
-    //   queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
-    //   router.push(`/plan/bodytune/${formState.data}`);
-    // } else {
-    //   setIsSubmitting(false);
-    // }
+    // setIsSubmitting(false);
+    // console.log(formState);
+    if (formState.success) {
+      setSubmitMessage(
+        "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
+      );
+      queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
+      router.push(`/plan/bodytune/${formState.data}`);
+    } else {
+      setIsSubmitting(false);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
