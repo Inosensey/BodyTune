@@ -280,7 +280,13 @@ export const arrangeExercisePlan = (
             classification: string;
           };
         }) => {
-          const fileInfo = extractFilePathFromSignedUrl(exercise.exerciseDemo);
+          const segments = exercise.exerciseDemo.split("/");
+          const fileName = segments[segments.length - 1];
+          let fileInfo;
+
+          if (fileName !== "undefined") {
+            fileInfo = extractFilePathFromSignedUrl(exercise.exerciseDemo)
+          }
           return {
             id: exercise.id,
             exerciseName: exercise.exerciseName,
@@ -289,12 +295,12 @@ export const arrangeExercisePlan = (
             day: exercise.day,
             exerciseMeasurementType: exercise.exercise_measurement_type.id,
             measurement: exercise.measurement,
-            exerciseDemo: exercise.exerciseDemo,
+            exerciseDemo: fileInfo ? exercise.exerciseDemo : "",
             bmiClassification: 1,
             instruction: exercise.instruction,
             youtubeLink: exercise?.youtubeLink,
             exerciseDemoInfo: {
-              url: exercise.exerciseDemo,
+              url: fileInfo ? exercise.exerciseDemo : "",
               fileName: fileInfo?.fileName || "",
               height: 0,
               width: 0,
