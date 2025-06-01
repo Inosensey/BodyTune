@@ -20,18 +20,20 @@ const BodyTunePlanPage = async ({ params }: props) => {
     parseInt(params.planId)
   );
   const bodyTune: bodyTunePlan | [] = res[0];
-  const exercisePlanGeneralInfo: exercisePlanGeneralInfo = {
+  const mealPlanGeneralInfo: mealPlanGeneralInfo = {
     id: bodyTune.mealPlanId,
     planName: bodyTune.meal_plan.planName,
-    tags: bodyTune.exercise_plan.exercise_plan_tag,
+    tags: bodyTune.meal_plan.meal_plan_tags,
+    createdBy: bodyTune.meal_plan.created_by
   };
-  const mealPlanGeneralInfo: mealPlanGeneralInfo = {
+  const exercisePlanGeneralInfo: exercisePlanGeneralInfo = {
     id: bodyTune.exercisePlanId,
     planName: bodyTune.exercise_plan.planName,
-    tags: bodyTune.meal_plan.meal_plan_tags,
+    tags: bodyTune.exercise_plan.exercise_plan_tag,
+    createdBy: bodyTune.exercise_plan.created_by
   };
   const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTune);
-
+  
   return (
     <div className="w-full">
       <PlanDetails
