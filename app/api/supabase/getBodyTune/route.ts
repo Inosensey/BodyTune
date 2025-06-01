@@ -164,7 +164,10 @@ const getSignedDemoUrls = async (bodyTunes: bodyTunePlan[]) => {
         bodyTunes.map(async (bodyTune: bodyTunePlan) => {
           bodyTune.exercise_plan.exercise = (await Promise.all(
             bodyTune.exercise_plan.exercise.map(async (exercise) => {
-              if (exercise.exerciseDemo) {
+                
+              const segments = exercise.exerciseDemo.split("/");
+              const fileName = segments[segments.length - 1];
+              if (fileName !== "undefined") {
                 const filePath = exercise.exerciseDemo
                   .replace("Exercise Demo/", "")
                   .trim();
