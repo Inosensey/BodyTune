@@ -21,6 +21,7 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { bodyTunePlan, exercisePlan } from "@/types/planTypes";
 import { mealPlanType } from "@/types/mealTypes";
 import Overlay from "@/components/reusableComponent/Overlay";
+import DeleteWarningPopup from "../reusableComponents/DeleteWarningPopup";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -64,6 +65,7 @@ const BodyTuneStudioContents = () => {
     },
   });
 
+  // States
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
@@ -73,6 +75,9 @@ const BodyTuneStudioContents = () => {
     exercisePlan?: exercisePlan;
     mealPlan?: mealPlanType;
   }>({});
+  const [toggleDeleteWarningPopUp, setToggleDeleteWarningPopUp] =
+    useState<boolean>(false);
+  const [dataToBeDeleted, setDataToBeDeleted] = useState<bodyTunePlan | null>(null)
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -199,6 +204,8 @@ const BodyTuneStudioContents = () => {
                       views="4451"
                       setToggleBodyTuneDetails={setToggleBodyTuneDetails}
                       setSelectedBodyTunePlan={setSelectedBodyTunePlan}
+                      setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+                      setDataToBeDeleted={setDataToBeDeleted}
                     />
                   </motion.div>
                 ))
@@ -220,6 +227,14 @@ const BodyTuneStudioContents = () => {
               exercisePlan={selectedBodyTunePlan.exercisePlan}
             />
           </Overlay>
+        )}
+        {toggleDeleteWarningPopUp && (
+          <DeleteWarningPopup
+            setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+            data={dataToBeDeleted!}
+            typeOfDataToBeDeleted="BodyTune"
+            id={dataToBeDeleted!.id}
+          />
         )}
       </AnimatePresence>
     </>
