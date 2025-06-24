@@ -234,6 +234,7 @@ const BodyTuneStudioContents = () => {
             data={dataToBeDeleted!}
             typeOfDataToBeDeleted="BodyTune"
             id={dataToBeDeleted!.id}
+            bodyTunes={bodyTunes}
           />
         )}
       </AnimatePresence>
