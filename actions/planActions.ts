@@ -295,6 +295,51 @@ export const createBodyTunePlan = async (
   }
 };
 
+export const deleteBodyTunePlan = async (
+  prevState: formReturnType<[] | number>,
+  formData: FormData
+): Promise<formReturnType<[] | number>> => {
+  const supabase = await createSSR();
+
+  const bodytuneId = parseInt(
+    formData.get("bodytune_plan") as string
+  );
+  try {
+    const { error } = await supabase
+      .from("exercise")
+      .delete()
+      .eq("id", bodytuneId);
+
+    if (error) {
+      const errorMessage: string = `There is an error Deleting the BodyTune: ${error.message}`;
+      return {
+        success: false,
+        error: true,
+        data: [],
+        message: errorMessage,
+      };
+    }
+    revalidateTag("bodyTunes");
+    return {
+      success: true,
+      error: false,
+      data: [],
+      message: ``,
+    };
+  } catch (error) {
+    const errorMessage: string =
+      error instanceof Error
+        ? `There is an error Deleting the BodyTune: ${error.message}`
+        : "An unknown error occurred";
+    return {
+      success: false,
+      error: true,
+      data: [],
+      message: errorMessage,
+    };
+  }
+}
+
 // Meals functions
 const mutateMealPlan = async (
   mealPlan: mealPlanType,
@@ -1262,8 +1307,6 @@ const arrangeExercises = (exercisePlan:exercisePlan, exercisePlanId: number, use
 
 
 const deleteExercises = async (toBeDeletedExercises: Array<number>) => {
-  
-  console.log(toBeDeletedExercises)
   const supabase = await createSSR();
 
   try {

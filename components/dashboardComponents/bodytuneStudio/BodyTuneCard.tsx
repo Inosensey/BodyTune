@@ -35,14 +35,16 @@ interface props {
   }>;
   views: string;
   likes: string;
-  setToggleBodyTuneDetails: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedBodyTunePlan: React.Dispatch<
+  setToggleBodyTuneDetails?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedBodyTunePlan?: React.Dispatch<
     React.SetStateAction<{
       bodyTuneId?: number;
       exercisePlan?: exercisePlan;
       mealPlan?: mealPlanType;
     }>
   >;
+  setToggleDeleteWarningPopUp?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDataToBeDeleted?: React.Dispatch<React.SetStateAction<bodyTunePlan | null>>
 }
 
 const BodyTuneCard = ({
@@ -56,6 +58,8 @@ const BodyTuneCard = ({
   views,
   setToggleBodyTuneDetails,
   setSelectedBodyTunePlan,
+  setToggleDeleteWarningPopUp,
+  setDataToBeDeleted
 }: props) => {
   return (
     <div className="flex flex-col gap-2 font-quickSand text-sm bg-lightPrimary rounded-lg h-max p-4 phone:w-12/12 tablet:w-[280px]">
@@ -63,16 +67,25 @@ const BodyTuneCard = ({
         <div className="flex flex-col">
           <p className="font-semibold text-sm">{author}</p>
         </div>
-        <div className="flex items-center justify-center gap-1">
-          <Link href={`bodytune/update/${bodyTunePlan.id}`}>
-            <span title="Edit" className="cursor-pointer">
-              <TablerEdit color="#B58E1C" width="1.5em" height="1.5em" />
+        {setSelectedBodyTunePlan && (
+          <div className="flex items-center justify-center gap-1">
+            <Link href={`bodytune/update/${bodyTunePlan.id}`}>
+              <span title="Edit" className="cursor-pointer">
+                <TablerEdit color="#B58E1C" width="1.5em" height="1.5em" />
+              </span>
+            </Link>
+            <span
+              onClick={() => {
+                setToggleDeleteWarningPopUp!(true);
+                setDataToBeDeleted!(bodyTunePlan);
+              }}
+              title="Delete"
+              className="cursor-pointer"
+            >
+              <TablerTrashX color="#dc3545" width="1.5em" height="1.5em" />
             </span>
-          </Link>
-          <span title="Delete" className="cursor-pointer">
-            <TablerTrashX color="#dc3545" width="1.5em" height="1.5em" />
-          </span>
-        </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-2 justify-between">
         <div className="flex flex-col gap-1">
@@ -137,26 +150,29 @@ const BodyTuneCard = ({
         </div>
       </div>
 
-      <motion.button
-        onClick={() => {
-          setToggleBodyTuneDetails(true);
-          const { exercisePlan, mealPlan } = arrangeBodyTunePlan(bodyTunePlan);
-          setSelectedBodyTunePlan((prev) => ({
-            ...prev,
-            bodyTuneId: bodyTunePlan.id,
-            mealPlan: mealPlan,
-            exercisePlan: exercisePlan,
-          }));
-        }}
-        className="w-max flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
-      >
-        View Full Details
-        <SolarStarsMinimalisticLineDuotone
-          color="#D3F0D1"
-          width="1.3em"
-          height="1.3em"
-        />
-      </motion.button>
+      {setSelectedBodyTunePlan && (
+        <motion.button
+          onClick={() => {
+            setToggleBodyTuneDetails!(true);
+            const { exercisePlan, mealPlan } =
+              arrangeBodyTunePlan(bodyTunePlan);
+            setSelectedBodyTunePlan((prev) => ({
+              ...prev,
+              bodyTuneId: bodyTunePlan.id,
+              mealPlan: mealPlan,
+              exercisePlan: exercisePlan,
+            }));
+          }}
+          className="w-max flex gap-1 items-center bg-[#5d897b] text-white font-quickSand font-semibold rounded-md p-1 px-2 transition duration-200 hover:bg-secondary"
+        >
+          View Full Details
+          <SolarStarsMinimalisticLineDuotone
+            color="#D3F0D1"
+            width="1.3em"
+            height="1.3em"
+          />
+        </motion.button>
+      )}
     </div>
   );
 };

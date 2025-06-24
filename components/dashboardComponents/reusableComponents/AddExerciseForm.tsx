@@ -274,8 +274,6 @@ const AddExerciseForm = ({
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log(e.target);
-        console.log(file);
         setExerciseFormInputVal((prev) => ({
           ...prev,
           exerciseDemo: '',
@@ -559,7 +557,7 @@ const AddExerciseForm = ({
               <Input
                 name="youtubeLink"
                 placeholder="Youtube link to the Exercise"
-                state={exerciseFormInputVal.youtubeLink!}
+                state={exerciseFormInputVal.youtubeLink ? exerciseFormInputVal.youtubeLink : ""}
                 type="text"
                 label="Youtube Link (Optional)"
                 onChange={onChange}
