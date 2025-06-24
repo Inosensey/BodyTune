@@ -302,11 +302,11 @@ export const deleteBodyTunePlan = async (
   const supabase = await createSSR();
 
   const bodytuneId = parseInt(
-    formData.get("bodytune_plan") as string
+    formData.get("bodyTuneId") as string
   );
   try {
     const { error } = await supabase
-      .from("exercise")
+      .from("bodytune_plan")
       .delete()
       .eq("id", bodytuneId);
 
