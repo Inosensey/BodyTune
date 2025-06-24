@@ -78,7 +78,7 @@ export const updateBodyTunePlan = async (
     } else {
       const mutateExercisePlanResult = await mutateExercisePlan(
         exercisePlanName,
-        selectedExercisePlan.selectedExercisePlanId as string,
+        parseInt(selectedExercisePlan.selectedExercisePlanId as string),
         jsonData.exercisePlan,
         visibilityPreference,
         jsonData.exercisePlanTags,
@@ -188,8 +188,14 @@ export const createBodyTunePlan = async (
   const visibilityPreference = parseInt(
     formData.get("visibilityPreference") as string
   );
-  // const selectedMealPlan = formData.get("selectedMealPlan") as string;
-  const selectedExercisePlan = formData.get("selectedExercisePlan") as string;
+  const selectedMealPlan: {
+    selectedMealPlanUserId: string,
+    selectedMealPlanId: number | string;
+  } = JSON.parse(formData.get("selectedMealPlan") as string);
+  const selectedExercisePlan: {
+    selectedExercisePlanUserId: string;
+    selectedExercisePlanId: number | string,
+  } = JSON.parse(formData.get("selectedExercisePlan") as string);
   const mealPlan: mealPlanType = jsonData.mealPlan;
   const exercisePlan: exercisePlan = jsonData.exercisePlan;
   const mealPlanTags: Array<string> = jsonData.mealPlanTags;
@@ -198,13 +204,17 @@ export const createBodyTunePlan = async (
   const user = await supabase.auth.getUser();
   const userId = user.data.user!.id;
 
+  console.log(selectedMealPlan)
+  console.log(selectedExercisePlan)
+
   try {
     const createMealPlanResult = await mutateMealPlan(
       mealPlan,
       mealPlanName,
       visibilityPreference,
       mealPlanTags,
-      userId
+      userId,
+      parseInt(selectedMealPlan.selectedMealPlanId as string)
     );
 
     if (createMealPlanResult.error) {
@@ -218,7 +228,7 @@ export const createBodyTunePlan = async (
 
     const mutateExercisePlanResult = await mutateExercisePlan(
       exercisePlanName,
-      selectedExercisePlan,
+      parseInt(selectedExercisePlan.selectedExercisePlanId as string),
       exercisePlan,
       visibilityPreference,
       exercisePlanTags,
@@ -265,6 +275,12 @@ export const createBodyTunePlan = async (
       data: bodyTunePlanId,
       message: ``,
     };
+    // return {
+    //   success: true,
+    //   error: false,
+    //   data: [],
+    //   message: ``,
+    // };
   } catch (error) {
     const errorMessage: string =
       error instanceof Error
@@ -292,26 +308,50 @@ const mutateMealPlan = async (
   const supabase = await createSSR();
 
   try {
-    const { data, error } = await supabase
-      .from("meal_plan")
-      .upsert<TableInsert<"meal_plan">>({
-        id: planId,
-        planName: mealPlanName,
-        visibility: visibilityPreference,
-        created_by: userId,
-      })
-      .select();
-    if (error) {
-      const errorMessage: string = `There is an error ${planId ? "Updating" : "Creating" } the Meal Plan: ${error.message}`;
-      return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
-      };
+    let response 
+    let mealPlanId 
+    if(planId! === 0) {
+      const { data, error } = await supabase
+        .from("meal_plan")
+        .insert<TableInsert<"meal_plan">>({
+          planName: mealPlanName,
+          visibility: visibilityPreference,
+          created_by: userId,
+        })
+        .select();
+      if (error) {
+        const errorMessage: string = `There is an error Creating the Meal Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+      response = data as TableInsert<"meal_plan">[];
+      mealPlanId = response[0].id!;
+    } else {
+      const { data, error } = await supabase
+        .from("meal_plan")
+        .upsert<TableInsert<"meal_plan">>({
+          id: planId,
+          planName: mealPlanName,
+          visibility: visibilityPreference,
+          created_by: userId,
+        })
+        .select();
+      if (error) {
+        const errorMessage: string = `There is an error Updating the Meal Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+      response = data as TableInsert<"meal_plan">[];
+      mealPlanId = response[0].id!;
     }
-    const response = data as TableInsert<"meal_plan">[];
-    const mealPlanId = response[0].id!;
 
     const mapMealPlanWithMealTagResult = await mapMealPlanWithMealTag(
       mealPlanId,
@@ -799,7 +839,7 @@ const arrangeDailyMeal = (mealIds:{
 // Exercises functions
 const mutateExercisePlan = async (
   exercisePlanName: string,
-  selectedExercisePlanId: string,
+  selectedExercisePlanId: number,
   exercisePlan: exercisePlan,
   visibilityPreference: number,
   exercisePlanTags: Array<string>,
@@ -809,25 +849,49 @@ const mutateExercisePlan = async (
   const supabase = await createSSR();
   
   try {
-    const { data, error } = await supabase.from("exercise_plan").upsert<TablesUpdate<"exercise_plan">>({
-      id: parseInt(selectedExercisePlanId),
-      planName: exercisePlanName,
-      visibility: visibilityPreference,
-      created_by: userId
-    }).select()
+    let response
+    let exercisePlanId
 
-    if (error) {
-      const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
-      return {
-        success: false,
-        error: true,
-        data: [],
-        message: errorMessage,
-      };
+    if(selectedExercisePlanId === 0) {
+      const { data, error } = await supabase.from("exercise_plan").insert<TablesUpdate<"exercise_plan">>({
+        planName: exercisePlanName,
+        visibility: visibilityPreference,
+        created_by: userId
+      }).select()
+
+      if (error) {
+        const errorMessage: string = `There is an error Creating your Exercise Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+
+      response = data as TableInsert<"exercise_plan">[];
+      exercisePlanId = response[0].id!;
+    } else {
+      const { data, error } = await supabase.from("exercise_plan").upsert<TablesUpdate<"exercise_plan">>({
+        id: selectedExercisePlanId,
+        planName: exercisePlanName,
+        visibility: visibilityPreference,
+        created_by: userId
+      }).select()
+
+      if (error) {
+        const errorMessage: string = `There is an error Updating your Exercise Plan: ${error.message}`;
+        return {
+          success: false,
+          error: true,
+          data: [],
+          message: errorMessage,
+        };
+      }
+
+      response = data as TableInsert<"exercise_plan">[];
+      exercisePlanId = response[0].id!;
     }
-
-    const response = data as TableInsert<"exercise_plan">[];
-    const exercisePlanId = response[0].id!;
     
     if(toBeDeletedExercises) {
       const deleteExercisesResult = await deleteExercises(toBeDeletedExercises)
@@ -1036,7 +1100,7 @@ const uploadExerciseDemos = async (exercisePlan:exercisePlan, exercisePlanId: nu
             if(exercise.exerciseDemoInfo || exercise.exerciseDemoInfo !== undefined) {
               const demoFile = await urlToFile(exercise.exerciseDemoInfo);
               const fileExist = await checkIfFileExistInSupabaseBucket(userId, exercisePlanId, demoFile!.name);
-              if(!fileExist) {
+              if(fileExist.data.length === 0) {
                 const {data, error} = await supabase.storage.from("Exercise Demo").upload(`exercise-demo/${userId}/${exercisePlanId}/${demoFile?.name}`, demoFile!, {
                   cacheControl: '3600',
                   upsert: false
