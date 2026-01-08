@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 
 //lib
-import { getExercisePlans } from "@/lib/supabaseQueries";
+// import { getExercisePlans } from "@/lib/supabaseQueries";
 
 // components
 import { Input } from "@/components/reusableComponent/formInputs/input";
@@ -20,12 +20,13 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import TablerBarbell from "@/icons/TablerBarbellLight";
 
 // Utils
-import { arrangeExercisePlan } from "@/utils/dashboardUtils";
+// import { arrangeExercisePlan } from "@/utils/dashboardUtils";
 
 // Types
 import { TableInsert } from "@/types/database.types";
 import {
   exercisePlanGeneralInfo,
+  // exercisePlanListType,
   exercisePlanName,
 } from "@/types/exerciseTypes";
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
@@ -48,6 +49,7 @@ interface props {
   selectedDifficulties: Array<string>;
   setSelectedDifficulties: React.Dispatch<React.SetStateAction<Array<string>>>;
   setToBeDeletedExercises: React.Dispatch<React.SetStateAction<number[]>>;
+  setTogglePlanPopUpList: React.Dispatch<React.SetStateAction<{listType: string, toggle:boolean}>>
 }
 
 // Initials
@@ -92,29 +94,30 @@ const SetExercisePlan = ({
   selectedDifficulties,
   setSelectedDifficulties,
   setToBeDeletedExercises,
+  setTogglePlanPopUpList
 }: props) => {
   // UseQuery
-  const { data: exercisePlanList } = useQuery({
-    queryKey: ["exercisePlans"],
-    queryFn: () => {
-      return getExercisePlans();
-    },
-  });
+  // const { data: exercisePlanList } = useQuery({
+  //   queryKey: ["exercisePlans"],
+  //   queryFn: () => {
+  //     return getExercisePlans();
+  //   },
+  // });
 
   // States
-  const [exercisePlans] = useState(() =>
-    exercisePlanList!.map((exercisePlanInfo) => {
-      return {
-        exerciseId: exercisePlanInfo.id,
-        createdBy: exercisePlanInfo.created_by,
-        planName: exercisePlanInfo.planName,
-        planTags: exercisePlanInfo.exercise_plan_tag,
-        exercises: arrangeExercisePlan(exercisePlanInfo),
-      };
-    })
-  );
+  // const [exercisePlans] = useState<Array<exercisePlanListType>>(() =>
+  //   exercisePlanList!.map((exercisePlanInfo) => {
+  //     return {
+  //       exerciseId: exercisePlanInfo.id,
+  //       createdBy: exercisePlanInfo.created_by,
+  //       planName: exercisePlanInfo.planName,
+  //       planTags: exercisePlanInfo.exercise_plan_tag,
+  //       exercises: arrangeExercisePlan(exercisePlanInfo),
+  //     };
+  //   })
+  // );
   const [selectedWeekDay, setSelectedWeekDay] = useState<string>("Monday");
-  const [showExercisePlanHtml, setShowExercisePanHtml] = useState<boolean>(
+  const [showExercisePlanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || exercisePlanInfo ? true : false
   );
   const [toggleAddExerciseForm, setToggleAddExerciseForm] =
@@ -136,29 +139,29 @@ const SetExercisePlan = ({
     const { name, value } = event.target;
     setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
-  const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value, options, selectedIndex } = event.target;
-    if (name === "exercisePlan") {
-      const selectedExercisePlan = exercisePlans.filter(
-        (exercise) => exercise.exerciseId === parseInt(value)
-      );
-      setExercisePlanNameVal((prev) => ({
-        ...prev,
-        selectedExercisePlanUserId: selectedExercisePlan[0].createdBy,
-        selectedExercisePlan: value,
-        exercisePlanName: options[selectedIndex].innerHTML,
-      }));
-      setSelectedDifficulties(
-        selectedExercisePlan[0].planTags.map(
-          (info) => info.exercise_tags.exerciseTagName
-        )
-      );
-      setExercisePlanInfo(selectedExercisePlan[0].exercises);
-    } else {
-      setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
-    }
-    setShowExercisePanHtml(true);
-  };
+  // const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value, options, selectedIndex } = event.target;
+  //   if (name === "exercisePlan") {
+  //     const selectedExercisePlan = exercisePlans.filter(
+  //       (exercise) => exercise.exerciseId === parseInt(value)
+  //     );
+  //     setExercisePlanNameVal((prev) => ({
+  //       ...prev,
+  //       selectedExercisePlanUserId: selectedExercisePlan[0].createdBy,
+  //       selectedExercisePlan: value,
+  //       exercisePlanName: options[selectedIndex].innerHTML,
+  //     }));
+  //     setSelectedDifficulties(
+  //       selectedExercisePlan[0].planTags.map(
+  //         (info) => info.exercise_tags.exerciseTagName
+  //       )
+  //     );
+  //     setExercisePlanInfo(selectedExercisePlan[0].exercises);
+  //   } else {
+  //     setExercisePlanNameVal((prev) => ({ ...prev, [name]: value }));
+  //   }
+  //   setShowExercisePanHtml(true);
+  // };
 
   const removeAnExercise = (indexToBeRemove: number) => {
     setExercisePlanInfo((prevItems) => ({
@@ -253,7 +256,7 @@ const SetExercisePlan = ({
               </div>
             </div>
           </div>
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             {!showExercisePlanHtml && (
               <>
                 <div
@@ -322,12 +325,19 @@ const SetExercisePlan = ({
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
 
-        {showExercisePlanHtml && (
+        {/* {showExercisePlanHtml && ( */}
           <div className="flex gap-1 bg-black rounded-b-lg pt-2 pb-4 px-2 w-full flex-col midtablet:flex-1">
             <div className="flex flex-col gap-2 ">
+              <button
+                  type="button"
+                  onClick={() => setTogglePlanPopUpList({listType: "exercise", toggle: true})}
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+              >
+                Choose a Exercise Plan <TablerBarbell color="#D3F0D1" width="1.3em" height="1.3em" />
+              </button>
               <motion.div className="phone:w-4/12 min-w-[260px]">
                 <Input
                   name="exercisePlanName"
@@ -343,7 +353,7 @@ const SetExercisePlan = ({
                 />
               </motion.div>
             </div>
-            <div
+            {/* <div
               className="relative flex flex-wrap items-center gap-1 w-12/12 mt-1"
               style={{
                 flexDirection: showExercisePlanHtml ? "row" : "column",
@@ -406,7 +416,7 @@ const SetExercisePlan = ({
                   </select>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="flex flex-col gap-1">
               <label className="font-dmSans phone:text-sm">
                 Select Workout Difficulty Tags:
@@ -581,7 +591,7 @@ const SetExercisePlan = ({
                 )}
             </div>
           </div>
-        )}
+        {/* )} */}
       </div>
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>

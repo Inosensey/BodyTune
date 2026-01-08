@@ -15,13 +15,14 @@ import SolarRestartSquareLineDuotone from "@/icons/SolarRestartSquareLineDuotone
 
 // Utils
 import { weekDates, bmiClassifications } from "@/utils/initials";
-import { arrangeMealPlan } from "@/utils/dashboardUtils";
+// import { arrangeMealPlan } from "@/utils/dashboardUtils";
 
 // Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 import { mealPlanGeneralInfo, mealPlanName, mealPlanType } from "@/types/mealTypes";
-import { useQuery } from "@tanstack/react-query";
-import { getMealPlans } from "@/lib/supabaseQueries";
+// import { useQuery } from "@tanstack/react-query";
+// import { getMealPlans } from "@/lib/supabaseQueries";
+import MdiFoodDrumstickOutline from "@/icons/MdiFoodDrumstickOutline";
 interface props {
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
@@ -38,6 +39,7 @@ interface props {
   selectedBmis: Array<string>;
   setSelectedBmis: React.Dispatch<React.SetStateAction<Array<string>>>;
   setToBeDeletedIngredients: React.Dispatch<React.SetStateAction<Array<number>>>
+  setTogglePlanPopUpList: React.Dispatch<React.SetStateAction<{listType: string, toggle:boolean}>>
 }
 
 const SetMealPlan = ({
@@ -53,28 +55,29 @@ const SetMealPlan = ({
   setMealPlanNameVal,
   selectedBmis,
   setSelectedBmis,
-  setToBeDeletedIngredients
+  setToBeDeletedIngredients,
+  setTogglePlanPopUpList
 }: props) => {
   // UseQuery
-  const { data: mealPlanList } = useQuery({
-    queryKey: ["mealPlans"],
-    queryFn: () => {
-      return getMealPlans();
-    },
-  });
-  const selectMealPlans = mealPlanList!.map((mealPlanInfo) => {
-    return {
-      mealId: mealPlanInfo.id,
-      createdBy: mealPlanInfo.created_by,
-      planName: mealPlanInfo.planName,
-      planTags: mealPlanInfo.meal_plan_tags,
-      meals: arrangeMealPlan(mealPlanInfo),
-    };
-  });
+  // const { data: mealPlanList } = useQuery({
+  //   queryKey: ["mealPlans"],
+  //   queryFn: () => {
+  //     return getMealPlans();
+  //   },
+  // });
+  // const selectMealPlans = mealPlanList!.map((mealPlanInfo) => {
+  //   return {
+  //     mealId: mealPlanInfo.id,
+  //     createdBy: mealPlanInfo.created_by,
+  //     planName: mealPlanInfo.planName,
+  //     planTags: mealPlanInfo.meal_plan_tags,
+  //     meals: arrangeMealPlan(mealPlanInfo),
+  //   };
+  // });
 
   // States
   const [selectedWeekDate, setSelectedWeekDate] = useState<string>("Monday");
-  const [showMealPlanHtml, setShowMealPanHtml] = useState<boolean>(
+  const [showMealPlanHtml] = useState<boolean>(
     selectedCreateOption === "recommendation" || mealPlanInfo ? true : false
   );
   const [toggleAddMealForm, setToggleAddMealForm] = useState<boolean>(false);
@@ -87,32 +90,32 @@ const SetMealPlan = ({
     // checkValidations(validationResult);
     setMealPlanNameVal((prev) => ({ ...prev, [name]: value }));
   };
-  const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value, name, selectedIndex, options } = event.target;
-    setShowMealPanHtml(true);
-    if (name === "mealPlan") {
-      const selectedMealPlan = selectMealPlans!.filter(
-        (mealPlan) => mealPlan.mealId === parseInt(value)
-      );
-      setMealPlanNameVal((prev) => ({
-        ...prev,
-        selectedMealPlanUserId: selectedMealPlan[0].createdBy,
-        selectedMealPlan: value,
-        mealPlanName: options[selectedIndex].innerHTML,
-      }));
-      setSelectedBmis(
-        selectedMealPlan[0].planTags.map(
-          (info) => info.meal_tags.mealTagName
-        )
-      );
-      setMealPlanInfo(selectedMealPlan[0].meals);
-    } else {
-      setMealPlanNameVal((prev) => ({
-        ...prev,
-        [name]: options[selectedIndex].innerHTML,
-      }));
-    }
-  };
+  // const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { value, name, selectedIndex, options } = event.target;
+  //   setShowMealPanHtml(true);
+  //   if (name === "mealPlan") {
+  //     const selectedMealPlan = selectMealPlans!.filter(
+  //       (mealPlan) => mealPlan.mealId === parseInt(value)
+  //     );
+  //     setMealPlanNameVal((prev) => ({
+  //       ...prev,
+  //       selectedMealPlanUserId: selectedMealPlan[0].createdBy,
+  //       selectedMealPlan: value,
+  //       mealPlanName: options[selectedIndex].innerHTML,
+  //     }));
+  //     setSelectedBmis(
+  //       selectedMealPlan[0].planTags.map(
+  //         (info) => info.meal_tags.mealTagName
+  //       )
+  //     );
+  //     setMealPlanInfo(selectedMealPlan[0].meals);
+  //   } else {
+  //     setMealPlanNameVal((prev) => ({
+  //       ...prev,
+  //       [name]: options[selectedIndex].innerHTML,
+  //     }));
+  //   }
+  // };
   return (
     <>
       <div
@@ -192,7 +195,7 @@ const SetMealPlan = ({
               </div>
             </div>
           </div>
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             {!showMealPlanHtml && (
               <>
                 <div className="relative flex flex-col flex-wrap items-center gap-1 w-full">
@@ -255,12 +258,19 @@ const SetMealPlan = ({
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
-        {showMealPlanHtml && (
+        {/* {showMealPlanHtml && ( */}
           <div className="flex gap-4 bg-black rounded-b-lg pt-2 pb-4 px-2 flex-col laptop:w-full">
             <div className="flex flex-col gap-1">
-              <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
+              <button
+                  type="button"
+                  onClick={() => setTogglePlanPopUpList({listType:"meal", toggle: true})}
+                  className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-max rounded-md py-[0.4rem] px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 hover:bg-secondary"
+              >
+                Choose a Meal Plan <MdiFoodDrumstickOutline color="#D3F0D1" width="1.3em" height="1.3em" />
+              </button>
+              {/* <div className="relative flex flex-wrap items-center gap-1 w-full phone:flex-col mdtablet:flex-row">
                 <div className="relative w-[270px]">
                   <label className="phone:text-sm font-quickSand font-semibold">
                     Filter Meal Plans
@@ -318,7 +328,7 @@ const SetMealPlan = ({
                     </select>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex gap-2 phone:flex-col">
               <motion.div className="phone:w-4/12 min-w-[260px]">
@@ -421,7 +431,7 @@ const SetMealPlan = ({
               />
             </div>
           </div>
-        )}
+        {/* )} */}
       </div>
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>

@@ -18,7 +18,7 @@ interface props {
   Icon: React.ComponentType<{ color: string; width?: string; height?: string }>;
   visibilityPreference: string;
   setVisibilityPreference: React.Dispatch<React.SetStateAction<string>>;
-  setTogglePreviewBodyTune: React.Dispatch<React.SetStateAction<boolean>>;
+  setTogglePreviewPlan: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Variants
@@ -39,7 +39,7 @@ const SetVisibility = ({
   Icon,
   visibilityPreference,
   setVisibilityPreference,
-  setTogglePreviewBodyTune,
+  setTogglePreviewPlan,
 }: props) => {
   // Events
   const radioOnChange = (value: string) => {
@@ -171,7 +171,7 @@ const SetVisibility = ({
             <button
               className=" bg-[#595959] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-[#404040]"
               type="button"
-              onClick={() => setTogglePreviewBodyTune(true)}
+              onClick={() => setTogglePreviewPlan(true)}
             >
               <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
               Preview Plan

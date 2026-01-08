@@ -3,7 +3,7 @@ import { useFormState } from "react-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Actions
-import { deleteBodyTunePlan } from "@/actions/planActions";
+import { deletePlan } from "@/actions/planActions";
 
 // Components
 import Overlay from "@/components/reusableComponent/Overlay";
@@ -18,15 +18,20 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 
 // Props
-import { bodyTunePlan } from "@/types/planTypes";
-import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
+import {
+  bodyTunePlan,
+  exercisePlanQuery,
+  mealPlanQuery,
+} from "@/types/planTypes";
 import { formReturnType } from "@/types/formTypes";
 interface props {
   setToggleDeleteWarningPopUp: React.Dispatch<React.SetStateAction<boolean>>;
   typeOfDataToBeDeleted: string;
   id: number;
-  data: bodyTunePlan;
-  bodyTunes: bodyTunePlan[] | undefined;
+  bodyTunes?: bodyTunePlan[] | undefined;
+  exercisePlansRes?: exercisePlanQuery[] | undefined;
+  mealPlansRes?: mealPlanQuery[] | undefined;
+  children: React.ReactNode;
 }
 
 // Form State Initials
@@ -39,10 +44,12 @@ const useFormStateInitials: formReturnType<[] | number> = {
 
 const DeleteWarningPopup = ({
   bodyTunes,
+  exercisePlansRes,
+  mealPlansRes,
   setToggleDeleteWarningPopUp,
-  data,
   typeOfDataToBeDeleted,
   id,
+  children,
 }: props) => {
   const queryClient = useQueryClient();
   const formData = new FormData();
@@ -53,7 +60,7 @@ const DeleteWarningPopup = ({
 
   // Form State
   const [formState, formAction] = useFormState(
-    deleteBodyTunePlan,
+    deletePlan,
     useFormStateInitials
   );
 
@@ -61,16 +68,49 @@ const DeleteWarningPopup = ({
   // Handles form submission success or error
   useEffect(() => {
     if (formState.success === null && formState.error === null) return;
+    console.log(formState);
     if (formState.success) {
-      setSubmitMessage("BodyTune deleted successfully! ✅");
-      queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
-      if (bodyTunes) {
-        const filteredBodyTunes = bodyTunes.filter(
-          (bodyTune: bodyTunePlan) => bodyTune.id !== id
-        );
-        queryClient.setQueryData(["bodyTunes"], filteredBodyTunes);
-        setIsSubmitting(false);
+      switch (typeOfDataToBeDeleted) {
+        case "BodyTune":
+          setSubmitMessage("BodyTune deleted successfully! ✅");
+          queryClient.invalidateQueries({ queryKey: ["bodyTunes"] });
+          if (bodyTunes) {
+            const filteredBodyTunes = bodyTunes.filter(
+              (bodyTune: bodyTunePlan) => bodyTune.id !== id
+            );
+            queryClient.setQueryData(["bodyTunes"], filteredBodyTunes);
+            setIsSubmitting(false);
+          }
+          break;
+
+        case "meal":
+          setSubmitMessage("Meal Plan deleted successfully! ✅");
+          queryClient.invalidateQueries({ queryKey: ["mealPlans"] });
+          if (mealPlansRes) {
+            const filteredMealPlans = mealPlansRes.filter(
+              (mealPlan: mealPlanQuery) => mealPlan.id !== id
+            );
+            queryClient.setQueryData(["mealPlans"], filteredMealPlans);
+            setIsSubmitting(false);
+          }
+          break;
+
+        case "exercise":
+          setSubmitMessage("Exercise Plan deleted successfully! ✅");
+          queryClient.invalidateQueries({ queryKey: ["exercisePlans"] });
+          if (exercisePlansRes) {
+            const filteredBodyTunes = exercisePlansRes.filter(
+              (exercisePlan: exercisePlanQuery) => exercisePlan.id !== id
+            );
+            queryClient.setQueryData(["exercisePlans"], filteredBodyTunes);
+            setIsSubmitting(false);
+          }
+          break;
+
+        default:
+          break;
       }
+      queryClient.invalidateQueries({ queryKey: ["userOverAllStatistics"] });
     } else {
       setIsSubmitting(false);
     }
@@ -79,9 +119,15 @@ const DeleteWarningPopup = ({
 
   // Events
   const handleSubmit = () => {
-    formData.append("bodyTuneId", JSON.stringify(id));
+    formData.append(
+      "payload",
+      JSON.stringify({
+        planId: id,
+        planType: typeOfDataToBeDeleted,
+      })
+    );
     setSubmitMessage(
-      "Deleting BodyTune... 🗑️ Hang tight while we clean things up."
+      `Deleting ${typeOfDataToBeDeleted.charAt(0).toUpperCase() + typeOfDataToBeDeleted.slice(1)} Plan... 🗑️ Hang tight while we clean things up.`
     );
     setIsSubmitting(true);
   };
@@ -90,7 +136,7 @@ const DeleteWarningPopup = ({
     <Overlay>
       {!isSubmitting && (
         <div className="w-full h-screen flex items-center justify-center">
-          <div className="bg-black rounded-lg p-4 overflow-auto phone:w-[95%] mdphone:w-[65%] mdtablet:w-[45%] laptop:w-[30%] desktop:w-[25%]">
+          <div className="bg-black rounded-lg p-4 overflow-auto phone:w-[95%] mdphone:w-[65%] mdtablet:w-[45%] laptop:max-w-[30%] desktop:max-w-[25%]">
             <div className="w-full flex justify-between items-center">
               <p className="text-[#B58E1C] font-dmSans text-lg font-semibold">
                 {formState.success === null || formState.error === true
@@ -113,19 +159,10 @@ const DeleteWarningPopup = ({
                   <p className="font-quickSand font-semibold text-sm">
                     Are you sure want to Delete{" "}
                     <span className="font-bold text-[#a3e09f]">
-                      {typeOfDataToBeDeleted} #{id}
+                      {typeOfDataToBeDeleted.charAt(0).toUpperCase() + typeOfDataToBeDeleted.slice(1)} Plan #{id}
                     </span>
                   </p>
-                  <BodyTuneCard
-                    bodyTunePlan={data}
-                    author={data.personal_information.name}
-                    exercisePlanName={data.exercise_plan.planName}
-                    mealPlanName={data.meal_plan.planName}
-                    exercise_plan_tag={data.exercise_plan.exercise_plan_tag}
-                    meal_plan_tags={data.meal_plan.meal_plan_tags}
-                    likes="44521"
-                    views="4451"
-                  />
+                  {children}
                 </>
               ) : (
                 <p className="font-quickSand font-semibold text-sm">

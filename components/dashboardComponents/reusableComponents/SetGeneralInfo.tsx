@@ -11,7 +11,7 @@ import { Input } from "@/components/reusableComponent/formInputs/input";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 
 // Libs
-import { generateBodyTunePlan } from "@/lib/hygraphQueries";
+import { generateBodyTunePlan, generateExercisePlan, generateMealPlan } from "@/lib/hygraphQueries";
 
 // Utils
 import { getBmi } from "@/utils/dashboardUtils";
@@ -33,6 +33,7 @@ interface generalInfoType {
   bmi: string;
 }
 interface props {
+  planType: string,
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
@@ -40,8 +41,8 @@ interface props {
   >;
   personalInfo: TableRow<"personal_information">;
   selectedCreateOption: string;
-  setExercisePlanInfo: React.Dispatch<React.SetStateAction<exercisePlan>>;
-  setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  setExercisePlanInfo?: React.Dispatch<React.SetStateAction<exercisePlan>>;
+  setMealPlanInfo?: React.Dispatch<React.SetStateAction<mealPlanType>>;
   generalInfoFieldsVal: generalInfoType;
   setGeneralInfoFieldsVal: React.Dispatch<
     React.SetStateAction<generalInfoType>
@@ -50,6 +51,9 @@ interface props {
   bmiClassification: { id: string; bmiClassification: string };
   setBmiClassification: React.Dispatch<
     React.SetStateAction<{ id: string; bmiClassification: string }>
+  >;
+  setSelectedDifficulties?: React.Dispatch<
+    React.SetStateAction<string[]>
   >;
 }
 
@@ -94,6 +98,7 @@ const generalInfoValidationInitials: generalInfoValidation = {
 };
 
 const SetGeneralInfo = ({
+  planType,
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
@@ -105,6 +110,7 @@ const SetGeneralInfo = ({
   setDisabledBreadCrumbs,
   bmiClassification,
   setBmiClassification,
+  setSelectedDifficulties
 }: props) => {
   // State
   const [formIsValid, setFormIsValid] = useState<boolean>(false);
@@ -113,15 +119,42 @@ const SetGeneralInfo = ({
 
   // Query
   const {
-    data,
+    data: bodyTunePlansData,
     refetch: generateBodyTune,
-    isFetching,
+    isFetching: bodyTunePlanIsFetching,
   } = useQuery({
     queryKey: ["generatedBodyTune"],
     queryFn: () => {
       return generateBodyTunePlan(
         bmiClassification.id,
         generalInfoFieldsVal.experience
+      );
+    },
+    enabled: false,
+  });
+  const {
+    data: exercisePlansData,
+    refetch: generateExercises,
+    isFetching: exercisePlanIsFetching,
+  } = useQuery({
+    queryKey: ["generatedExercise"],
+    queryFn: () => {
+      return generateExercisePlan(
+        bmiClassification.id,
+        generalInfoFieldsVal.experience
+      );
+    },
+    enabled: false,
+  });
+  const {
+    data: mealPlansData,
+    refetch: generateMeals,
+    isFetching: mealPlanIsFetching,
+  } = useQuery({
+    queryKey: ["generatedMeal"],
+    queryFn: () => {
+      return generateMealPlan(
+        bmiClassification.id,
       );
     },
     enabled: false,
@@ -215,37 +248,81 @@ const SetGeneralInfo = ({
     return isValid;
   };
 
-  const getBodyTunePlan = (weight: number, height: number) => {
+  const getPlanDetails = (weight: number, height: number) => {
     const isValid = checkAllInputValidations();
     setFormIsValid(isValid);
     if (isValid) {
       const bmiClassification = getBmi(weight, height);
       setBmiClassification(bmiClassification);
+      if(setSelectedDifficulties) {
+        setSelectedDifficulties([generalInfoFieldsVal.experience])
+      }
     }
   };
 
   useEffect(() => {
-    if (formIsValid) {
+    if (!formIsValid) return
+
+    if(planType === "exercise") {
+      generateExercises()
+    } else if(planType === "meal") {
+      generateMeals()
+    } else {
       generateBodyTune();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formIsValid]);
 
   useEffect(() => {
-    if (data && formIsValid) {
-      setMealPlanInfo(data.mealPlan);
-      setExercisePlanInfo(data.exercisePlan);
-      setFormIsValid(false);
-      setDisabledBreadCrumbs([]);
-      setProgress(2);
-      setSelectedBreadCrumb({
-        id: 2,
-        title: "Meal Plan",
-        shortDescription: "Customize your daily meals",
-      });
+    if(planType === "exercise") {
+      if (exercisePlansData) {
+        if(setExercisePlanInfo) {
+          setExercisePlanInfo(exercisePlansData.exercisePlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Exercise Plan",
+          shortDescription: "Define your workout routine",
+        });
+      }
+    } else if(planType === "meal") {
+      if (mealPlansData) {
+        console.log(mealPlansData);
+        if(setMealPlanInfo) {
+          setMealPlanInfo(mealPlansData.mealPlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Meal Plan",
+          shortDescription: "Customize your daily meals",
+        });
+      }
+    } else {
+      if (bodyTunePlansData) {
+        if(setMealPlanInfo) {
+          setMealPlanInfo(bodyTunePlansData.mealPlan);
+        }        
+        if(setExercisePlanInfo) {
+          setExercisePlanInfo(bodyTunePlansData.exercisePlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Meal Plan",
+          shortDescription: "Customize your daily meals",
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [bodyTunePlansData, exercisePlansData, mealPlansData]);
 
   return (
     <>
@@ -354,7 +431,7 @@ const SetGeneralInfo = ({
           {selectedCreateOption === "recommendation" ? (
             <motion.button
               onClick={() => {
-                getBodyTunePlan(
+                getPlanDetails(
                   parseInt(generalInfoFieldsVal.weight),
                   parseInt(generalInfoFieldsVal.height)
                 );
@@ -393,8 +470,8 @@ const SetGeneralInfo = ({
         </div>
       </div>
       <LoadingPopUp
-        message="⏳ Hang Tight! Crafting Your Ultimate BodyTune Plan..."
-        isLoading={isFetching}
+        message={`${planType === "exercise" || planType === "meal" ? '⏳ Hang Tight! Crafting Your Ultimate Plan...' : '⏳ Hang Tight! Crafting Your Ultimate BodyTune Plan...'}`}
+        isLoading={bodyTunePlanIsFetching || exercisePlanIsFetching || mealPlanIsFetching}
         LoadingAnimationIcon={
           <Oval
           visible={true}
