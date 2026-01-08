@@ -1,3 +1,5 @@
+import { exercisePlan } from "./planTypes";
+
 export interface ExercisePlanInfoTypes {
   exercisePlanName: string;
   shortDescription?: string;
@@ -22,4 +24,12 @@ export interface exercisePlanTag {
     id: number;
     exerciseTagName: string;
   };
+}
+
+export interface exercisePlanListType {
+  exerciseId: number | undefined,
+  createdBy: string,
+  planName: string,
+  planTags: Array<exercisePlanTag>,
+  exercises: exercisePlan
 }
