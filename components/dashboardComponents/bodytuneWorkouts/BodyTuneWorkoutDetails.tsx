@@ -7,7 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons/faXmarkCircle";
 
 // types
+import { exercisePlan } from "@/types/planTypes";
 interface props {
+  exercisePlan: {planName: string, exercise_tags: Array<string>, exercises:exercisePlan };
   setToggleBodyTuneWorkoutDetails?: React.Dispatch<
     React.SetStateAction<boolean>
   >;
@@ -38,11 +40,15 @@ const exerciseAnimationVariant = {
   },
 };
 
-const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
+const BodyTuneWorkoutDetails = ({
+  exercisePlan,
+  setToggleBodyTuneWorkoutDetails,
+}: props) => {
   // States
   useState<string>("Monday");
   const [selectedExerciseDate, setSelectedExerciseDate] =
     useState<string>("Monday");
+  const [arrangedExercise] = useState<exercisePlan>(exercisePlan.exercises);
 
   return (
     <div className="w-full phone:h-full laptop:h-[95%] flex flex-col justify-center tablet:items-center">
@@ -69,13 +75,21 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
             <p className="font-dmSans">
               Plan Name:{" "}
               <span className="font-normal text-lightSecondary">
-                A Beginner-Friendly Plan
+                {exercisePlan.planName}
               </span>
             </p>
             <p className="font-dmSans">
               Exercise Difficulty:{" "}
               <span className="font-normal text-lightSecondary">
-                Suitable for Beginners
+                {exercisePlan.exercise_tags.length !== 1
+                  ? `Suitable from ${
+                      exercisePlan.exercise_tags[0]
+                    } to ${
+                      exercisePlan.exercise_tags[
+                        exercisePlan.exercise_tags.length - 1
+                      ]
+                    }`
+                  : `Suitable for ${exercisePlan.exercise_tags[0]}`}
               </span>
             </p>
             <div className="font-dmSans">
@@ -118,7 +132,52 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                   animate="show"
                   className="flex flex-wrap gap-2 h-[100%] w-[100%] overflow-auto"
                 >
-                  <motion.div
+                  {arrangedExercise[selectedExerciseDate].map((exercise) => (
+                    <motion.div
+                      key={exercise.exerciseName}
+                      variants={exerciseAnimationVariant}
+                      className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
+                    >
+                      <div className="flex flex-col">
+                        <p className="font-bold text-[#a3e09f]">
+                          {exercise.exerciseName}
+                        </p>
+                        <p className="font-semibold laptop:text-sm">Beginner</p>
+                        <p className="font-semibold laptop:text-sm">
+                          {exercise.measurement}
+                        </p>
+                        <p className="font-semibold laptop:text-sm">
+                          {exercise.equipment}
+                        </p>
+                        {exercise.youtubeLink && (
+                          <p className="font-semibold cursor-pointer underline laptop:text-sm">
+                            {exercise.youtubeLink}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-[100%] h-36">
+                        <Image
+                          data-loaded="false"
+                          onLoad={(event) => {
+                            event.currentTarget.setAttribute(
+                              "data-loaded",
+                              "true"
+                            );
+                          }}
+                          className="w-full h-full object-contain data-[loaded=false]:animate-pulse data-[loaded=false]:bg-gray-100/10"
+                          width={200}
+                          height={200}
+                          src={
+                            exercise.exerciseDemo
+                              ? `${exercise.exerciseDemo}`
+                              : "/assets/svg/healthy-1.svg"
+                          }
+                          alt="Preview"
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                  {/* <motion.div
                     variants={exerciseAnimationVariant}
                     className="font-dmSans flex flex-col gap-1 h-max p-2 bg-lightPrimary rounded-md phone:w-[95%] tablet:w-[200px]"
                   >
@@ -217,7 +276,7 @@ const BodyTuneWorkoutDetails = ({ setToggleBodyTuneWorkoutDetails }: props) => {
                         className="w-full h-full object-contain"
                       />
                     </div>
-                  </motion.div>
+                  </motion.div> */}
                 </motion.div>
               </div>
             </div>

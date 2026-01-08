@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 // Components
 import DashboardHeader from "../DashboardHeader";
 import BodyTuneWorkoutsContent from "./BodyTuneWorkoutsContent";
@@ -7,7 +8,24 @@ import BodyTuneWorkoutsContent from "./BodyTuneWorkoutsContent";
 // Icons
 import TablerBarbell from "@/icons/TablerBarbell";
 
-const BodyTuneWorkouts = () => {
+// types
+import { exercisePlanQuery } from "@/types/planTypes";
+import { getUserExercisePlans } from "@/lib/supabaseQueries";
+interface props {
+  exercisePlans?: Array<exercisePlanQuery> | [];
+}
+
+
+const BodyTuneWorkouts = ({exercisePlans}:props) => {
+    // Use query
+  useQuery({
+    queryKey: ["userExercisePlans"],
+    initialData: exercisePlans,
+    queryFn: () => {
+      return getUserExercisePlans();
+    }
+  });
+  console.log(exercisePlans);
   return (
     <div className="flex flex-col gap-3 h-[99%]">
       <DashboardHeader
