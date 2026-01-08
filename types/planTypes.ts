@@ -54,7 +54,7 @@ export interface bodyTunePlan {
 }
 
 export interface exercisePlanQuery {
-  id: number;
+  id?: number;
   planName: string;
   created_by: string;
   visibility: number;
@@ -70,27 +70,28 @@ export interface exercisePlanQuery {
   personal_information: {
     name: string;
   };
-  exercise: [
-    {
-      exerciseName: string;
-      bodyPart: string;
-      equipment: string;
-      day: string;
-      exerciseDemo: string;
-      youtubeLink: string | null;
-      measurement: string;
-      instruction: string;
-      bmiClassification: number;
-      exerciseMeasurementType: number;
-      exercise_measurement_type: {
-        id: number;
-        measurement: string;
-      };
-      bmi_classification: {
-        classification: string;
-      };
-    }
-  ];
+  exercise: [exerciseInfo];
+}
+
+export interface exerciseInfo {
+  id?: number;
+  exerciseName: string;
+  bodyPart: string;
+  equipment: string;
+  day: string;
+  exerciseDemo: string;
+  youtubeLink: string | null;
+  measurement: string;
+  instruction: string;
+  bmiClassification: number;
+  exerciseMeasurementType: number;
+  exercise_measurement_type: {
+    id: number;
+    measurement: string;
+  };
+  bmi_classification: {
+    classification: string;
+  };
 }
 
 export interface mealPlanQuery {
@@ -110,40 +111,26 @@ export interface mealPlanQuery {
   personal_information: {
     name: string;
   };
-  daily_meals: Array<{
-    plan_id: number;
-    day: string;
-    breakFast: {
-      id: number;
-      mealName: string;
-      mealType: {
-        mealType: string;
-      };
-      instructions: string;
-      meal_ingredients: Array<mealPlanIngredientQuery>;
-      veganAlternative: string | null;
+  daily_meals: Array<dailyMealsInterface>;
+}
+
+export interface dailyMealsInterface {
+  plan_id: number;
+  day: string;
+  breakFast: mealInterface;
+  lunch: mealInterface;
+  dinner: mealInterface;
+}
+
+export interface mealInterface {
+    id: number;
+    mealName: string;
+    mealType: {
+      mealType: string;
     };
-    lunch: {
-      id: number;
-      mealName: string;
-      mealType: {
-        mealType: string;
-      };
-      instructions: string;
-      meal_ingredients: Array<mealPlanIngredientQuery>;
-      veganAlternative: string | null;
-    };
-    dinner: {
-      id: number;
-      mealName: string;
-      mealType: {
-        mealType: string;
-      };
-      instructions: string;
-      meal_ingredients: Array<mealPlanIngredientQuery>;
-      veganAlternative: string | null;
-    };
-  }>;
+    instructions: string;
+    meal_ingredients: Array<mealPlanIngredientQuery>;
+    veganAlternative: string | null;
 }
 
 export interface mealPlanIngredientQuery {
@@ -159,4 +146,31 @@ export interface mealPlanIngredientQuery {
 export interface visibilityInterface {
   id: number;
   visibility: string;
+}
+
+export interface userActivePlanInterface {
+  id: number;
+  mealPlanId: number;
+  exercisePlanId: number;
+  created_by: string;
+  meal_plan: mealPlanQuery;
+  exercise_plan: exercisePlanQuery;
+}
+
+export interface explorePageContentInterface {
+  bodyTunes: Array<exploreBodyTuneInterface>;
+  exercisePlans: Array<exploreExercisePlanInterface>;
+  mealPlans: Array<exploreMealPlanInterface>;
+}
+export interface exploreBodyTuneInterface extends bodyTunePlan {
+  canMutate: boolean;
+  userFavorite: boolean;
+}
+export interface exploreExercisePlanInterface extends exercisePlanQuery {
+  canMutate: boolean;
+  userFavorite: boolean;
+}
+export interface exploreMealPlanInterface extends mealPlanQuery {
+  canMutate: boolean;
+  userFavorite: boolean;
 }
