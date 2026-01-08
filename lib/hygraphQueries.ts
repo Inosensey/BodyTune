@@ -179,6 +179,29 @@ export const generateBodyTunePlan = async (
   return { mealPlan, exercisePlan };
 };
 
+export const generateExercisePlan = async (
+  bmiClassification: string,
+  experience: string
+) => {
+  const exerciseList = await getExerciseByBmi(bmiClassification);
+  const exercisePlan: exercisePlan = await setExercisePlan(
+    exerciseList.data.exercises,
+    experience
+  );
+
+  return { exercisePlan };
+};
+
+export const generateMealPlan = async (
+  bmiClassification: string
+) => {
+
+  const mealList = await getMealsByBmi(bmiClassification);
+  const mealPlan: mealPlanType = setMealPlan(mealList.data.meals);
+
+  return { mealPlan };
+};
+
 const setMealPlan = (meals: Array<mealQueryHygraphType>) => {
   const shuffledMeals = [...meals].sort(() => Math.random() - 0.5);
   const breakfastMeal = shuffledMeals.filter(
@@ -300,8 +323,8 @@ const setExercisePlan = async (
     ],
   };
 
-  const test = await urlToFile(exercises[0].exerciseDemo);
-  console.log(test);
+  // const test = await urlToFile(exercises[0].exerciseDemo);
+  // console.log(test);
 
   weekDates.forEach((day) => {
     const filteredExercises: Array<
@@ -358,29 +381,29 @@ const setExercisePlan = async (
   return exercisePlan;
 };
 
-const getFileTypeFromFileName = (fileName: string) => {
-  const extension = fileName.split(".").pop()?.toLowerCase();
-  const mimeTypes: Record<string, string> = {
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    png: "image/png",
-    gif: "image/gif",
-    webp: "image/webp",
-  };
+// const getFileTypeFromFileName = (fileName: string) => {
+//   const extension = fileName.split(".").pop()?.toLowerCase();
+//   const mimeTypes: Record<string, string> = {
+//     jpg: "image/jpeg",
+//     jpeg: "image/jpeg",
+//     png: "image/png",
+//     gif: "image/gif",
+//     webp: "image/webp",
+//   };
 
-  return mimeTypes[extension || ""] || "application/octet-stream";
-};
+//   return mimeTypes[extension || ""] || "application/octet-stream";
+// };
 
-const urlToFile = async (exerciseDemo: { url: string; fileName: string }) => {
-  try {
-    const response = await fetch(exerciseDemo.url);
-    const blob = await response.blob();
-    const fileType =
-      getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
+// const urlToFile = async (exerciseDemo: { url: string; fileName: string }) => {
+//   try {
+//     const response = await fetch(exerciseDemo.url);
+//     const blob = await response.blob();
+//     const fileType =
+//       getFileTypeFromFileName(exerciseDemo.fileName) || blob.type;
 
-    return new File([blob], exerciseDemo.fileName, { type: fileType });
-  } catch (error) {
-    console.error("Error converting URL to file:", error);
-    return null;
-  }
-};
+//     return new File([blob], exerciseDemo.fileName, { type: fileType });
+//   } catch (error) {
+//     console.error("Error converting URL to file:", error);
+//     return null;
+//   }
+// };
