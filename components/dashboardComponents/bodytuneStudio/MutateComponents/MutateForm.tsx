@@ -9,9 +9,9 @@ import { Oval } from "react-loader-spinner";
 
 // Actions
 import { createBodyTunePlan, updateBodyTunePlan } from "@/actions/planActions";
-import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 
 // Components
+import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 import DashboardHeader from "@/components/dashboardComponents/DashboardHeader";
 import BreadCrumbs from "@/components/dashboardComponents/reusableComponents/BreadCrumbs";
 import SetGeneralInfo from "@/components/dashboardComponents/reusableComponents/SetGeneralInfo";
@@ -25,6 +25,8 @@ import BodyTuneDetails from "../BodyTuneDetails";
 import {
   generateMealPlanName,
   generateExercisePlanName,
+  arrangeMealPlan,
+  arrangeExercisePlan,
 } from "@/utils/dashboardUtils";
 
 // Icons
@@ -39,14 +41,25 @@ import {
   mealPlanQuery,
   visibilityInterface,
 } from "@/types/planTypes";
-import { mealPlanGeneralInfo, mealPlanName, mealPlanType } from "@/types/mealTypes";
+import {
+  mealPlanGeneralInfo,
+  mealPlanName,
+  mealPlanType,
+  mealPlanListType,
+} from "@/types/mealTypes";
 import { formReturnType } from "@/types/formTypes";
-import { getExercisePlans, getMealPlans } from "@/lib/supabaseQueries";
-import { exercisePlanGeneralInfo, exercisePlanName } from "@/types/exerciseTypes";
+import { getUserExercisePlans, getUserMealPlans } from "@/lib/supabaseQueries";
+import {
+  exercisePlanGeneralInfo,
+  exercisePlanListType,
+  exercisePlanName,
+} from "@/types/exerciseTypes";
+import PlanListPopUp from "../../reusableComponents/PlanListPopUp";
+import Overlay from "@/components/reusableComponent/Overlay";
 interface props {
   action: string;
   personalInfo: TableRow<"personal_information">[];
-  bodyTuneId?: number,
+  bodyTuneId?: number;
   exercisePlanGeneralInfo?: exercisePlanGeneralInfo;
   fetchedExercisePlanInfo?: exercisePlan;
   mealPlanGeneralInfo?: mealPlanGeneralInfo;
@@ -72,18 +85,42 @@ const useFormStateInitials: formReturnType<[] | number> = {
 
 // BreadCrumbs Initials
 const BreadCrumbsInitials: Array<InterfaceBreadCrumbs> = [
-  { id: 1, title: "Body Metrics", shortDescription: "Set weight, height, and experience" },
+  {
+    id: 1,
+    title: "Body Metrics",
+    shortDescription: "Set weight, height, and experience",
+  },
   { id: 2, title: "Meal Plan", shortDescription: "Customize your daily meals" },
-  { id: 3, title: "Exercise Plan", shortDescription: "Define your workout routine" },
-  { id: 4, title: "Finalize & Share", shortDescription: "Review and set visibility" },
+  {
+    id: 3,
+    title: "Exercise Plan",
+    shortDescription: "Define your workout routine",
+  },
+  {
+    id: 4,
+    title: "Finalize & Share",
+    shortDescription: "Review and set visibility",
+  },
 ];
 
 // Meal Plan Initial Structure
 const mealPlanInitial: mealPlanType = {
   ["Monday"]: {
-    breakFast: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
-    lunch: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
-    dinner: { mealInfo: undefined, ingredients: undefined, nutrition: undefined },
+    breakFast: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
+    lunch: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
+    dinner: {
+      mealInfo: undefined,
+      ingredients: undefined,
+      nutrition: undefined,
+    },
   },
 };
 
@@ -105,41 +142,76 @@ const MutateForm = ({
 
   // UseQuery
   useQuery({
-    queryKey: ["exercisePlans"],
+    queryKey: ["userExercisePlans"],
     initialData: exercisePlanList,
     queryFn: () => {
-      return getExercisePlans();
+      return getUserExercisePlans();
     },
   });
   useQuery({
-    queryKey: ["mealPlans"],
+    queryKey: ["userMealPlans"],
     initialData: mealPlanList,
     queryFn: () => {
-      return getMealPlans();
+      return getUserMealPlans();
     },
   });
+  const [exercisePlans] = useState<Array<exercisePlanListType>>(() =>
+    exercisePlanList!.map((exercisePlanInfo) => {
+      return {
+        exerciseId: exercisePlanInfo.id,
+        createdBy: exercisePlanInfo.created_by,
+        planName: exercisePlanInfo.planName,
+        planTags: exercisePlanInfo.exercise_plan_tag,
+        exercises: arrangeExercisePlan(exercisePlanInfo),
+      };
+    })
+  );
+  const [mealPlans] = useState<Array<mealPlanListType>>(() =>
+    mealPlanList!.map((mealPlanInfo) => {
+      return {
+        mealId: mealPlanInfo.id,
+        createdBy: mealPlanInfo.created_by,
+        planName: mealPlanInfo.planName,
+        planTags: mealPlanInfo.meal_plan_tags,
+        meals: arrangeMealPlan(mealPlanInfo),
+      };
+    })
+  );
 
   // Derived Values
   const mealPlanNameInit: mealPlanName = {
-    selectedMealPlanUserId: mealPlanGeneralInfo ? mealPlanGeneralInfo.createdBy : "",
+    selectedMealPlanUserId: mealPlanGeneralInfo
+      ? mealPlanGeneralInfo.createdBy
+      : "",
     selectedMealPlan: mealPlanGeneralInfo ? mealPlanGeneralInfo.id : "0",
     mealPlanName: mealPlanGeneralInfo ? mealPlanGeneralInfo.planName : "",
   };
   const exercisePlanNameInit: exercisePlanName = {
-    selectedExercisePlanUserId: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.createdBy : "0",
-    selectedExercisePlan: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.id : "0",
-    exercisePlanName: exercisePlanGeneralInfo ? exercisePlanGeneralInfo.planName : "",
+    selectedExercisePlanUserId: exercisePlanGeneralInfo
+      ? exercisePlanGeneralInfo.createdBy
+      : "0",
+    selectedExercisePlan: exercisePlanGeneralInfo
+      ? exercisePlanGeneralInfo.id
+      : "0",
+    exercisePlanName: exercisePlanGeneralInfo
+      ? exercisePlanGeneralInfo.planName
+      : "",
   };
   const selectedBmisInitials: string[] = mealPlanGeneralInfo
     ? mealPlanGeneralInfo.tags.map((info) => info.meal_tags.mealTagName)
     : [];
 
   const selectedDifficultiesInitials: string[] = exercisePlanGeneralInfo
-    ? exercisePlanGeneralInfo.tags.map((info) => info.exercise_tags.exerciseTagName)
+    ? exercisePlanGeneralInfo.tags.map(
+        (info) => info.exercise_tags.exerciseTagName
+      )
     : [];
 
   // Form State
-  const [formState, formAction] = useFormState(action === "Update" ? updateBodyTunePlan : createBodyTunePlan, useFormStateInitials);
+  const [formState, formAction] = useFormState(
+    action === "Update" ? updateBodyTunePlan : createBodyTunePlan,
+    useFormStateInitials
+  );
 
   // State Hooks
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,22 +219,26 @@ const MutateForm = ({
   const [selectedOption, setSelectedOption] = useState(
     fetchedExercisePlanInfo && fetchedMealPlanInfo ? "Custom" : ""
   );
+  const [togglePlanPopUpList, setTogglePlanPopUpList] = useState<{
+    listType: string;
+    toggle: boolean;
+  }>({ listType: "", toggle: false });
 
   // BreadCrumbs State
   const [disabledBreadCrumbs, setDisabledBreadCrumbs] = useState<number[]>([]);
-  const [selectedBreadCrumb, setSelectedBreadCrumb] = useState<InterfaceBreadCrumbs>(
-    BreadCrumbsInitials[0]
-  );
+  const [selectedBreadCrumb, setSelectedBreadCrumb] =
+    useState<InterfaceBreadCrumbs>(BreadCrumbsInitials[0]);
   const [progress, setProgress] = useState(1);
   const [togglePreviewBodyTune, setTogglePreviewBodyTune] = useState(false);
 
   // General Info Fields
-  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] = useState<generalInfoType>({
-    height: personalInfo[0].height!.toString(),
-    weight: personalInfo[0].weight!.toString(),
-    experience: "",
-    bmi: "",
-  });
+  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] =
+    useState<generalInfoType>({
+      height: personalInfo[0].height!.toString(),
+      weight: personalInfo[0].weight!.toString(),
+      experience: "",
+      bmi: "",
+    });
 
   // Meal Plan State
   const [originalFetchedMealPlanInfo] = useState<mealPlanType | undefined>(
@@ -172,25 +248,37 @@ const MutateForm = ({
     fetchedMealPlanInfo || mealPlanInitial
   );
   const [mealPlanNameVal, setMealPlanNameVal] = useState(mealPlanNameInit);
-  const [selectedBmis, setSelectedBmis] = useState<string[]>(selectedBmisInitials);
-  const [bmiClassification, setBmiClassification] = useState({ id: "", bmiClassification: "" });
-  const [toBeDeletedIngredients, setToBeDeletedIngredients] = useState<number[]>([]);
+  const [selectedBmis, setSelectedBmis] =
+    useState<string[]>(selectedBmisInitials);
+  const [bmiClassification, setBmiClassification] = useState({
+    id: "",
+    bmiClassification: "",
+  });
+  const [toBeDeletedIngredients, setToBeDeletedIngredients] = useState<
+    number[]
+  >([]);
 
   // Exercise Plan State
   const [originalFetchedExercisePlanInfo] = useState<exercisePlan | undefined>(
-    fetchedExercisePlanInfo || {});
+    fetchedExercisePlanInfo || {}
+  );
   const [exercisePlanInfo, setExercisePlanInfo] = useState<exercisePlan>(
     fetchedExercisePlanInfo || {}
   );
-  const [exercisePlanNameVal, setExercisePlanNameVal] = useState(exercisePlanNameInit);
+  const [exercisePlanNameVal, setExercisePlanNameVal] =
+    useState(exercisePlanNameInit);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(
     selectedDifficultiesInitials
   );
-  const [toBeDeletedExercises, setToBeDeletedExercises] = useState<number[]>([]);
+  const [toBeDeletedExercises, setToBeDeletedExercises] = useState<number[]>(
+    []
+  );
 
   // Visibility Preference
-  const [visibilityPreference, setVisibilityPreference] = useState(planVisibilityInfo ? planVisibilityInfo.id.toString() : "");
-  
+  const [visibilityPreference, setVisibilityPreference] = useState(
+    planVisibilityInfo ? planVisibilityInfo.id.toString() : ""
+  );
+
   // Events
   const handleSubmit = () => {
     const jsonData = {
@@ -207,22 +295,26 @@ const MutateForm = ({
     formData.append("mealPlanName", mealPlanNameVal.mealPlanName);
     formData.append("exercisePlanName", exercisePlanNameVal.exercisePlanName);
     formData.append("visibilityPreference", visibilityPreference);
-    formData.append("selectedMealPlan", 
+    formData.append(
+      "selectedMealPlan",
       JSON.stringify({
-        selectedMealPlanId: mealPlanNameVal.selectedMealPlan, 
-        selectedMealPlanUserId: mealPlanNameVal.selectedMealPlanUserId
+        selectedMealPlanId: mealPlanNameVal.selectedMealPlan,
+        selectedMealPlanUserId: mealPlanNameVal.selectedMealPlanUserId,
       })
-    )
+    );
     formData.append(
       "selectedExercisePlan",
       JSON.stringify({
-        selectedExercisePlanId: exercisePlanNameVal.selectedExercisePlan, 
-        selectedExercisePlanUserId: exercisePlanNameVal.selectedExercisePlanUserId
+        selectedExercisePlanId: exercisePlanNameVal.selectedExercisePlan,
+        selectedExercisePlanUserId:
+          exercisePlanNameVal.selectedExercisePlanUserId,
       })
     );
 
     setSubmitMessage(
-      action === "Update" ? "Updating your BodyTune... 🔄 Just a moment while we refresh your plan!" : "Creating your BodyTune... ⏳ Hang tight while we set up your plan!"
+      action === "Update"
+        ? "Updating your BodyTune... 🔄 Just a moment while we refresh your plan!"
+        : "Creating your BodyTune... ⏳ Hang tight while we set up your plan!"
     );
     setIsSubmitting(true);
   };
@@ -232,7 +324,9 @@ const MutateForm = ({
   // Handles breadcrumb disabling based on selectedOption
   useEffect(() => {
     if (selectedOption === "") return;
-    setDisabledBreadCrumbs(selectedOption === "recommendation" ? [2, 3, 4] : []);
+    setDisabledBreadCrumbs(
+      selectedOption === "recommendation" ? [2, 3, 4] : []
+    );
   }, [selectedOption]);
 
   // Updates BMI classification and generates a meal plan name
@@ -250,10 +344,15 @@ const MutateForm = ({
   useEffect(() => {
     if (!generalInfoFieldsVal.experience) return;
 
-    setSelectedDifficulties((prev) => [...prev, generalInfoFieldsVal.experience]);
+    setSelectedDifficulties((prev) => [
+      ...prev,
+      generalInfoFieldsVal.experience,
+    ]);
     setExercisePlanNameVal((prev) => ({
       ...prev,
-      exercisePlanName: generateExercisePlanName(generalInfoFieldsVal.experience),
+      exercisePlanName: generateExercisePlanName(
+        generalInfoFieldsVal.experience
+      ),
     }));
   }, [generalInfoFieldsVal]);
 
@@ -266,12 +365,14 @@ const MutateForm = ({
       setSubmitMessage(
         "Your BodyTune is ready! 🎯 Redirecting you to view your personalized plan—let’s get started! 💪"
       );
-      queryClient.invalidateQueries({ queryKey: ["bodyTunes", "exercisePlans", "mealPlans"] });
+      queryClient.invalidateQueries({
+        queryKey: ["bodyTunes", "exercisePlans", "mealPlans"],
+      });
       router.push(`/plan/bodytune/${formState.data}`);
     } else {
       setIsSubmitting(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
 
   return (
@@ -309,6 +410,7 @@ const MutateForm = ({
                 {progress === 1 && (
                   <div className="flex justify-center max-h w-full">
                     <SetGeneralInfo
+                      planType="bodytune"
                       personalInfo={personalInfo[0]}
                       setSelectedOption={setSelectedOption}
                       setDisabledBreadCrumbs={setDisabledBreadCrumbs}
@@ -321,6 +423,7 @@ const MutateForm = ({
                       setMealPlanInfo={setMealPlanInfo}
                       bmiClassification={bmiClassification}
                       setBmiClassification={setBmiClassification}
+                      setSelectedDifficulties={setSelectedDifficulties}
                     />
                   </div>
                 )}
@@ -340,6 +443,7 @@ const MutateForm = ({
                       selectedBmis={selectedBmis}
                       setSelectedBmis={setSelectedBmis}
                       setToBeDeletedIngredients={setToBeDeletedIngredients}
+                      setTogglePlanPopUpList={setTogglePlanPopUpList}
                     />
                   </div>
                 )}
@@ -352,13 +456,16 @@ const MutateForm = ({
                       setSelectedBreadCrumb={setSelectedBreadCrumb}
                       setProgress={setProgress}
                       originalExercisePlanGeneralInfo={exercisePlanGeneralInfo}
-                      originalFetchedExercisePlanInfo={originalFetchedExercisePlanInfo}
+                      originalFetchedExercisePlanInfo={
+                        originalFetchedExercisePlanInfo
+                      }
                       exercisePlanInfo={exercisePlanInfo}
                       setExercisePlanInfo={setExercisePlanInfo}
                       selectedCreateOption={selectedOption}
                       selectedDifficulties={selectedDifficulties}
                       setSelectedDifficulties={setSelectedDifficulties}
                       setToBeDeletedExercises={setToBeDeletedExercises}
+                      setTogglePlanPopUpList={setTogglePlanPopUpList}
                     />
                   </div>
                 )}
@@ -372,7 +479,7 @@ const MutateForm = ({
                       Icon={SolarStarsMinimalisticLineDuotone}
                       visibilityPreference={visibilityPreference}
                       setVisibilityPreference={setVisibilityPreference}
-                      setTogglePreviewBodyTune={setTogglePreviewBodyTune}
+                      setTogglePreviewPlan={setTogglePreviewBodyTune}
                     />
                   </div>
                 )}
@@ -384,10 +491,29 @@ const MutateForm = ({
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {togglePreviewBodyTune && (
-          <BodyTuneDetails
-            exercisePlan={exercisePlanInfo}
-            mealPlan={mealPlanInfo}
-            setToggleBodyTuneDetails={setTogglePreviewBodyTune}
+          <Overlay>
+            <BodyTuneDetails
+              exercisePlan={exercisePlanInfo}
+              mealPlan={mealPlanInfo}
+              setToggleBodyTuneDetails={setTogglePreviewBodyTune}
+            />
+          </Overlay>
+        )}
+        {togglePlanPopUpList.toggle && (
+          <PlanListPopUp
+            planList={
+              togglePlanPopUpList.listType === "meal"
+                ? mealPlans
+                : exercisePlans
+            }
+            setTogglePlanPopUpList={setTogglePlanPopUpList}
+            listType={togglePlanPopUpList.listType}
+            setExercisePlanInfo={setExercisePlanInfo}
+            setExercisePlanNameVal={setExercisePlanNameVal}
+            setSelectedDifficulties={setSelectedDifficulties}
+            setMealPlanInfo={setMealPlanInfo}
+            setMealPlanNameVal={setMealPlanNameVal}
+            setSelectedBmis={setSelectedBmis}
           />
         )}
       </AnimatePresence>

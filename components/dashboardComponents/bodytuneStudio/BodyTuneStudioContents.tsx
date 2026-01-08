@@ -7,7 +7,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Lib
-import { getBodyTunes } from "@/lib/supabaseQueries";
+import { getUserBodyTunes } from "@/lib/supabaseQueries";
 
 // Components
 import BodyTuneCard from "./BodyTuneCard";
@@ -59,9 +59,9 @@ const bodyTuneContainerAnimationVariant = {
 const BodyTuneStudioContents = () => {
   // UseQuery
   const { data: bodyTunes } = useQuery({
-    queryKey: ["bodyTunes"],
+    queryKey: ["userBodyTunes"],
     queryFn: () => {
-      return getBodyTunes();
+      return getUserBodyTunes();
     },
   });
 
@@ -77,7 +77,9 @@ const BodyTuneStudioContents = () => {
   }>({});
   const [toggleDeleteWarningPopUp, setToggleDeleteWarningPopUp] =
     useState<boolean>(false);
-  const [dataToBeDeleted, setDataToBeDeleted] = useState<bodyTunePlan | null>(null)
+  const [dataToBeDeleted, setDataToBeDeleted] = useState<bodyTunePlan | null>(
+    null
+  );
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -91,26 +93,6 @@ const BodyTuneStudioContents = () => {
   return (
     <>
       <div className="flex-1 bg-black h-[80%] w-full p-4 rounded-lg">
-        <div className="hidden flex-col w-full h-full font-dmSans justify-center items-center">
-          <Image
-            src="/assets/svg/dumbbell-2.svg"
-            width={300}
-            height={300}
-            alt="Logo"
-          />
-          <p className="w-max text-xl">
-            You don&apos;t have a{" "}
-            <span className="font-bold font-quickSand text-secondary">
-              BodyTune
-            </span>{" "}
-            yet.
-          </p>
-          <Link href={"bodytune/create"}>
-            <p className="w-max text-lg text-lightSecondary underline cursor-pointer">
-              Create your first one now!
-            </p>
-          </Link>
-        </div>
         <div className="w-full h-full">
           <div className="flex flex-col w-full h-full">
             <div className="flex gap-1 items-center justify-between phone:flex-col laptop:flex-row">
@@ -185,32 +167,57 @@ const BodyTuneStudioContents = () => {
               className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto phone:justify-center desktop:justify-start"
             >
               {bodyTunes && bodyTunes.length !== 0 ? (
-                bodyTunes.map((bodyTune: bodyTunePlan, index: number) => (
-                  <motion.div
-                    variants={fadeVariants}
-                    className="w-max"
-                    key={index}
-                  >
-                    <BodyTuneCard
-                      bodyTunePlan={bodyTune}
-                      author={bodyTune.personal_information.name}
-                      exercisePlanName={bodyTune.exercise_plan.planName}
-                      mealPlanName={bodyTune.meal_plan.planName}
-                      exercise_plan_tag={
-                        bodyTune.exercise_plan.exercise_plan_tag
-                      }
-                      meal_plan_tags={bodyTune.meal_plan.meal_plan_tags}
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-                      setSelectedBodyTunePlan={setSelectedBodyTunePlan}
-                      setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
-                      setDataToBeDeleted={setDataToBeDeleted}
-                    />
-                  </motion.div>
-                ))
+                bodyTunes.map((bodyTune: bodyTunePlan, index: number) => {
+                  if (bodyTune.exercise_plan && bodyTune.meal_plan)
+                    return (
+                      <motion.div
+                        variants={fadeVariants}
+                        className="w-max"
+                        key={index}
+                      >
+                        <BodyTuneCard
+                          bodyTunePlan={bodyTune}
+                          author={bodyTune.personal_information.name}
+                          exercisePlanName={bodyTune.exercise_plan.planName}
+                          mealPlanName={bodyTune.meal_plan.planName}
+                          exercise_plan_tag={
+                            bodyTune.exercise_plan.exercise_plan_tag
+                          }
+                          meal_plan_tags={bodyTune.meal_plan.meal_plan_tags}
+                          likes="44521"
+                          views="4451"
+                          setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+                          setSelectedBodyTunePlan={setSelectedBodyTunePlan}
+                          setToggleDeleteWarningPopUp={
+                            setToggleDeleteWarningPopUp
+                          }
+                          setDataToBeDeleted={setDataToBeDeleted}
+                          
+                        />
+                      </motion.div>
+                    );
+                })
               ) : (
-                <p>No BodyTunes</p>
+                <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                  <Image
+                    src="/assets/svg/dumbbell-2.svg"
+                    width={300}
+                    height={300}
+                    alt="Logo"
+                  />
+                  <p className="w-max text-xl">
+                    You don&apos;t have a{" "}
+                    <span className="font-bold font-quickSand text-secondary">
+                      BodyTune
+                    </span>{" "}
+                    yet.
+                  </p>
+                  <Link href={"bodytune/create"}>
+                    <p className="w-max text-lg text-lightSecondary underline cursor-pointer">
+                      Create your first one now!
+                    </p>
+                  </Link>
+                </div>
               )}
             </motion.div>
           </div>
@@ -231,11 +238,23 @@ const BodyTuneStudioContents = () => {
         {toggleDeleteWarningPopUp && (
           <DeleteWarningPopup
             setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
-            data={dataToBeDeleted!}
-            typeOfDataToBeDeleted="BodyTune"
+            typeOfDataToBeDeleted="meal"
             id={dataToBeDeleted!.id}
             bodyTunes={bodyTunes}
-          />
+          >
+            <BodyTuneCard
+              bodyTunePlan={dataToBeDeleted!}
+              author={dataToBeDeleted!.personal_information.name}
+              exercisePlanName={dataToBeDeleted!.exercise_plan.planName}
+              mealPlanName={dataToBeDeleted!.meal_plan.planName}
+              exercise_plan_tag={
+                dataToBeDeleted!.exercise_plan.exercise_plan_tag
+              }
+              meal_plan_tags={dataToBeDeleted!.meal_plan.meal_plan_tags}
+              likes="44521"
+              views="4451"
+            />
+          </DeleteWarningPopup>
         )}
       </AnimatePresence>
     </>

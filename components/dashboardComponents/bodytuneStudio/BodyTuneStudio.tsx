@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 // lib
-import { getBodyTunes } from "@/lib/supabaseQueries";
+import { getUserBodyTunes } from "@/lib/supabaseQueries";
 
 // Components
 import DashboardHeader from "../DashboardHeader";
@@ -15,17 +15,16 @@ import BodyTuneStudioContents from "./BodyTuneStudioContents";
 // Types
 import { bodyTunePlan } from "@/types/planTypes";
 interface props {
-  bodyTunesProp: Array<bodyTunePlan> | undefined
+  bodyTunesProp: Array<bodyTunePlan> | []
 }
 
 const BodyTuneStudio = ({bodyTunesProp}:props) => {
-
   // Use query
   useQuery({
-    queryKey: ["bodyTunes"],
+    queryKey: ["userBodyTunes"],
     initialData: bodyTunesProp,
     queryFn: () => {
-      return getBodyTunes();
+      return getUserBodyTunes();
     }
   });
   return (
