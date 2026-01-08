@@ -11,13 +11,16 @@ import {
 // Types
 import {
   bodyTunePlan,
+  dailyMealsInterface,
+  exerciseInfo,
   exercisePlan,
   exercisePlanQuery,
+  mealInterface,
   mealPlanIngredientQuery,
   mealPlanQuery,
 } from "@/types/planTypes";
 import { IngredientTypes, mealPlanType, Nutrients } from "@/types/mealTypes";
-import { TableInsert } from "@/types/database.types";
+import { TableInsert, TableRow } from "@/types/database.types";
 
 export const getBmi = (
   weight: number,
@@ -184,9 +187,7 @@ export const arrangeBodyTunePlan = (
   return { exercisePlan, mealPlan };
 };
 
-const arrangeIngredientInfo = (
-  ingredients: Array<mealPlanIngredientQuery>
-) => {
+export const arrangeIngredientInfo = (ingredients: Array<mealPlanIngredientQuery>) => {
   let ingredientList: IngredientTypes = {};
   const nutritionInfo: Nutrients = {
     calories: 0,
@@ -194,30 +195,28 @@ const arrangeIngredientInfo = (
     carbs: 0,
     fat: 0,
   };
-  ingredients.forEach(
-    (ingredient: mealPlanIngredientQuery) => {
-      ingredientList = {
-        ...ingredientList,
-        [ingredient.id]: {
-          id: ingredient.id,
-          ingredientName: `Ingredient ${ingredient.id}`,
-          ingredientValue: ingredient.ingredientName,
-          caloriesName: `Calories`,
-          caloriesValue: ingredient.calories.toString(),
-          proteinsName: `Proteins`,
-          proteinsValue: ingredient.protein.toString(),
-          carbsName: `Carbs`,
-          carbsValue: ingredient.carbs.toString(),
-          fatName: `Fat`,
-          fatValue: ingredient.fat.toString(),
-        },
-      };
-      nutritionInfo.calories += ingredient.calories;
-      nutritionInfo.protein += ingredient.protein;
-      nutritionInfo.carbs += ingredient.carbs;
-      nutritionInfo.fat += ingredient.fat;
-    }
-  );
+  ingredients.forEach((ingredient: mealPlanIngredientQuery) => {
+    ingredientList = {
+      ...ingredientList,
+      [ingredient.id]: {
+        id: ingredient.id,
+        ingredientName: `Ingredient ${ingredient.id}`,
+        ingredientValue: ingredient.ingredientName,
+        caloriesName: `Calories`,
+        caloriesValue: ingredient.calories.toString(),
+        proteinsName: `Proteins`,
+        proteinsValue: ingredient.protein.toString(),
+        carbsName: `Carbs`,
+        carbsValue: ingredient.carbs.toString(),
+        fatName: `Fat`,
+        fatValue: ingredient.fat.toString(),
+      },
+    };
+    nutritionInfo.calories += ingredient.calories;
+    nutritionInfo.protein += ingredient.protein;
+    nutritionInfo.carbs += ingredient.carbs;
+    nutritionInfo.fat += ingredient.fat;
+  });
   return { ingredientList, nutritionInfo };
 };
 
@@ -261,7 +260,7 @@ export const arrangeExercisePlan = (
       .filter((exercise) => exercise.day === day)
       .map(
         (exercise: {
-          id?: number,
+          id?: number;
           exerciseName: string;
           bodyPart: string;
           equipment: string;
@@ -285,7 +284,7 @@ export const arrangeExercisePlan = (
           let fileInfo;
 
           if (fileName !== "undefined") {
-            fileInfo = extractFilePathFromSignedUrl(exercise.exerciseDemo)
+            fileInfo = extractFilePathFromSignedUrl(exercise.exerciseDemo);
           }
           return {
             id: exercise.id,
@@ -314,26 +313,28 @@ export const arrangeExercisePlan = (
   return exercisePlan;
 };
 
-export const extractFilePathFromSignedUrl = (signedUrl: string): {path: string | null, fileName: string} | null => {
+export const extractFilePathFromSignedUrl = (
+  signedUrl: string
+): { path: string | null; fileName: string } | null => {
   try {
-    const url = new URL(signedUrl)
-    const path = url.pathname
-    const match = path.match(/\/sign\/(.+)/)
+    const url = new URL(signedUrl);
+    const path = url.pathname;
+    const match = path.match(/\/sign\/(.+)/);
 
-    if (!match || !match[1]) return null
-    const decodedPath = decodeURIComponent(match[1])
-    const segments = decodedPath.split('/')
-    const fileName = segments[segments.length - 1]
+    if (!match || !match[1]) return null;
+    const decodedPath = decodeURIComponent(match[1]);
+    const segments = decodedPath.split("/");
+    const fileName = segments[segments.length - 1];
 
     return {
       path: decodedPath,
       fileName,
-    }
+    };
   } catch (err) {
-    console.error('Invalid URL:', err)
-    return null
+    console.error("Invalid URL:", err);
+    return null;
   }
-}
+};
 
 export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
   const mealPlan: mealPlanType = {};
@@ -342,40 +343,7 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
     mealPlanQuery.daily_meals
       .filter((meal) => meal.day === day)
       .forEach(
-        (meal: {
-          plan_id: number;
-          day: string;
-          breakFast: {
-            id: number;
-            mealName: string;
-            mealType: {
-              mealType: string;
-            };
-            instructions: string;
-            meal_ingredients: Array<mealPlanIngredientQuery>;
-            veganAlternative: string | null;
-          };
-          lunch: {
-            id: number;
-            mealName: string;
-            mealType: {
-              mealType: string;
-            };
-            instructions: string;
-            meal_ingredients: Array<mealPlanIngredientQuery>;
-            veganAlternative: string | null;
-          };
-          dinner: {
-            id: number;
-            mealName: string;
-            mealType: {
-              mealType: string;
-            };
-            instructions: string;
-            meal_ingredients: Array<mealPlanIngredientQuery>;
-            veganAlternative: string | null;
-          };
-        }) => {
+        (meal: dailyMealsInterface) => {
           const breakFastIngredientInfo = arrangeIngredientInfo(
             meal.breakFast.meal_ingredients
           );
@@ -434,4 +402,57 @@ export const arrangeMealPlan = (mealPlanQuery: mealPlanQuery): mealPlanType => {
       );
   });
   return mealPlan;
+};
+
+
+export const getCompletedMeals = (
+  mealPlanQuery: mealPlanQuery,
+  userPlanInfoData: Array<TableRow<"user_active_plan_data">> | undefined
+): Array<mealInterface> | [] => {  
+
+  if(!userPlanInfoData) return []
+  const completedMeals: Array<mealInterface> = [];  
+
+  type MealKeys = "breakFast" | "lunch" | "dinner";
+  const mealTypes: MealKeys[] = ["breakFast", "lunch", "dinner"];
+
+  weekDates.forEach((day) => {
+    mealPlanQuery.daily_meals
+      .filter((meal) => meal.day === day)
+      .forEach((meal) => {
+        let mealPlanInfoData: TableRow<"user_active_plan_data"> | undefined;
+
+        for (const type of mealTypes) {
+
+          mealPlanInfoData = userPlanInfoData?.find(
+            (data) => data.planDataId === meal[type].id
+          );
+
+          if (mealPlanInfoData?.status === 1) {
+            completedMeals.push(meal[type]);
+            break;
+          }
+        }
+      });
+  });
+
+  return completedMeals;
+};
+
+export const getCompletedExercises = (
+  exercisePlanQuery: exercisePlanQuery,
+  userPlanInfoData: Array<TableRow<"user_active_plan_data">> | undefined
+): Array<exerciseInfo> | [] => {
+  if(!userPlanInfoData || !exercisePlanQuery) return []
+  const completedExercises: Array<exerciseInfo> = [];
+
+  exercisePlanQuery.exercise.forEach((exercise) => {
+    const exercisePlanInfoData = userPlanInfoData?.find(
+      (data: TableRow<"user_active_plan_data">) =>
+        data.planDataId === exercise.id
+    );
+    if(exercisePlanInfoData?.status === 1) return completedExercises.push(exercise);
+  });
+
+  return completedExercises!;
 };
