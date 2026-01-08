@@ -12,6 +12,11 @@ import BodyTuneMealDetails from "./BodyTuneMealDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { getUserMealPlans } from "@/lib/supabaseQueries";
+import { mealPlanQuery } from "@/types/planTypes";
+import { arrangeMealPlan } from "@/utils/dashboardUtils";
+import DeleteWarningPopup from "../reusableComponents/DeleteWarningPopup";
 
 // Fixed values
 const sortByValues: Array<string> = ["Relevance", "Latest", "Views", "Hearts"];
@@ -25,10 +30,25 @@ const pageResultPreferences: Array<number | string> = [
 ];
 
 const BodyTuneMealsContent = () => {
+  // UseQuery
+  const { data: mealPlans } = useQuery({
+    queryKey: ["userMealPlans"],
+    queryFn: () => {
+      return getUserMealPlans();
+    },
+  });
+
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
     useState<boolean>(false);
+  const [selectedMealPlan, setSelectedMealPlan] =
+    useState<mealPlanQuery | null>(null);
+  const [toggleDeleteWarningPopUp, setToggleDeleteWarningPopUp] =
+    useState<boolean>(false);
+  const [dataToBeDeleted, setDataToBeDeleted] = useState<mealPlanQuery | null>(
+    null
+  );
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -111,56 +131,47 @@ const BodyTuneMealsContent = () => {
               </div>
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
-              <BodyTuneMealCard
-                author="Philip Mathew Dingcong"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
-              />
-              <BodyTuneMealCard
-                author="Philip Mathew Dingcong"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
-              />
-              <BodyTuneMealCard
-                author="Philip Mathew Dingcong"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
-              />
-              <BodyTuneMealCard
-                author="Philip Mathew Dingcong"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
-              />
-              <BodyTuneMealCard
-                author="Philip Mathew Dingcong"
-                mealPlanName="Meal Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
-              />
-            </div>
-            <div className="hidden flex-col w-full h-full font-dmSans justify-center items-center">
-              <Image
-                src="/assets/svg/healthy-1.svg"
-                width={300}
-                height={300}
-                alt="Logo"
-              />
-              <p className="w-max text-xl">
-                You don&apos;t have any{" "}
-                <span className="font-bold font-quickSand text-secondary">
-                  Meal Plans
-                </span>{" "}
-                yet.
-              </p>
+              {mealPlans && mealPlans.length !== 0 ? (
+                mealPlans.map((mealPlan: mealPlanQuery) => (
+                  <div key={mealPlan.id}>
+                    <BodyTuneMealCard
+                      author={mealPlan.personal_information.name}
+                      mealPlanName={mealPlan.planName}
+                      planTags={mealPlan.meal_plan_tags}
+                      likes="44521"
+                      views="4451"
+                      setToggleBodyTuneMealDetails={
+                        setToggleBodyTuneMealDetails
+                      }
+                      mealPlan={mealPlan}
+                      setSelectedMealPlan={setSelectedMealPlan}
+                      setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+                      setDataToBeDeleted={setDataToBeDeleted}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                  <Image
+                    src="/assets/svg/healthy-1.svg"
+                    width={300}
+                    height={300}
+                    alt="Logo"
+                  />
+                  <p className="w-max text-xl">
+                    You don&apos;t have any{" "}
+                    <span className="font-bold font-quickSand text-secondary">
+                      Meal Plans
+                    </span>{" "}
+                    yet.
+                  </p>
+                  <Link href={"meals/create"}>
+                    <p className="w-max text-lg text-lightSecondary underline cursor-pointer">
+                      Create your first one now!
+                    </p>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -169,8 +180,34 @@ const BodyTuneMealsContent = () => {
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneMealDetails && (
           <BodyTuneMealDetails
+            mealPlan={{
+              planName: selectedMealPlan!.planName,
+              bmi_classification: selectedMealPlan!.meal_plan_tags.map(
+                (tag) => tag.meal_tags.mealTagName
+              ),
+              meals: arrangeMealPlan(selectedMealPlan!),
+            }}
             setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
           />
+        )}
+        {toggleDeleteWarningPopUp && (
+          <DeleteWarningPopup
+            setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+            typeOfDataToBeDeleted="BodyTune"
+            id={dataToBeDeleted!.id}
+            mealPlansRes={mealPlans}
+          >
+            <BodyTuneMealCard
+              author={dataToBeDeleted!.personal_information.name}
+              mealPlanName={dataToBeDeleted!.planName}
+              planTags={dataToBeDeleted!.meal_plan_tags}
+              likes="44521"
+              views="4451"
+              setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
+              mealPlan={dataToBeDeleted!}
+              setSelectedMealPlan={setSelectedMealPlan}
+            />
+          </DeleteWarningPopup>
         )}
       </AnimatePresence>
     </>
