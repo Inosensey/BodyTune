@@ -8,7 +8,7 @@ import MutateForm from "@/components/dashboardComponents/bodytuneStudio/MutateCo
 // Types
 import { TableRow } from "@/types/database.types";
 import { exercisePlanQuery, mealPlanQuery } from "@/types/planTypes";
-import { getExercisePlans, getMealPlans } from "@/lib/supabaseQueries";
+import { getUserExercisePlans, getUserMealPlans } from "@/lib/supabaseQueries";
 
 const CreateBodyTunePage = async () => {
   const [personalRes, exercisePlanRes, mealPlanRes]: [
@@ -17,8 +17,8 @@ const CreateBodyTunePage = async () => {
     Array<mealPlanQuery>
   ] = await Promise.all([
     getUserInformation(),
-    getExercisePlans(),
-    getMealPlans(),
+    getUserExercisePlans(),
+    getUserMealPlans(),
   ]);
   let userInformation:
     | { response: TableRow<"personal_information">[] }
