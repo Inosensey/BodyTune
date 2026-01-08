@@ -2,17 +2,24 @@
 
 import getUserInformation from "@/lib/getUserInformation";
 
-// Types
-import { TableRow } from "@/types/database.types";
+// Components
 import MutateForm from "@/components/dashboardComponents/bodytuneWorkouts/Mutatecomponents/MutateForm";
 
+// Types
+import { TableRow } from "@/types/database.types";
+import { exercisePlanQuery } from "@/types/planTypes";
+import { getExercisePlans } from "@/lib/supabaseQueries";
+
 const CreateWorkoutPage = async () => {
-  const res = await getUserInformation();
+  const [personalRes, exercisePlanRes]: [
+    Response | undefined,
+    Array<exercisePlanQuery>
+  ] = await Promise.all([getUserInformation(), getExercisePlans()]);
   let userInformation:
     | { response: TableRow<"personal_information">[] }
     | { response: [] } = { response: [] };
-  if (res) {
-    userInformation = await res.json();
+  if (personalRes) {
+    userInformation = await personalRes.json();
   } else {
     userInformation = { response: [] };
   }
@@ -21,7 +28,11 @@ const CreateWorkoutPage = async () => {
     | [] = userInformation;
   return (
     <div className="px-4 mt-4 w-full">
-      <MutateForm personalInfo={personalInformation.response} />
+      <MutateForm
+        personalInfo={personalInformation.response}
+        exercisePlanList={exercisePlanRes}
+        action="Create"
+      />
     </div>
   );
 };
