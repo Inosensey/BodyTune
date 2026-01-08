@@ -107,3 +107,11 @@ export interface mealQueryHygraphType {
   veganAlternative: string;
   cookingInstructions: string;
 }
+
+export interface mealPlanListType {
+  mealId: number,
+  createdBy: string,
+  planName: string,
+  planTags: Array<mealPlanTag>,
+  meals: mealPlanType,
+}
