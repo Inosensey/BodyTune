@@ -3,14 +3,16 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getUserExercisePlans } from "@/lib/supabaseQueries";
 
 // Components
 import BodyTuneWorkoutDetails from "./BodyTuneWorkoutDetails";
+import Overlay from "@/components/reusableComponent/Overlay";
+import BodyTuneWorkoutCard from "./BodyTuneWorkoutCard";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-import BodyTuneWorkoutCard from "./BodyTuneWorkoutCard";
 import { AnimatePresence } from "framer-motion";
 
 // Fixed values
@@ -24,11 +26,30 @@ const pageResultPreferences: Array<number | string> = [
   "All",
 ];
 
+// types
+import { exercisePlanQuery } from "@/types/planTypes";
+import { useQuery } from "@tanstack/react-query";
+import { arrangeExercisePlan } from "@/utils/dashboardUtils";
+import DeleteWarningPopup from "../reusableComponents/DeleteWarningPopup";
+
 const BodyTuneWorkoutsContent = () => {
+  // UseQuery
+  const { data: exercisePlans } = useQuery({
+    queryKey: ["userExercisePlans"],
+    queryFn: () => {
+      return getUserExercisePlans();
+    },
+  });
+
+  // States
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
     useState<boolean>(false);
+  const [selectedExercisePlan, setSelectedExercisePlan] = useState<exercisePlanQuery | null>(null);
+  const [toggleDeleteWarningPopUp, setToggleDeleteWarningPopUp] =
+    useState<boolean>(false);
+  const [dataToBeDeleted, setDataToBeDeleted] = useState<exercisePlanQuery | null>(null)
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -111,75 +132,47 @@ const BodyTuneWorkoutsContent = () => {
               </div>
             </div>
             <div className="w-full max-h-[95%] gap-2 flex flex-wrap mt-2 overflow-auto">
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-              <BodyTuneWorkoutCard
-                author="Philip Mathew Dingcong"
-                exercisePlanName="Exercise Plan Name"
-                likes="44521"
-                views="4451"
-                setToggleBodyTuneWorkoutDetails={
-                  setToggleBodyTuneWorkoutDetails
-                }
-              />
-            </div>
-            <div className="hidden flex-col w-full h-full font-dmSans justify-center items-center">
-              <Image
-                src="/assets/svg/dumbbell-2.svg"
-                width={300}
-                height={300}
-                alt="Logo"
-              />
-              <p className="w-max text-xl">
-                You don&apos;t have any{" "}
-                <span className="font-bold font-quickSand text-secondary">
-                  Workout Plans
-                </span>{" "}
-                yet.
-              </p>
+              {exercisePlans && exercisePlans?.length !== 0 ? (
+                exercisePlans.map((exercisePlan: exercisePlanQuery) => (
+                  <div key={exercisePlan.id}>
+                    <BodyTuneWorkoutCard
+                      author={exercisePlan.personal_information.name}
+                      exercisePlanName={exercisePlan.planName}
+                      planTags={exercisePlan.exercise_plan_tag}
+                      likes="44521"
+                      views="4451"
+                      exercisePlan={exercisePlan}
+                      setToggleBodyTuneWorkoutDetails={
+                        setToggleBodyTuneWorkoutDetails
+                      }
+                      setDataToBeDeleted={setDataToBeDeleted}
+                      setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+                      setSelectedExercisePlan={setSelectedExercisePlan}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                  <Image
+                    src="/assets/svg/dumbbell-2.svg"
+                    width={300}
+                    height={300}
+                    alt="Logo"
+                  />
+                  <p className="w-max text-xl">
+                    You don&apos;t have any{" "}
+                    <span className="font-bold font-quickSand text-secondary">
+                      Workout Plans
+                    </span>{" "}
+                    yet.
+                  </p>
+                  <Link href={"workouts/create"}>
+                    <p className="w-max text-lg text-lightSecondary underline cursor-pointer">
+                      Create your first one now!
+                    </p>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -187,9 +180,38 @@ const BodyTuneWorkoutsContent = () => {
 
       <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneWorkoutDetails && (
-          <BodyTuneWorkoutDetails
-            setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
-          />
+          <Overlay>
+            <BodyTuneWorkoutDetails
+              exercisePlan={{
+                planName: selectedExercisePlan!.planName,
+                exercise_tags: selectedExercisePlan!.exercise_plan_tag.map(tag => tag.exercise_tags.exerciseTagName),
+                exercises: arrangeExercisePlan(selectedExercisePlan!)
+              }}
+              setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
+            />
+          </Overlay>
+        )}
+        
+        {toggleDeleteWarningPopUp && (
+          <DeleteWarningPopup
+            setToggleDeleteWarningPopUp={setToggleDeleteWarningPopUp}
+            typeOfDataToBeDeleted="exercise"
+            id={dataToBeDeleted!.id!}
+            exercisePlansRes={exercisePlans}
+          >
+            <BodyTuneWorkoutCard
+              author={dataToBeDeleted!.personal_information.name}
+              exercisePlanName={dataToBeDeleted!.planName}
+              planTags={dataToBeDeleted!.exercise_plan_tag}
+              likes="44521"
+              views="4451"
+              exercisePlan={dataToBeDeleted!}
+              setToggleBodyTuneWorkoutDetails={
+                setToggleBodyTuneWorkoutDetails
+              }
+              setSelectedExercisePlan={setSelectedExercisePlan}
+            />
+          </DeleteWarningPopup>
         )}
       </AnimatePresence>
     </>

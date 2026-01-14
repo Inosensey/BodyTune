@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
+import { ProgressBar as ProgressBarSpinner } from "react-loader-spinner";
 
 // Action
 import { profileSetUp, signOut } from "@/actions/authActions";
@@ -178,7 +179,22 @@ const ProfileSetup = () => {
           <SolarExitLineDuotone color="#D3F0D1" width="1.5em" height="1.5em" />
         </div>
       </div>
-      <LoadingPopUp isLoading={isSubmitting} message={submitMessage} />
+      <LoadingPopUp
+        isLoading={isSubmitting}
+        message={submitMessage}
+        LoadingAnimationIcon={
+          <ProgressBarSpinner
+            visible={true}
+            height="60"
+            width="60"
+            ariaLabel="progress-bar-loading"
+            wrapperStyle={{}}
+            barColor="#D3F0D1"
+            borderColor="#4B6F64"
+            wrapperClass=""
+          />
+        }
+      />
     </>
   );
 };

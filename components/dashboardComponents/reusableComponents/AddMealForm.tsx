@@ -23,7 +23,14 @@ import {
 
 // Types
 import { stepValidationResult, validation } from "@/types/inputTypes";
-import { IngredientTypes, IngredientInputValidation, MealInfoTypes, nutritionTypes } from "@/types/mealTypes";
+import {
+  IngredientTypes,
+  IngredientInputValidation,
+  MealInfoTypes,
+  Nutrients,
+  dailyMealInfo,
+  mealPlanType,
+} from "@/types/mealTypes";
 interface MealFormValidations {
   mealName: {
     valid: boolean | null;
@@ -37,32 +44,20 @@ interface MealFormValidations {
     valid: boolean | null;
     validationMessage: string;
   };
-}
-
-interface mealPlanType {
-  breakFast: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
-  };
-  lunch: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
-  };
-  dinner: {
-    mealInfo: MealInfoTypes | undefined;
-    ingredients: IngredientTypes | undefined;
-    nutrition: nutritionTypes | undefined;
+  veganAlternative: {
+    valid: boolean | null;
+    validationMessage: string;
   };
 }
 
 interface props {
   setToggleAddMealForm: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMeal: string;
-  setMealPlan: React.Dispatch<React.SetStateAction<mealPlanType>>;
-  mealPlan: mealPlanType;
+  selectedMealType: string;
+  setMealPlanInfo: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  dailyMealInfo: dailyMealInfo;
   formAction: string;
+  selectedWeekDate: string;
+  setToBeDeletedIngredients: React.Dispatch<React.SetStateAction<Array<number>>>
 }
 
 // Initials
@@ -70,6 +65,7 @@ const MealFormInputValInitial: MealInfoTypes = {
   mealName: "",
   shortDescription: "",
   cookingInstruction: "",
+  veganAlternative: "",
 };
 const MealFormValidationInitials: MealFormValidations = {
   mealName: {
@@ -84,20 +80,26 @@ const MealFormValidationInitials: MealFormValidations = {
     valid: null,
     validationMessage: "",
   },
+  veganAlternative: {
+    valid: null,
+    validationMessage: "",
+  },
 };
-const nutritionInitial: nutritionTypes = {
-  caloriesValue: 0,
-  proteinsValue: 0,
-  carbsValue: 0,
-  fatValue: 0,
+const nutritionInitial: Nutrients = {
+  calories: 0,
+  protein: 0,
+  carbs: 0,
+  fat: 0,
 };
 
 const AddMealForm = ({
   setToggleAddMealForm,
-  selectedMeal,
-  setMealPlan,
+  selectedMealType,
+  setMealPlanInfo,
   formAction,
-  mealPlan,
+  dailyMealInfo,
+  selectedWeekDate,
+  setToBeDeletedIngredients
 }: props) => {
   // Init Values
   const initUUID = crypto.randomUUID();
@@ -116,10 +118,10 @@ const AddMealForm = ({
   const [mealFormInputVal, setMealFormInputVal] = useState<MealInfoTypes>(
     MealFormInputValInitial
   );
-  const [nutrition, setNutrition] = useState<nutritionTypes>(nutritionInitial);
+  const [nutrition, setNutrition] = useState<Nutrients>(nutritionInitial);
 
-  const [ingredientInputVal, setIngredientInputVal] =
-    useState<IngredientTypes>({
+  const [ingredientInputVal, setIngredientInputVal] = useState<IngredientTypes>(
+    {
       [`ingredient${initUUID}`]: {
         id: initUUID,
         ingredientName: `Ingredients 1`,
@@ -133,7 +135,8 @@ const AddMealForm = ({
         fatName: `Fat`,
         fatValue: "",
       },
-    });
+    }
+  );
   const [ingredientValidations, setIngredientValidations] =
     useState<IngredientInputValidation>({
       [`ingredient${initUUID}`]: {
@@ -232,20 +235,26 @@ const AddMealForm = ({
   const setInitialFormValues = () => {
     if (formAction === "Edit") {
       let mealType = "";
-      if(selectedMeal === "Breakfast") {
+      if (selectedMealType === "Breakfast") {
         mealType = "breakFast";
-      } else if(selectedMeal === "Lunch") {
+      } else if (selectedMealType === "Lunch") {
         mealType = "lunch";
-      } else if(selectedMeal === "Dinner") {
-        mealType = "dinner"; 
+      } else if (selectedMealType === "Dinner") {
+        mealType = "dinner";
       }
-      setMealFormInputVal(mealPlan[mealType as keyof mealPlanType].mealInfo!);
-      setIngredientInputVal(mealPlan[mealType as keyof mealPlanType].ingredients!);
-      setNutrition(mealPlan[mealType as keyof mealPlanType].nutrition!);
-      Object.entries(mealPlan[mealType as keyof mealPlanType].ingredients!).map(([, value]) => {
+      setMealFormInputVal(
+        dailyMealInfo[mealType as keyof dailyMealInfo].mealInfo!
+      );
+      setIngredientInputVal(
+        dailyMealInfo[mealType as keyof dailyMealInfo].ingredients!
+      );
+      setNutrition(dailyMealInfo[mealType as keyof dailyMealInfo].nutrition!);
+      Object.entries(
+        dailyMealInfo[mealType as keyof dailyMealInfo].ingredients!
+      ).map(([, value]) => {
         setIngredientValidations((prev) => ({
           ...prev,
-          [`ingredient${value.id}`]: {
+          [`${value.id}`]: {
             ingredientValid: null,
             ingredientValidationMessage: "",
             caloriesValid: null,
@@ -279,10 +288,10 @@ const AddMealForm = ({
       fatValue =
         fatValue + parseFloat(value.fatValue === "" ? "0" : value.fatValue);
       setNutrition(() => ({
-        caloriesValue: caloriesValue,
-        proteinsValue: proteinsValue,
-        carbsValue: carbsValue,
-        fatValue: fatValue,
+        calories: caloriesValue,
+        protein: proteinsValue,
+        carbs: carbsValue,
+        fat: fatValue,
       }));
     });
   };
@@ -415,7 +424,7 @@ const AddMealForm = ({
         <div className="bg-lightPrimary rounded-lg p-4 overflow-auto max-h-[96%] phone:w-[95%] desktop:w-[32%] larger:w-[25%]">
           <div className="w-full flex justify-between items-center">
             <p className="text-[#a3e09f] font-dmSans text-lg font-semibold">
-              Add {selectedMeal} Meal
+              Add {selectedMealType} Meal
             </p>
             <div
               onClick={() => setToggleAddMealForm(false)}
@@ -503,6 +512,9 @@ const AddMealForm = ({
                                 delete updatedValidations[key];
                                 return updatedValidations;
                               });
+                              if(formAction === "Edit") {
+                                setToBeDeletedIngredients((prev) => [...prev, parseInt(value.id! as string)])
+                              }
                             }}
                           />
                         </div>
@@ -619,6 +631,7 @@ const AddMealForm = ({
                       }));
                     }}
                     className="bg-[#5d897b] text-white font-quickSand font-semibold text-sm w-full rounded-md py-1 px-2 flex items-center justify-center gap-1 mt-2 transition duration-200 group-hover:bg-secondary"
+                    type="button"
                   >
                     Add More Ingredient
                     <FontAwesomeIcon
@@ -637,7 +650,7 @@ const AddMealForm = ({
                         Calories:
                       </p>
                       <p className="font-quickSand text-sm">
-                        {nutrition.caloriesValue}g
+                        {nutrition.calories}g
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -645,7 +658,7 @@ const AddMealForm = ({
                         Protein:
                       </p>
                       <p className="font-quickSand text-sm">
-                        {nutrition.proteinsValue}g
+                        {nutrition.protein}g
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -653,21 +666,36 @@ const AddMealForm = ({
                         Carbs:
                       </p>
                       <p className="font-quickSand text-sm">
-                        {nutrition.carbsValue}g
+                        {nutrition.carbs}g
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
                       <p className="font-dmSans font-bold text-lightSecondary text-sm">
                         Fat:
                       </p>
-                      <p className="font-quickSand text-sm">
-                        {nutrition.fatValue}g
-                      </p>
+                      <p className="font-quickSand text-sm">{nutrition.fat}g</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <motion.div className="w-full">
+              <Input
+                name="veganAlternative"
+                placeholder="Enter a vegan substitute"
+                state={mealFormInputVal.veganAlternative}
+                type="text"
+                label="Vegan Alternative"
+                onChange={onChange}
+                onBlur={onChange}
+                autoComplete="off"
+                valid={mealValidations.veganAlternative.valid}
+                validationMessage={
+                  mealValidations.veganAlternative.validationMessage
+                }
+              />
+            </motion.div>
             <div className="flex flex-col laptop:w-[100%]">
               <p className="font-dmSans font-semibold text-[#a3e09f] underline">
                 How to Prepare
@@ -700,23 +728,25 @@ const AddMealForm = ({
                   );
                   let mealType = "";
                   if (MealInfoValidation && ingredientValidationResult) {
-                    
-                    if(selectedMeal === "Breakfast") {
+                    if (selectedMealType === "Breakfast") {
                       mealType = "breakFast";
-                    } else if(selectedMeal === "Lunch") {
+                    } else if (selectedMealType === "Lunch") {
                       mealType = "lunch";
-                    } else if(selectedMeal === "Dinner") {
-                      mealType = "dinner"; 
+                    } else if (selectedMealType === "Dinner") {
+                      mealType = "dinner";
                     }
-                    setMealPlan((prev) => ({
+                    setMealPlanInfo((prev) => ({
                       ...prev,
-                      [mealType as keyof mealPlanType]: {
-                        mealInfo: mealFormInputVal,
-                        ingredients: ingredientInputVal,
-                        nutrition: nutrition,
+                      [selectedWeekDate]: {
+                        ...prev[selectedWeekDate],
+                        [mealType as keyof dailyMealInfo]: {
+                          mealInfo: mealFormInputVal,
+                          ingredients: ingredientInputVal,
+                          nutrition: nutrition,
+                        },
                       },
                     }));
-                    
+
                     setToggleAddMealForm(false);
                   }
                 }}
@@ -728,7 +758,7 @@ const AddMealForm = ({
                   width="1.3em"
                   height="1.3em"
                 />
-                Create Meal
+                {formAction === "Edit" ? "Update Meal" : "Create Meal"}
               </motion.button>
             </div>
           </div>

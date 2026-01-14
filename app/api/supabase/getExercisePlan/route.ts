@@ -1,0 +1,98 @@
+import { exercisePlanQuery } from "@/types/planTypes";
+import { createSSR } from "@/utils/supabaseSSR";
+
+export async function GET(req: Request) {
+  const supabase = await createSSR();
+  const { searchParams } = new URL(req.url);
+  const planId = searchParams.get("planId")?.toString();
+  if(!planId)  return Response.json({ message: "Can't find BodyTune, Didn't provide an ID" });
+    
+  try {
+    const { data, error } = await supabase.from("exercise_plan").select(`
+        id,
+        planName,
+        created_by,
+        visibility,
+        plan_visibility (
+            visibility
+        ),
+        exercise_plan_tag (
+            exercise_tags (
+                id,
+                exerciseTagName
+            )
+        ),
+        created_by,
+        personal_information (  
+            name
+        ),
+        exercise (
+            id,
+            exerciseName,
+            bodyPart,
+            equipment,
+            day,
+            exerciseDemo,
+            youtubeLink,
+            measurement,
+            instruction,
+            bmiClassification,
+            exerciseMeasurementType,
+            exercise_measurement_type (
+                id,
+                measurement
+            ),
+            bmi_classification (
+                classification
+            )
+        )
+    `).eq("id", parseInt(planId));
+    if (error) {
+      return Response.json({ message: error });
+    }
+    const exercisePlanRes = data as unknown as exercisePlanQuery[];
+    const res = await getSignedDemoUrls(exercisePlanRes);
+
+    return Response.json({ res });
+  } catch (error) {
+    return Response.json({ message: error });
+  }
+}
+
+const getSignedDemoUrls = async (exercisePlan: exercisePlanQuery[]) => {
+  const supabase = await createSSR();
+  try {
+    const updatedExercisePlan = await Promise.all(
+      exercisePlan.map(async (exercisePlanInfo: exercisePlanQuery) => {
+        exercisePlanInfo.exercise = (await Promise.all(
+          exercisePlanInfo.exercise.map(async (exercise) => {
+            if (exercise.exerciseDemo) {
+              const filePath = exercise.exerciseDemo
+                .replace("Exercise Demo/", "")
+                .trim();
+
+              const { data: signedUrlData, error } = await supabase.storage
+                .from("Exercise Demo")
+                .createSignedUrl(filePath, 60 * 60);
+
+              if (error) {
+                console.error("Error generating signed URL:", error);
+                return exercise;
+              }
+
+              return {
+                ...exercise,
+                exerciseDemo: signedUrlData?.signedUrl || "",
+              };
+            }
+            return exercise;
+          })
+        )) as typeof exercisePlanInfo.exercise;
+        return exercisePlanInfo;
+      })
+    );
+    return updatedExercisePlan;
+  } catch (error) {
+    return error;
+  }
+};

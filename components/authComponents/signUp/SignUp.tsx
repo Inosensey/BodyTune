@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
+import { ProgressBar as ProgressBarSpinner } from "react-loader-spinner";
 
 // Action
 import { signUpWithEmail } from "@/actions/authActions";
@@ -63,7 +64,9 @@ const SignUp = () => {
     registerInputInitials
   );
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitMessage, setSubmitMessage] = useState<string>("Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!");
+  const [submitMessage, setSubmitMessage] = useState<string>(
+    "Setting up your profile... 🏋️‍♀️ Your fitness journey begins in just a moment!"
+  );
   const [progress, setProgress] = useState<number>(0);
   const [stepValidation, setStepValidation] = useState<stepsValidation>(
     stepValidationInitials
@@ -93,14 +96,16 @@ const SignUp = () => {
   // useEffect
   useEffect(() => {
     if (formState.success !== null || formState.error !== null) {
-      if(formState.success) {
-        setSubmitMessage("You're in! 🎯 Taking you to your dashboard—let’s crush some goals today! 💪");
-        router.push("/dashboard")
+      if (formState.success) {
+        setSubmitMessage(
+          "You're in! 🎯 Taking you to your dashboard—let’s crush some goals today! 💪"
+        );
+        router.push("/dashboard");
       } else {
         setIsSubmitting(false);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState]);
   return (
     <>
@@ -245,6 +250,18 @@ const SignUp = () => {
       <LoadingPopUp
         isLoading={isSubmitting}
         message={submitMessage}
+        LoadingAnimationIcon={
+          <ProgressBarSpinner
+            visible={true}
+            height="60"
+            width="60"
+            ariaLabel="progress-bar-loading"
+            wrapperStyle={{}}
+            barColor="#D3F0D1"
+            borderColor="#4B6F64"
+            wrapperClass=""
+          />
+        }
       />
     </>
   );

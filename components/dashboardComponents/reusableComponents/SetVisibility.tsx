@@ -1,18 +1,24 @@
-import { useState } from "react";
+"use client";
+
 import { motion } from "framer-motion";
 
 // Icons
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
+import TablerCirclePlus from "@/icons/TablerCirclePlus";
 
 //Types
 import { InterfaceBreadCrumbs } from "@/types/inputTypes";
 interface props {
+  action: string;
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
   setSelectedBreadCrumb: React.Dispatch<
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   Icon: React.ComponentType<{ color: string; width?: string; height?: string }>;
+  visibilityPreference: string;
+  setVisibilityPreference: React.Dispatch<React.SetStateAction<string>>;
+  setTogglePreviewPlan: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Variants
@@ -26,19 +32,19 @@ const childContainer = {
 };
 
 const SetVisibility = ({
+  action,
   setProgress,
   setSelectedBreadCrumb,
   setSelectedOption,
   Icon,
+  visibilityPreference,
+  setVisibilityPreference,
+  setTogglePreviewPlan,
 }: props) => {
-  // States
-  const [visibilityPreference, SetVisibilityPreference] = useState<string>("");
-  console.log(visibilityPreference);
-
   // Events
   const radioOnChange = (value: string) => {
     // SetVisibilityPreference((prev) => ({ ...prev, [name]: value }));
-    SetVisibilityPreference(value);
+    setVisibilityPreference(value);
   };
   return (
     <>
@@ -72,18 +78,18 @@ const SetVisibility = ({
           </div>
         </div>
         <motion.div variants={childContainer} className="bg-black w-full p-2">
-          <label className="phone:text-sm font-quickSand font-semibold">
+          <label className="underline font-dmSans font-bold text-[#a3e09f] m-0 mb-2 p-0 phone:text-sm tablet:text-lg">
             Visibility Preferences
           </label>
           <div className="w-full flex flex-col flex-wrap gap-4 mt-2">
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Private")}
+              onClick={() => radioOnChange("1")}
             >
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Private"
+                    visibilityPreference === "1"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
@@ -91,27 +97,27 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">Private:</span>{" "}
-                Only you can see this{" "}
+                <span className="font-bold text-[#a3e09f]">Private:</span> Only
+                you can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Private"
+                value="1"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Private" ? true : false}
+                checked={visibilityPreference === "1" ? true : false}
               />
             </div>
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Followers")}
+              onClick={() => radioOnChange("2")}
             >
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Followers"
+                    visibilityPreference === "2"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
@@ -119,29 +125,27 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">
-                  Followers:
-                </span>{" "}
+                <span className="font-bold text-[#a3e09f]">Followers:</span>{" "}
                 Only your followers can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Followers"
+                value="2"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Followers" ? true : false}
+                checked={visibilityPreference === "2" ? true : false}
               />
             </div>
             <div
               className="flex items-center gap-1 cursor group font-dmSans cursor-pointer"
-              onClick={() => radioOnChange("Public")}
+              onClick={() => radioOnChange("3")}
             >
               <div
                 style={{
                   boxShadow:
-                    visibilityPreference === "Public"
+                    visibilityPreference === "3"
                       ? "0px 0px 0px 3.5px #4B6F64 inset"
                       : "",
                 }}
@@ -149,24 +153,35 @@ const SetVisibility = ({
               ></div>
 
               <label className="phone:text-sm font-quickSand cursor-pointer">
-                <span className="font-bold text-lightSecondary">Public:</span>{" "}
+                <span className="font-bold text-[#a3e09f]">Public:</span>{" "}
                 Everyone can see this{" "}
                 <span className="font-bold text-lightSecondary">BodyTune</span>.
               </label>
               <input
                 type="radio"
                 name="visibilityPreference"
-                value="Public"
+                value="3"
                 className="hidden"
                 onChange={() => console.log("wew")}
-                checked={visibilityPreference === "Public" ? true : false}
+                checked={visibilityPreference === "3" ? true : false}
               />
             </div>
           </div>
-          <div className="mt-4 mx-auto w-max flex items-center gap-1">
-            <button className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary">
-            <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
+          <div className="mt-4 mx-auto w-full flex justify-between items-center gap-1">
+            <button
+              className=" bg-[#595959] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-[#404040]"
+              type="button"
+              onClick={() => setTogglePreviewPlan(true)}
+            >
+              <Icon color="#D3F0D1" width="1.2em" height="1.2em" />
               Preview Plan
+            </button>
+            <button
+              className=" bg-[#5d897b] text-white font-quickSand font-semibold text-sm rounded-md py-1 px-2 flex items-center justify-center gap-1 transition duration-200 hover:bg-secondary"
+              type="submit"
+            >
+              <TablerCirclePlus color="#D3F0D1" width="1.2em" height="1.2em" />
+              {action === "Update" ? "Update Plan" : "Save Plan"}
             </button>
           </div>
         </motion.div>

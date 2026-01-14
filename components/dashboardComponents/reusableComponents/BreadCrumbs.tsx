@@ -11,6 +11,8 @@ interface props {
     React.SetStateAction<InterfaceBreadCrumbs>
   >;
   breadCrumbs: Array<InterfaceBreadCrumbs>;
+  selectedCreateOption: string,
+  disabledBreadCrumbs: number[]
 }
 
 
@@ -18,18 +20,21 @@ const BreadCrumbs = ({
   breadCrumbs,
   setSelectedBreadCrumb,
   selectedBreadCrumb,
-  setProgress
+  setProgress,
+  disabledBreadCrumbs
 }: props) => {
+  
   return (
     <div className="flex border-[1.5px] border-secondary w-full mx-auto">
       {breadCrumbs.map((breadcrumb: InterfaceBreadCrumbs) => (
         <motion.div
           onClick={() => {
+            if(disabledBreadCrumbs.includes(breadcrumb.id)) return
             setSelectedBreadCrumb(breadcrumb)
             setProgress(breadcrumb.id)
           }}
           key={breadcrumb.id}
-          className={`group bg-black px-4 py-4 cursor-pointer relative ${style.breadcrumbs}`}
+          className={`${!disabledBreadCrumbs.includes(breadcrumb.id) && "group"} bg-black px-4 py-4 ${disabledBreadCrumbs.includes(breadcrumb.id) ? "cursor-no-drop" : "cursor-pointer"} relative ${style.breadcrumbs}`}
         >
           <p
             className={`font-dmSans font-semibold phone:text-[0.8rem] mdphone:text-sm tablet:text-base transition duration-200 ${

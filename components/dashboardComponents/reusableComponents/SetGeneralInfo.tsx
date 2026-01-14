@@ -1,13 +1,21 @@
 "use effect";
-import React, { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { Oval } from "react-loader-spinner";
 
 // Components
+import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/LoadingPopUp";
 import { Input } from "@/components/reusableComponent/formInputs/input";
 import IcOutlineArrowBackIosNew from "@/icons/IcOutlineArrowBackIosNew";
 
+// Libs
+import { generateBodyTunePlan, generateExercisePlan, generateMealPlan } from "@/lib/hygraphQueries";
+
 // Utils
-import FormValidation from "@/utils/validation";
+import { getBmi } from "@/utils/dashboardUtils";
+import FormValidation, { validateFormInputs } from "@/utils/validation";
 
 // Types
 import { TableRow } from "@/types/database.types";
@@ -16,19 +24,37 @@ import {
   stepValidationResult,
   validation,
 } from "@/types/inputTypes";
-interface props {
-  setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setSelectedBreadCrumb: React.Dispatch<
-  React.SetStateAction<InterfaceBreadCrumbs>
-  >;
-  personalInfo: TableRow<"personal_information">;
-}
+import { exercisePlan } from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 interface generalInfoType {
   weight: string;
   height: string;
   experience: string;
   bmi: string;
+}
+interface props {
+  planType: string,
+  setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setSelectedBreadCrumb: React.Dispatch<
+    React.SetStateAction<InterfaceBreadCrumbs>
+  >;
+  personalInfo: TableRow<"personal_information">;
+  selectedCreateOption: string;
+  setExercisePlanInfo?: React.Dispatch<React.SetStateAction<exercisePlan>>;
+  setMealPlanInfo?: React.Dispatch<React.SetStateAction<mealPlanType>>;
+  generalInfoFieldsVal: generalInfoType;
+  setGeneralInfoFieldsVal: React.Dispatch<
+    React.SetStateAction<generalInfoType>
+  >;
+  setDisabledBreadCrumbs: React.Dispatch<React.SetStateAction<Array<number>>>;
+  bmiClassification: { id: string; bmiClassification: string };
+  setBmiClassification: React.Dispatch<
+    React.SetStateAction<{ id: string; bmiClassification: string }>
+  >;
+  setSelectedDifficulties?: React.Dispatch<
+    React.SetStateAction<string[]>
+  >;
 }
 
 interface generalInfoValidation {
@@ -51,7 +77,7 @@ interface generalInfoValidation {
 }
 
 // Initials
-import { bmiClassifications, workoutDifficulties } from "@/utils/initials";
+import { workoutDifficulties } from "@/utils/initials";
 const generalInfoValidationInitials: generalInfoValidation = {
   height: {
     valid: null,
@@ -68,24 +94,71 @@ const generalInfoValidationInitials: generalInfoValidation = {
   bmi: {
     valid: null,
     validationMessage: "",
-  }
+  },
 };
 
 const SetGeneralInfo = ({
+  planType,
   setSelectedOption,
   setProgress,
   setSelectedBreadCrumb,
-  personalInfo,
+  generalInfoFieldsVal,
+  setGeneralInfoFieldsVal,
+  selectedCreateOption,
+  setExercisePlanInfo,
+  setMealPlanInfo,
+  setDisabledBreadCrumbs,
+  bmiClassification,
+  setBmiClassification,
+  setSelectedDifficulties
 }: props) => {
   // State
-  const [generalInfoFieldsVal, setGeneralInfoFieldsVal] = useState<generalInfoType>({
-    height: personalInfo.height!.toString(),
-    weight: personalInfo.weight!.toString(),
-    experience: "",
-    bmi: "",
-  });
+  const [formIsValid, setFormIsValid] = useState<boolean>(false);
   const [generalInfoValidation, setGeneralInfoValidation] =
     useState<generalInfoValidation>(generalInfoValidationInitials);
+
+  // Query
+  const {
+    data: bodyTunePlansData,
+    refetch: generateBodyTune,
+    isFetching: bodyTunePlanIsFetching,
+  } = useQuery({
+    queryKey: ["generatedBodyTune"],
+    queryFn: () => {
+      return generateBodyTunePlan(
+        bmiClassification.id,
+        generalInfoFieldsVal.experience
+      );
+    },
+    enabled: false,
+  });
+  const {
+    data: exercisePlansData,
+    refetch: generateExercises,
+    isFetching: exercisePlanIsFetching,
+  } = useQuery({
+    queryKey: ["generatedExercise"],
+    queryFn: () => {
+      return generateExercisePlan(
+        bmiClassification.id,
+        generalInfoFieldsVal.experience
+      );
+    },
+    enabled: false,
+  });
+  const {
+    data: mealPlansData,
+    refetch: generateMeals,
+    isFetching: mealPlanIsFetching,
+  } = useQuery({
+    queryKey: ["generatedMeal"],
+    queryFn: () => {
+      return generateMealPlan(
+        bmiClassification.id,
+      );
+    },
+    enabled: false,
+  });
 
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -135,6 +208,7 @@ const SetGeneralInfo = ({
     setGeneralInfoFieldsVal((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validations
   const checkValidations = (
     validationInfo: stepValidationResult | validation
   ) => {
@@ -154,152 +228,264 @@ const SetGeneralInfo = ({
 
     return isValid;
   };
-  return (
-    <div className="bg-black rounded-lg py-4 px-2 tablet:w-[350px]">
-      <div
-        className="flex items-center gap-1 cursor-pointer w-max group"
-        onClick={() => {
-          setSelectedOption("")
-          setProgress(1);
-          setSelectedBreadCrumb({
-            id: 1,
-            title: "Body Metrics",
-            shortDescription: "Set weight, height, and experience",
-          });
-        }}
-      >
-        <IcOutlineArrowBackIosNew
-          color="#4B6F64"
-          width="1.7em"
-          height="1.7em"
-        />
-        <div>
-          <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
-            Return to BodyTune creation options
-          </p>
-        </div>
-      </div>
-      <div className="mt-4 flex flex-col items-center gap-4">
-        <div className="flex justify-center gap-6">
-          <div className="min-w-[10px] max-w-[120px] relative">
-            <Input
-              name="weight"
-              placeholder="Weight"
-              state={generalInfoFieldsVal.weight}
-              type="text"
-              label="Weight (kg)"
-              onChange={onChange}
-              autoComplete="off"
-              valid={generalInfoValidation.weight.valid}
-            />
-          </div>
-          <div className="min-w-[10px] max-w-[120px] relative">
-            <Input
-              name="height"
-              placeholder="Height"
-              state={generalInfoFieldsVal.height}
-              type="text"
-              label="Height (cm)"
-              onChange={onChange}
-              autoComplete="off"
-              valid={generalInfoValidation.height.valid}
-            />
-          </div>
-        </div>
-        <div
-          style={{
-            border:
-              generalInfoValidation.experience.valid === null ||
-              generalInfoValidation.experience.valid
-                ? ""
-                : "1px solid rgb(239 68 68)",
-          }}
-          className="relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]"
-        >
-          <label className="phone:text-sm font-quickSand font-semibold">
-            Choose Exercise Experience
-          </label>
-          <div className={`flex flex-col w-full gap-2 bg-primary`}>
-            <select
-              className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-              onChange={selectOnChange}
-              name="experience"
-              defaultValue={generalInfoFieldsVal.experience}
-            >
-              <option className="bg-primary font-quickSand" value="" disabled>
-                Experience
-              </option>
-              {workoutDifficulties.map((experience: string) => (
-                <option
-                  className="bg-primary font-quickSand"
-                  key={experience}
-                  value={experience}
-                >
-                  {experience}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div
-          style={{
-            border:
-              generalInfoValidation.bmi.valid === null ||
-              generalInfoValidation.bmi.valid
-                ? ""
-                : "1px solid rgb(239 68 68)",
-          }}
-          className="relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]"
-        >
-          <label className="phone:text-sm font-quickSand font-semibold">
-            Choose BMI Classification
-          </label>
-          <div className={`flex flex-col w-full gap-2 bg-primary`}>
-            <select
-              className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
-              onChange={selectOnChange}
-              name="bmi"
-              defaultValue={generalInfoFieldsVal.bmi}
-            >
-              <option className="bg-primary font-quickSand" value="" disabled>
-                BMI Classification
-              </option>
-              {bmiClassifications.map((bmi: string) => (
-                <option
-                  className="bg-primary font-quickSand"
-                  key={bmi}
-                  value={bmi}
-                >
-                  {bmi}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+  const validationRules = {
+    weight: (value: string) => FormValidation({ stateName: "weight", value }),
+    height: (value: string) => FormValidation({ stateName: "height", value }),
+    experience: (value: string) =>
+      FormValidation({ stateName: "experience", value }),
+  };
+  const checkAllInputValidations = () => {
+    const generalFieldsVal = {
+      weight: generalInfoFieldsVal.weight,
+      height: generalInfoFieldsVal.height,
+      experience: generalInfoFieldsVal.experience,
+    };
+    const generalValidationResult = validateFormInputs(
+      generalFieldsVal,
+      validationRules
+    );
+    const isValid = checkValidations(generalValidationResult);
+    return isValid;
+  };
 
-      <div className="w-28 mx-auto mt-2">
-        <motion.button
+  const getPlanDetails = (weight: number, height: number) => {
+    const isValid = checkAllInputValidations();
+    setFormIsValid(isValid);
+    if (isValid) {
+      const bmiClassification = getBmi(weight, height);
+      setBmiClassification(bmiClassification);
+      if(setSelectedDifficulties) {
+        setSelectedDifficulties([generalInfoFieldsVal.experience])
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!formIsValid) return
+
+    if(planType === "exercise") {
+      generateExercises()
+    } else if(planType === "meal") {
+      generateMeals()
+    } else {
+      generateBodyTune();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formIsValid]);
+
+  useEffect(() => {
+    if(planType === "exercise") {
+      if (exercisePlansData) {
+        if(setExercisePlanInfo) {
+          setExercisePlanInfo(exercisePlansData.exercisePlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Exercise Plan",
+          shortDescription: "Define your workout routine",
+        });
+      }
+    } else if(planType === "meal") {
+      if (mealPlansData) {
+        console.log(mealPlansData);
+        if(setMealPlanInfo) {
+          setMealPlanInfo(mealPlansData.mealPlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Meal Plan",
+          shortDescription: "Customize your daily meals",
+        });
+      }
+    } else {
+      if (bodyTunePlansData) {
+        if(setMealPlanInfo) {
+          setMealPlanInfo(bodyTunePlansData.mealPlan);
+        }        
+        if(setExercisePlanInfo) {
+          setExercisePlanInfo(bodyTunePlansData.exercisePlan);
+        }
+        setFormIsValid(false);
+        setDisabledBreadCrumbs([]);
+        setProgress(2);
+        setSelectedBreadCrumb({
+          id: 2,
+          title: "Meal Plan",
+          shortDescription: "Customize your daily meals",
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bodyTunePlansData, exercisePlansData, mealPlansData]);
+
+  return (
+    <>
+      <div className="bg-black rounded-lg py-4 px-2 tablet:w-[350px]">
+        <div
+          className="flex items-center gap-1 cursor-pointer w-max group"
           onClick={() => {
-            setProgress((prev) => prev + 1);
+            setSelectedOption("");
+            setProgress(1);
             setSelectedBreadCrumb({
-              id: 2,
-              title: "Meal Plan",
-              shortDescription: "Customize your daily meals",
+              id: 1,
+              title: "Body Metrics",
+              shortDescription: "Set weight, height, and experience",
             });
           }}
-          whileHover={{
-            scale: 1.1,
-            transition: { duration: 0.2 },
-          }}
-          whileTap={{ scale: 0.9 }}
-          className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
-          type="button"
         >
-          Next
-        </motion.button>
+          <IcOutlineArrowBackIosNew
+            color="#4B6F64"
+            width="1.7em"
+            height="1.7em"
+          />
+          <div>
+            <p className="font-dmSans font-semibold text-sm text-[#b3b3b3] transition duration-200 group-hover:text-[#ffffff]">
+              Return to BodyTune creation options
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-col items-center gap-4">
+          <div className="flex justify-center gap-6">
+            <div className="min-w-[10px] max-w-[120px] relative">
+              <Input
+                name="weight"
+                placeholder="Weight"
+                state={generalInfoFieldsVal.weight}
+                type="text"
+                label="Weight (kg)"
+                onChange={onChange}
+                autoComplete="off"
+                valid={generalInfoValidation.weight.valid}
+                validationMessage={
+                  generalInfoValidation.weight.validationMessage
+                }
+              />
+            </div>
+            <div className="min-w-[10px] max-w-[120px] relative">
+              <Input
+                name="height"
+                placeholder="Height"
+                state={generalInfoFieldsVal.height}
+                type="text"
+                label="Height (m)"
+                onChange={onChange}
+                autoComplete="off"
+                valid={generalInfoValidation.height.valid}
+                validationMessage={
+                  generalInfoValidation.height.validationMessage
+                }
+              />
+            </div>
+          </div>
+          <div
+            style={{
+              border:
+                generalInfoValidation.experience.valid === null ||
+                generalInfoValidation.experience.valid
+                  ? ""
+                  : "1px solid rgb(239 68 68)",
+            }}
+            className="relative mt-[0.05rem] phone:w-[96%] mdphone:w-11/12 laptop:w-[270px]"
+          >
+            <label className="phone:text-sm font-quickSand font-semibold">
+              Choose Exercise Experience
+            </label>
+            <div className={`flex flex-col w-full gap-2 bg-primary`}>
+              <select
+                className={`bg-transparent w-[92%] text-white h-[2.7rem] phone:text-sm font-quickSand`}
+                onChange={selectOnChange}
+                name="experience"
+                defaultValue={generalInfoFieldsVal.experience}
+              >
+                <option className="bg-primary font-quickSand" value="" disabled>
+                  Experience
+                </option>
+                {workoutDifficulties.map((experience: string) => (
+                  <option
+                    className="bg-primary font-quickSand"
+                    key={experience}
+                    value={experience}
+                  >
+                    {experience.charAt(0).toUpperCase() + experience.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {!generalInfoValidation.experience.valid && (
+              <div className="flex flex-col gap-1 mt-1">
+                <p className="text-[0.75rem] text-red-500 font-bold font-dmSans">
+                  {generalInfoValidation.experience.validationMessage}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-28 mx-auto mt-2">
+          {selectedCreateOption === "recommendation" ? (
+            <motion.button
+              onClick={() => {
+                getPlanDetails(
+                  parseInt(generalInfoFieldsVal.weight),
+                  parseInt(generalInfoFieldsVal.height)
+                );
+              }}
+              whileHover={{
+                scale: 1.1,
+                transition: { duration: 0.2 },
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+              type="button"
+            >
+              Generate
+            </motion.button>
+          ) : (
+            <motion.button
+              onClick={() => {
+                setProgress((prev) => prev + 1);
+                setSelectedBreadCrumb({
+                  id: 2,
+                  title: "Meal Plan",
+                  shortDescription: "Customize your daily meals",
+                });
+              }}
+              whileHover={{
+                scale: 1.1,
+                transition: { duration: 0.2 },
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="bg-secondary text-white font-quickSand font-bold w-full rounded-md p-1 mt-2"
+              type="button"
+            >
+              Next
+            </motion.button>
+          )}
+        </div>
       </div>
-    </div>
+      <LoadingPopUp
+        message={`${planType === "exercise" || planType === "meal" ? '⏳ Hang Tight! Crafting Your Ultimate Plan...' : '⏳ Hang Tight! Crafting Your Ultimate BodyTune Plan...'}`}
+        isLoading={bodyTunePlanIsFetching || exercisePlanIsFetching || mealPlanIsFetching}
+        LoadingAnimationIcon={
+          <Oval
+          visible={true}
+          height="60"
+          width="60"
+          color="#4fa94d"
+          secondaryColor="#4B6F64"
+          ariaLabel="oval-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          />
+        }
+      />
+    </>
   );
 };
 

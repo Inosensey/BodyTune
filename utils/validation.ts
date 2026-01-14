@@ -22,6 +22,9 @@ const FormValidation = (data: params): validationInfo => {
       return validateDate(data);
     case "weight":
     case "height":
+    case "exerciseDifficulty":
+    case "exerciseMeasurementType":
+    case "bmiClassification":
       return validateNumber(data);
     //   case "date":
     //   case "timeStart":
@@ -32,10 +35,14 @@ const FormValidation = (data: params): validationInfo => {
     case "state":
     case "city":
     case "note":
+    case "experience":
     case "exerciseName":
-    case "difficulty":
-    case "measurementType":
+    case "equipment":
+    case "bodyPart":
     case "measurement":
+    case "exerciseDemo":
+    case "instruction":
+    case "veganAlternative":
     case "mealName":
     case "cookingInstruction":
       return validateString(data);
@@ -156,8 +163,8 @@ const validateDate = (data: params): validationInfo => {
   });
 };
 const validateNumber = (data: params): validationInfo => {
-  const numberRegex = /^\d*$/;
-  if (data.value.length === 0 || data.value === "0") {
+  const numberRegex = /^\d*\.?\d+$/;
+  if (data.value.length === 0) {
     return (validationInfo = {
       validationName: data.stateName,
       valid: false,
@@ -191,7 +198,15 @@ const validateString = (data: params): validationInfo => {
       validationMessage: "This field is required",
     });
   }
-  if(data.stateName === "mealName" || data.stateName === "cookingInstruction" || data.stateName === "exerciseName" || data.stateName === "measurement") {
+  if (
+    data.stateName === "mealName" ||
+    data.stateName === "cookingInstruction" ||
+    data.stateName === "exerciseName" ||
+    data.stateName === "measurement" ||
+    data.stateName === "exerciseDemo" ||
+    data.stateName === "veganAlternative" ||
+    data.stateName === "instruction"
+  ) {
     return (validationInfo = {
       validationName: data.stateName,
       valid: true,

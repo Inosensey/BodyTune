@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useAnimation } from "framer-motion";
+import { ProgressBar } from "react-loader-spinner";
 
 // Components
 import LoadingPopUp from "../reusableComponent/loadingAnimation/LoadingPopUp";
@@ -20,6 +21,7 @@ import IcBaselinePeopleOutline from "@/icons/IcBaselinePeopleOutline";
 import SolarExitLineDuotone from "@/icons/SolarExitLineDuotone";
 import SolarRoundedMagniferLinear from "@/icons/SolarRoundedMagniferLinear";
 import IcOutlinePerson from "@/icons/IcOutlinePerson";
+import MingcuteFitnessLine from "@/icons/MingcuteFitnessLine";
 
 // Variants
 const sidebarVariant = {
@@ -119,6 +121,41 @@ const Sidebar = () => {
                   className="font-quickSand text-[0.8rem] text-[#b3b3b3]"
                 >
                   Your personalized fitness snapshot
+                </p>
+              </motion.div>
+            </Link>
+            <Link
+              data-testid="activity-link"
+              onClick={() => {
+                if (window.innerWidth <= 991) {
+                  setToggleSidebar(false);
+                  animateSidebar(false);
+                }
+              }}
+              href={"/dashboard/activity"}
+            >
+              <motion.div
+                whileHover={{
+                  x: "10px",
+                  transition: { duration: 0.2 },
+                }}
+                className="flex flex-col py-2 px-[0.6rem]"
+              >
+                <div className="flex gap-1">
+                  <p className="font-dmSans font-semibold text-lightSecondary">
+                    Activity & Plans
+                  </p>
+                  <MingcuteFitnessLine
+                    color="#D3F0D1"
+                    width="1.3em"
+                    height="1.3em"
+                  />
+                </div>
+                <p
+                  data-testid="activity-link-description"
+                  className="font-quickSand text-[0.8rem] text-[#b3b3b3]"
+                >
+                  Activate and manage your selected exercise or meal plans
                 </p>
               </motion.div>
             </Link>
@@ -335,9 +372,9 @@ const Sidebar = () => {
               }}
               className="flex flex-col py-2 px-[0.6rem] cursor-pointer"
               onClick={() => {
-                setMessage("Logging you out... 🔄 See you next time! 👋")
+                setMessage("Logging you out... 🔄 See you next time! 👋");
                 setIsLoggingOut(true);
-                signOut()
+                signOut();
               }}
             >
               <div className="flex gap-1">
@@ -377,10 +414,21 @@ const Sidebar = () => {
         ></span>
       </div>
 
-      
       <LoadingPopUp
         isLoading={isLoggingOut}
         message={message}
+        LoadingAnimationIcon={
+          <ProgressBar
+            visible={true}
+            height="60"
+            width="60"
+            ariaLabel="progress-bar-loading"
+            wrapperStyle={{}}
+            barColor="#D3F0D1"
+            borderColor="#4B6F64"
+            wrapperClass=""
+          />
+        }
       />
     </>
   );
