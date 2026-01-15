@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+// import { AnimatePresence, motion } from "framer-motion";
 
 // Components
-import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
-import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
-import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
-import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
-import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
-import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
+// import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
+// import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
+// import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
+// import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
+// import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
+// import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,38 +33,38 @@ const pageResultPreferences: Array<number | string> = [
 ];
 
 // Variants
-const containerAnimationVariant = {
-  hidden: {
-    opacity: 0,
-  },
-  show: {
-    opacity: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.1,
-    },
-  },
-};
-const childAnimationVariant = {
-  hidden: {
-    opacity: 0,
-  },
-  show: {
-    opacity: 1,
-  },
-};
+// const containerAnimationVariant = {
+//   hidden: {
+//     opacity: 0,
+//   },
+//   show: {
+//     opacity: 1,
+//     transition: {
+//       when: "beforeChildren",
+//       staggerChildren: 0.1,
+//     },
+//   },
+// };
+// const childAnimationVariant = {
+//   hidden: {
+//     opacity: 0,
+//   },
+//   show: {
+//     opacity: 1,
+//   },
+// };
 
 const FollowerProfileContent = () => {
   // States
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [selectedContentTab, setSelectedContentTab] =
     useState<string>("BodyTunes");
-  const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
-    useState<boolean>(false);
-  const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
-    useState<boolean>(false);
-  const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
-    useState<boolean>(false);
+  // const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
+  //   useState<boolean>(false);
+  // const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
+  //   useState<boolean>(false);
+  // const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
+  //   useState<boolean>(false);
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
 
   // Events
@@ -240,7 +240,7 @@ const FollowerProfileContent = () => {
               </div>
             </div>
 
-            <div className="w-full max-h-[93%] overflow-auto">
+            {/* <div className="w-full max-h-[93%] overflow-auto">
               {selectedContentTab === "BodyTunes" && (
                 <motion.div
                   variants={containerAnimationVariant}
@@ -251,7 +251,7 @@ const FollowerProfileContent = () => {
                   <motion.div variants={childAnimationVariant}>
                     <BodyTuneCard
                       author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
+                      bodyTunePlan="Beginner Friendly Plan"
                       exercisePlanName="Exercise Plan Name"
                       mealPlanName="Meal Plan Name"
                       likes="44521"
@@ -262,7 +262,7 @@ const FollowerProfileContent = () => {
                   <motion.div variants={childAnimationVariant}>
                     <BodyTuneCard
                       author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
+                      bodyTunePlan="Beginner Friendly Plan"
                       exercisePlanName="Exercise Plan Name"
                       mealPlanName="Meal Plan Name"
                       likes="44521"
@@ -273,7 +273,7 @@ const FollowerProfileContent = () => {
                   <motion.div variants={childAnimationVariant}>
                     <BodyTuneCard
                       author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
+                      bodyTunePlan="Beginner Friendly Plan"
                       exercisePlanName="Exercise Plan Name"
                       mealPlanName="Meal Plan Name"
                       likes="44521"
@@ -367,11 +367,11 @@ const FollowerProfileContent = () => {
                   </motion.div>
                 </motion.div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+      {/* <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneMealDetails && (
           <BodyTuneMealDetails
             setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
@@ -387,7 +387,7 @@ const FollowerProfileContent = () => {
             setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };
