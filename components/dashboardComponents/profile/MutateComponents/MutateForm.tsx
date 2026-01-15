@@ -25,6 +25,7 @@ import LoadingPopUp from "@/components/reusableComponent/loadingAnimation/Loadin
 import { formReturnType } from "@/types/formTypes";
 import { TableRow } from "@/types/database.types";
 import { stepValidationResult } from "@/types/inputTypes";
+import { Oval } from "react-loader-spinner";
 interface props {
   personalInfo: TableRow<"personal_information">;
 }
@@ -550,7 +551,22 @@ const MutateForm = ({ personalInfo }: props) => {
         </div>
       </div>
 
-      <LoadingPopUp isLoading={isSubmitting} message={submitMessage} />
+      <LoadingPopUp
+        LoadingAnimationIcon={
+          <Oval
+            visible={true}
+            height="60"
+            width="60"
+            color="#4fa94d"
+            secondaryColor="#4B6F64"
+            ariaLabel="oval-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />
+        }
+        isLoading={isSubmitting}
+        message={submitMessage}
+      />
     </>
   );
 };
