@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+// import { AnimatePresence, motion } from "framer-motion";
 
 // Components
-import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
-import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
-import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
-import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
-import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
-import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
+// import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
+// import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
+// import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
+// import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
+// import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
+// import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
 
 // Icons
 import IcOutlinePerson from "@/icons/IcOutlinePerson";
@@ -33,38 +33,38 @@ const pageResultPreferences: Array<number | string> = [
 ];
 
 // Variants
-const containerAnimationVariant = {
-  hidden: {
-    opacity: 0,
-  },
-  show: {
-    opacity: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.1,
-    },
-  },
-};
-const childAnimationVariant = {
-  hidden: {
-    opacity: 0,
-  },
-  show: {
-    opacity: 1,
-  },
-};
+// const containerAnimationVariant = {
+//   hidden: {
+//     opacity: 0,
+//   },
+//   show: {
+//     opacity: 1,
+//     transition: {
+//       when: "beforeChildren",
+//       staggerChildren: 0.1,
+//     },
+//   },
+// };
+// const childAnimationVariant = {
+//   hidden: {
+//     opacity: 0,
+//   },
+//   show: {
+//     opacity: 1,
+//   },
+// };
 
 const ProfileContent = () => {
   // States
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [selectedContentTab, setSelectedContentTab] =
     useState<string>("BodyTunes");
-  const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
-    useState<boolean>(false);
-  const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
-    useState<boolean>(false);
-  const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
-    useState<boolean>(false);
+  // const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
+  //   useState<boolean>(false);
+  // const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
+  //   useState<boolean>(false);
+  // const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
+  //   useState<boolean>(false);
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -240,7 +240,7 @@ const ProfileContent = () => {
               </div>
             </div>
 
-            <div className="w-full max-h-[93%] overflow-auto">
+            {/* <div className="w-full max-h-[93%] overflow-auto">
               {selectedContentTab === "BodyTunes" && (
                 <motion.div
                   variants={containerAnimationVariant}
@@ -367,11 +367,11 @@ const ProfileContent = () => {
                   </motion.div>
                 </motion.div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+      {/* <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
         {toggleBodyTuneMealDetails && (
           <BodyTuneMealDetails
             setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
@@ -387,7 +387,7 @@ const ProfileContent = () => {
             setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };
