@@ -2,15 +2,28 @@
 
 import Link from "next/link";
 import { useState } from "react";
-// import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+
+// lib
+import {
+  getUserBodyTunes,
+  getUserExercisePlans,
+  getUserMealPlans,
+} from "@/lib/supabaseQueries";
+
+// utils
+import { arrangeExercisePlan, arrangeMealPlan } from "@/utils/dashboardUtils";
 
 // Components
-// import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
-// import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
-// import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
-// import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
-// import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
-// import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
+import Overlay from "@/components/reusableComponent/Overlay";
+import BodyTuneCard from "../bodytuneStudio/BodyTuneCard";
+import BodyTuneDetails from "../bodytuneStudio/BodyTuneDetails";
+import BodyTuneWorkoutCard from "../bodytuneWorkouts/BodyTuneWorkoutCard";
+import BodyTuneWorkoutDetails from "../bodytuneWorkouts/BodyTuneWorkoutDetails";
+import BodyTuneMealCard from "../bodytuneMeals/BodyTuneMealsCard";
+import BodyTuneMealDetails from "../bodytuneMeals/BodyTuneMealDetails";
 
 // Icons
 import IcOutlinePerson from "@/icons/IcOutlinePerson";
@@ -33,38 +46,80 @@ const pageResultPreferences: Array<number | string> = [
 ];
 
 // Variants
-// const containerAnimationVariant = {
-//   hidden: {
-//     opacity: 0,
-//   },
-//   show: {
-//     opacity: 1,
-//     transition: {
-//       when: "beforeChildren",
-//       staggerChildren: 0.1,
-//     },
-//   },
-// };
-// const childAnimationVariant = {
-//   hidden: {
-//     opacity: 0,
-//   },
-//   show: {
-//     opacity: 1,
-//   },
-// };
+const containerAnimationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+const childAnimationVariant = {
+  hidden: {
+    opacity: 0,
+  },
+  show: {
+    opacity: 1,
+  },
+};
+
+// Types
+import {
+  bodyTunePlan,
+  exercisePlan,
+  exercisePlanQuery,
+  mealPlanQuery,
+} from "@/types/planTypes";
+import { mealPlanType } from "@/types/mealTypes";
 
 const ProfileContent = () => {
+  // useQuery
+  const { data: bodyTuneList } = useQuery({
+    queryKey: ["userBodyTunes"],
+    queryFn: () => {
+      return getUserBodyTunes();
+    },
+  });
+  const { data: exercisePlanList } = useQuery({
+    queryKey: ["userExercisePlans"],
+    queryFn: () => {
+      return getUserExercisePlans();
+    },
+  });
+  const { data: mealPlanList } = useQuery({
+    queryKey: ["userMealPlans"],
+    queryFn: () => {
+      return getUserMealPlans();
+    },
+  });
+
   // States
   const [sortBy, setSortBy] = useState<string>("Relevance");
   const [selectedContentTab, setSelectedContentTab] =
     useState<string>("BodyTunes");
-  // const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
-  //   useState<boolean>(false);
-  // const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
-  //   useState<boolean>(false);
-  // const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
-  //   useState<boolean>(false);
+
+  const [toggleBodyTuneDetails, setToggleBodyTuneDetails] =
+    useState<boolean>(false);
+  const [selectedBodyTunePlan, setSelectedBodyTunePlan] = useState<{
+    bodyTuneId?: number;
+    exercisePlan?: exercisePlan;
+    mealPlan?: mealPlanType;
+  }>({});
+
+  const [toggleBodyTuneWorkoutDetails, setToggleBodyTuneWorkoutDetails] =
+    useState<boolean>(false);
+  const [selectedExercisePlan, setSelectedExercisePlan] =
+    useState<exercisePlanQuery | null>(null);
+
+  const [toggleBodyTuneMealDetails, setToggleBodyTuneMealDetails] =
+    useState<boolean>(false);
+  const [selectedMealPlan, setSelectedMealPlan] =
+    useState<mealPlanQuery | null>(null);
+
   const [resultsPerPage, setResultsPerPage] = useState<number | string>(10);
   // Events
   const selectOnChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -86,9 +141,9 @@ const ProfileContent = () => {
                   <p className="text-center">Profile Image here</p>
                 </div>
                 <p className="font-bold laptop:text-sm desktop:text-xl text-lightSecondary">
-                  Philip Mathew Dingcong
+                  John Doe
                 </p>
-                <p className="font-semibold text-[#ccc]">Mat2x</p>
+                <p className="font-semibold text-[#ccc]">John</p>
               </div>
               <div className="max-h-[100px] overflow-auto">
                 <p className="text-justify font-quickSand h-full text-sm">
@@ -210,7 +265,7 @@ const ProfileContent = () => {
                         >
                           {pageResult}
                         </option>
-                      )
+                      ),
                     )}
                   </select>
                 </div>
@@ -240,154 +295,203 @@ const ProfileContent = () => {
               </div>
             </div>
 
-            {/* <div className="w-full max-h-[93%] overflow-auto">
+            <div className="w-full h-[93%] overflow-auto">
               {selectedContentTab === "BodyTunes" && (
                 <motion.div
                   variants={containerAnimationVariant}
                   initial="hidden"
                   animate="show"
-                  className="w-full gap-2 flex flex-wrap mt-2"
+                  className="w-full h-[100%] gap-2 flex flex-wrap overflow-auto phone:justify-center desktop:justify-start"
                 >
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneCard
-                      author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
-                      exercisePlanName="Exercise Plan Name"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneCard
-                      author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
-                      exercisePlanName="Exercise Plan Name"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneCard
-                      author="Philip Mathew Dingcong"
-                      bodyTunePlanName="Beginner Friendly Plan"
-                      exercisePlanName="Exercise Plan Name"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-                    />
-                  </motion.div>
+                  {bodyTuneList && bodyTuneList.length !== 0 ? (
+                    bodyTuneList.map(
+                      (bodyTune: bodyTunePlan, index: number) => {
+                        if (bodyTune.exercise_plan && bodyTune.meal_plan)
+                          return (
+                            <motion.div
+                              variants={childAnimationVariant}
+                              className="w-max"
+                              key={index}
+                            >
+                              <BodyTuneCard
+                                bodyTunePlan={bodyTune}
+                                author={bodyTune.personal_information.name}
+                                exercisePlanName={
+                                  bodyTune.exercise_plan.planName
+                                }
+                                mealPlanName={bodyTune.meal_plan.planName}
+                                exercise_plan_tag={
+                                  bodyTune.exercise_plan.exercise_plan_tag
+                                }
+                                meal_plan_tags={
+                                  bodyTune.meal_plan.meal_plan_tags
+                                }
+                                likes="44521"
+                                views="4451"
+                                setToggleBodyTuneDetails={
+                                  setToggleBodyTuneDetails
+                                }
+                                setSelectedBodyTunePlan={
+                                  setSelectedBodyTunePlan
+                                }
+                              />
+                            </motion.div>
+                          );
+                      },
+                    )
+                  ) : (
+                    <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                      <Image
+                        src="/assets/svg/dumbbell-2.svg"
+                        width={300}
+                        height={300}
+                        alt="Logo"
+                      />
+                      <p className="w-max text-xl">
+                        User don&apos;t have a{" "}
+                        <span className="font-bold font-quickSand text-secondary">
+                          BodyTune
+                        </span>{" "}
+                        yet.
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
               {selectedContentTab === "Workouts" && (
                 <motion.div
+                  className="w-full max-h-[100%] gap-2 flex flex-wrap overflow-auto"
                   variants={containerAnimationVariant}
                   initial="hidden"
                   animate="show"
-                  className="w-full gap-2 flex flex-wrap mt-2"
                 >
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneWorkoutCard
-                      author="Philip Mathew Dingcong"
-                      exercisePlanName="Exercise Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneWorkoutDetails={
-                        setToggleBodyTuneWorkoutDetails
-                      }
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneWorkoutCard
-                      author="Philip Mathew Dingcong"
-                      exercisePlanName="Exercise Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneWorkoutDetails={
-                        setToggleBodyTuneWorkoutDetails
-                      }
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneWorkoutCard
-                      author="Philip Mathew Dingcong"
-                      exercisePlanName="Exercise Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneWorkoutDetails={
-                        setToggleBodyTuneWorkoutDetails
-                      }
-                    />
-                  </motion.div>
+                  {exercisePlanList && exercisePlanList?.length !== 0 ? (
+                    exercisePlanList.map((exercisePlan: exercisePlanQuery) => (
+                      <motion.div
+                        variants={childAnimationVariant}
+                        key={exercisePlan.id}
+                      >
+                        <BodyTuneWorkoutCard
+                          author={exercisePlan.personal_information.name}
+                          exercisePlanName={exercisePlan.planName}
+                          planTags={exercisePlan.exercise_plan_tag}
+                          likes="44521"
+                          views="4451"
+                          exercisePlan={exercisePlan}
+                          setToggleBodyTuneWorkoutDetails={
+                            setToggleBodyTuneWorkoutDetails
+                          }
+                          setSelectedExercisePlan={setSelectedExercisePlan}
+                        />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                      <Image
+                        src="/assets/svg/dumbbell-2.svg"
+                        width={300}
+                        height={300}
+                        alt="Logo"
+                      />
+                      <p className="w-max text-xl">
+                        User don&apos;t have any{" "}
+                        <span className="font-bold font-quickSand text-secondary">
+                          Workout Plans
+                        </span>{" "}
+                        yet.
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
               {selectedContentTab === "Meals" && (
                 <motion.div
+                  className="w-full max-h-[100%] gap-2 flex flex-wrap overflow-auto"
                   variants={containerAnimationVariant}
                   initial="hidden"
                   animate="show"
-                  className="w-full gap-2 flex flex-wrap mt-2"
                 >
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneMealCard
-                      author="Philip Mathew Dingcong"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneMealDetails={
-                        setToggleBodyTuneMealDetails
-                      }
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneMealCard
-                      author="Philip Mathew Dingcong"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneMealDetails={
-                        setToggleBodyTuneMealDetails
-                      }
-                    />
-                  </motion.div>
-                  <motion.div variants={childAnimationVariant}>
-                    <BodyTuneMealCard
-                      author="Philip Mathew Dingcong"
-                      mealPlanName="Meal Plan Name"
-                      likes="44521"
-                      views="4451"
-                      setToggleBodyTuneMealDetails={
-                        setToggleBodyTuneMealDetails
-                      }
-                    />
-                  </motion.div>
+                  {mealPlanList && mealPlanList.length !== 0 ? (
+                    mealPlanList.map((mealPlan: mealPlanQuery) => (
+                      <motion.div
+                        key={mealPlan.id}
+                        variants={childAnimationVariant}
+                      >
+                        <BodyTuneMealCard
+                          author={mealPlan.personal_information.name}
+                          mealPlanName={mealPlan.planName}
+                          planTags={mealPlan.meal_plan_tags}
+                          likes="44521"
+                          views="4451"
+                          setToggleBodyTuneMealDetails={
+                            setToggleBodyTuneMealDetails
+                          }
+                          mealPlan={mealPlan}
+                          setSelectedMealPlan={setSelectedMealPlan}
+                        />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col w-full h-full font-dmSans justify-center items-center">
+                      <Image
+                        src="/assets/svg/healthy-1.svg"
+                        width={300}
+                        height={300}
+                        alt="Logo"
+                      />
+                      <p className="w-max text-xl">
+                        You don&apos;t have any{" "}
+                        <span className="font-bold font-quickSand text-secondary">
+                          Meal Plans
+                        </span>{" "}
+                        yet.
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
-      {/* <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+      <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+        {toggleBodyTuneDetails && (
+          <Overlay>
+            <BodyTuneDetails
+              setToggleBodyTuneDetails={setToggleBodyTuneDetails}
+              bodyTuneId={selectedBodyTunePlan.bodyTuneId!}
+              mealPlan={selectedBodyTunePlan.mealPlan}
+              exercisePlan={selectedBodyTunePlan.exercisePlan}
+            />
+          </Overlay>
+        )}
+        {toggleBodyTuneWorkoutDetails && (
+          <Overlay>
+            <BodyTuneWorkoutDetails
+              exercisePlan={{
+                planName: selectedExercisePlan!.planName,
+                exercise_tags: selectedExercisePlan!.exercise_plan_tag.map(
+                  (tag) => tag.exercise_tags.exerciseTagName,
+                ),
+                exercises: arrangeExercisePlan(selectedExercisePlan!),
+              }}
+              setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
+            />
+          </Overlay>
+        )}
         {toggleBodyTuneMealDetails && (
           <BodyTuneMealDetails
+            mealPlan={{
+              planName: selectedMealPlan!.planName,
+              bmi_classification: selectedMealPlan!.meal_plan_tags.map(
+                (tag) => tag.meal_tags.mealTagName,
+              ),
+              meals: arrangeMealPlan(selectedMealPlan!),
+            }}
             setToggleBodyTuneMealDetails={setToggleBodyTuneMealDetails}
           />
         )}
-        {toggleBodyTuneDetails && (
-          <BodyTuneDetails
-            setToggleBodyTuneDetails={setToggleBodyTuneDetails}
-          />
-        )}
-        {toggleBodyTuneWorkoutDetails && (
-          <BodyTuneWorkoutDetails
-            setToggleBodyTuneWorkoutDetails={setToggleBodyTuneWorkoutDetails}
-          />
-        )}
-      </AnimatePresence> */}
+      </AnimatePresence>
     </>
   );
 };

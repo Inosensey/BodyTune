@@ -1,4 +1,12 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
+
+// lib
+import {
+  getUserBodyTunes,
+  getUserExercisePlans,
+  getUserMealPlans,
+} from "@/lib/supabaseQueries";
 
 // Components
 import DashboardHeader from "../DashboardHeader";
@@ -12,8 +20,37 @@ import { TableRow } from "@/types/database.types";
 interface props {
   personalInfo: TableRow<"personal_information">;
 }
+import { bodyTunePlan, exercisePlanQuery, mealPlanQuery } from "@/types/planTypes";
+interface props {
+  bodyTunes: Array<bodyTunePlan>,
+  mealPlans: Array<mealPlanQuery>,
+  exercisePlans: Array<exercisePlanQuery>,
+}
 
-const Profile = ({personalInfo}:props) => {
+const Profile = ({personalInfo, bodyTunes, exercisePlans, mealPlans}:props) => {
+  // useQuery
+  useQuery({
+    queryKey: ["userBodyTunes"],
+    initialData: bodyTunes,
+    queryFn: () => {
+      return getUserBodyTunes();
+    },
+  });
+  useQuery({
+    queryKey: ["userExercisePlans"],
+    initialData: exercisePlans,
+    queryFn: () => {
+      return getUserExercisePlans();
+    },
+  });
+  useQuery({
+    queryKey: ["userMealPlans"],
+    initialData: mealPlans,
+    queryFn: () => {
+      return getUserMealPlans();
+    },
+  });
+
   console.log(personalInfo);
   return (
     <div className="flex flex-col gap-3 h-[99%]">
