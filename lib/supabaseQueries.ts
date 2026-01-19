@@ -168,9 +168,9 @@ export const getBodyTunes = async () => {
   }
 };
 
-export const getUserBodyTunes = async () => {
+export const getUserBodyTunes = async (id?: string) => {
   const user = await getUser();
-  const userId = user.data.user!.id;
+  const userId = id ? id : user.data.user!.id;
   const encryptedUserId = encryptUserId(userId);
   const headerInfo = headers();
 
@@ -240,9 +240,9 @@ export const getMealPlans = async () => {
   }
 };
 
-export const getUserMealPlans = async () => {
+export const getUserMealPlans = async (id?: string) => {
   const user = await getUser();
-  const userId = user.data.user!.id;
+  const userId = id ? id : user.data.user!.id;
   const encryptedUserId = encryptUserId(userId);
   const headerInfo = headers();
 
@@ -310,9 +310,9 @@ export const getExercisePlans = async () => {
     return [];
   }
 };
-export const getUserExercisePlans = async () => {
+export const getUserExercisePlans = async (id?: string) => {
   const user = await getUser();
-  const userId = user.data.user!.id;
+  const userId = id ? id : user.data.user!.id;
   const encryptedUserId = encryptUserId(userId);
   const headerInfo = headers();
 
